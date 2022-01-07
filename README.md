@@ -1,6 +1,6 @@
 # sockemfia
 
-## By Sarah Leong, Yuqing Wu, pd 5
+## By Sarah Leong, Yuqing Wu, Andy Lin pd 5
 ## Description of Project
 
 ## A description as to how the project will be used (describe the user interface).
