@@ -22,7 +22,8 @@ This will be an online multiplayer game where people play Mafia, an epic party g
    - Voting: each person votes for who they think the mafia is. The vote is announced to the clients so that people can see what other people voted for. Record          who's dead.
    - The people who are dead can continue watch the game but can't write anything to the server. 
    #### What algorithms and /or data structures you will be using, and how.
-   - A struct will keep track of who's alive, dead, doctor, mafia, detective.
+   - A struct will keep track of the state of a player. (alive, role, ...) 
+   - Each player will get a number (ID) and the file that stores their information would be named like that. 
    - An array of structs will be used in order to have the statuses of all players in the game.
 
 ## Timeline 
