@@ -13,6 +13,10 @@ int* role_setup(int civilian, int mafia, int doctor, int detective){
   return role_num;
 }
 
+void remove_shm(){
+  int shmd = shmget(ROLE_NUM_MEM,0,0);
+  shmctl(shmd, IPC_RMID,0);
+}
 int main() {
 
   int to_client;
@@ -82,6 +86,9 @@ int main() {
         write(to_client, input, sizeof(input));
       }
       */
+    }
+    else{
+      remove_shm();
     }
   }
 }
