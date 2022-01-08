@@ -7,7 +7,7 @@ int main() {
 
   from_server = client_handshake();
   
-  char role[10];
+  char role[10] = {0};
   read(from_server, role, sizeof(role));
   printf("You are a %s\n", role);
 
