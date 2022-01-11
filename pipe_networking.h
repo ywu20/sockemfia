@@ -25,6 +25,7 @@
 #define ROLE_NUM_MEM 11111
 
 
+
 //for forking server
 int server_setup();
 int server_connect(int from_client);
