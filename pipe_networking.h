@@ -12,7 +12,7 @@
 #include<sys/ipc.h>
 #include<sys/sem.h>
 #include<sys/shm.h>
-
+#include<signal.h>
 
 #ifndef NETWORKING_H
 #define NETWORKING_H
@@ -20,6 +20,7 @@
 #define HANDSHAKE_BUFFER_SIZE 10
 #define BUFFER_SIZE 1000
 #define ROLE_NUM_MEM 11111
+
 
 
 //for forking server
