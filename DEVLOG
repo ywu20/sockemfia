@@ -19,4 +19,4 @@ Updated proposal by a bit.
 yuqingW -- 2022-01-11 13:53
 Did client enter names and print rules for clients before game starts.
 Made an array that contains all the struct of player data.
-
+Add signal handler to free memory when exiting. 
