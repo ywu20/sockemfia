@@ -8,6 +8,7 @@ struct player{
 };
 
 struct player * players[20];
+char* roles[6] = {"civilian", "mafia", "doctor","detective", "lead mafia", "hunter"};
 
 int* role_setup(int civilian, int mafia, int doctor, int detective, int lead_mafia, int hunter){
   int shmd = shmget(ROLE_NUM_MEM, sizeof(int) * 6, IPC_CREAT | 0644);
@@ -56,7 +57,8 @@ void free_struct(struct player * s[20]){
   }
 }
 
-char * role_assign(int to_client, char * roles[6], int num_player_per_role[6]){
+void role_assign(int num_player, int num_player_per_role[6]){
+  /*
   // when there's more client than positions, goes forever loop
   // no error checking yet, relying on semaphores.
   printf("Roles left:\n");
@@ -81,6 +83,27 @@ char * role_assign(int to_client, char * roles[6], int num_player_per_role[6]){
   write(to_client, client_role, 15);
 
   return client_role;
+  */
+  int i;
+  for (i = 0; i < num_player && players[i]; i++)
+  {
+    char* client_role = NULL;
+    int r = rand()%6;
+
+    while(num_player_per_role[r] == 0){
+      r = rand()%6;
+    }
+
+    // role is takable, reduce role number left by 1
+    client_role = roles[r];
+    (num_player_per_role[r])--;
+
+    // assign role in player struct
+    strcpy(players[i]->role, client_role);
+
+    // tell client its role
+    write(players[i]->socket, client_role, 15);
+  }
 }
 
 void sigint_handle(){
@@ -104,13 +127,11 @@ int main() {
 
   sd = server_setup();
 
-  char* roles[6] = {"civilian", "mafia", "doctor","detective", "lead mafia", "hunter"};
-
   // set number of people per role
   int * num_player_per_role = role_setup(2,1,0,0,1,0);
+  int num_player = 0;
 
   srand(time (NULL));
-  int num_player = 0;
   int pid = fork();
   if (pid)
   {
@@ -138,4 +159,6 @@ int main() {
     }
   }
   // here we assign roles
+  role_assign(num_player, num_player_per_role);
+  printf("done\n");
 }
