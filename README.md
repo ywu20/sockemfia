@@ -29,4 +29,7 @@ This will be an online multiplayer game where people play Mafia, an epic party g
    - An array of structs will be used in order to have the statuses of all players in the game.
 
 ## Timeline 
-
+1/13: Role assignment, semaphore, instructional period for mafia to kill people, announce death.
+1/18: Chatroom for both mafia and big group, voting.
+1/20: Deal with dead players, special roles instructional period.
+1/24: Debugging, error handling, timer.
