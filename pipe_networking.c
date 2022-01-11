@@ -59,7 +59,7 @@ int server_connect(int sd) {
 
   returns the file descriptor for the downstream pipe.
   =========================*/
-int client_handshake(int *to_server) {
+int client_handshake() {
 
   struct addrinfo *hints, *results;
   hints = calloc(1, sizeof(struct addrinfo));
