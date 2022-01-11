@@ -26,24 +26,22 @@ void rules(){
 int main() {
   rules();
   int from_server;
+  char serverComms[BUFFER_SIZE] = {0};
 
   from_server = client_handshake();
   char * name = get_name(from_server);
   printf("Your name is: %s",name);
 
-  char role[15] = {0};
-  read(from_server, role, sizeof(role));
-  printf("You are a %s\n", role);
+  // char role[15] = {0};
+  // read(from_server, role, sizeof(role));
+  // printf("You are a %s\n", role);
 
   while(1){
-    /*
-    char input[BUFFER_SIZE] = {0};
-    printf("Enter something...\n");
-    read(STDIN_FILENO, input, sizeof(input));
-    write(from_server, input, sizeof(input));
-    char result[BUFFER_SIZE] = {0};
-    read(from_server, result, sizeof(result));
-    printf("Result: %s\n", result);
-    */
+    read(from_server, serverComms, sizeof(serverComms));
+
+    if (strcmp(serverComms, "gameEnd") == 0){
+      printf("Game has ended!\n");
+      break;
+    }
   }
 }

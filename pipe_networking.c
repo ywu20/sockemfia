@@ -65,7 +65,7 @@ int client_handshake() {
   hints = calloc(1, sizeof(struct addrinfo));
   hints->ai_family = AF_INET;
   hints->ai_socktype = SOCK_STREAM;
-  getaddrinfo("127.0.0.1", "9846", hints, &results);
+  getaddrinfo("localhost", "9846", hints, &results);
 
   int sd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
   connect(sd, results->ai_addr, results->ai_addrlen);
