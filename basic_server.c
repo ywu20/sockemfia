@@ -4,7 +4,7 @@ struct player{
   char role[15];
   int alive; // 1 alive, 0 dead
 };
-
+struct player * players[20];
 int* role_setup(int civilian, int mafia, int doctor, int detective, int lead_mafia, int hunter){
   int shmd = shmget(ROLE_NUM_MEM, sizeof(int) * 6, IPC_CREAT | 0644);
   int* role_num = shmat (shmd,0,0);
@@ -40,6 +40,13 @@ void print_struct(struct player * s [20], int num_player){
 }
 }
 
+void free_struct(struct player * s[20]){
+  int i;
+  for(i=0;i<20;i++){
+    free(s[i]);
+  }
+}
+
 char * role_assign(int to_client, char * roles[6], int num_player_per_role[6]){
   // when there's more client than positions, goes forever loop
   // no error checking yet, relying on semaphores.
@@ -66,6 +73,19 @@ char * role_assign(int to_client, char * roles[6], int num_player_per_role[6]){
 
         return client_role;
 }
+void sigint_handle(){
+  open("file.txt",O_CREAT,0644);
+  printf("ctrl c\n");
+  remove_shm();
+  free_struct(players);
+  exit(SIGINT);
+}
+static void sighandler(int signo){
+ if(signo == SIGINT){
+   sigint_handle();
+ }
+}
+
 int main() {
 
   int to_client;
@@ -77,7 +97,7 @@ int main() {
 
   // set number of people per role
   int * num_player_per_role = role_setup(2,1,0,0,1,0);
-  struct player * players[20];
+
   srand(time (NULL));
   int num_player = 0;
     while (1)
@@ -92,7 +112,9 @@ int main() {
       players[num_player] = player_setup(name, client_role);
       print_struct(players, num_player);
       num_player++;
-      remove_shm();
-
+      //remove_shm();
+    //  free_struct(players);
+      signal(SIGINT, sighandler);
   }
+
 }

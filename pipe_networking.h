@@ -12,7 +12,7 @@
 #include<sys/ipc.h>
 #include<sys/sem.h>
 #include<sys/shm.h>
-
+#include<signal.h>
 
 #ifndef NETWORKING_H
 #define NETWORKING_H
