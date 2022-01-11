@@ -1,11 +1,11 @@
 #include "pipe_networking.h"
 struct player{
-
-  char role[10];
+  char name [50];
+  char role[15];
   int alive; // 1 alive, 0 dead
 };
-int* role_setup(int civilian, int mafia, int doctor, int detective){
-  int shmd = shmget(ROLE_NUM_MEM, sizeof(int) * 4, IPC_CREAT | 0644);
+int* role_setup(int civilian, int mafia, int doctor, int detective, int lead_mafia, int hunter){
+  int shmd = shmget(ROLE_NUM_MEM, sizeof(int) * 6, IPC_CREAT | 0644);
   int* role_num = shmat (shmd,0,0);
 
   // set up number of each role
@@ -13,6 +13,8 @@ int* role_setup(int civilian, int mafia, int doctor, int detective){
   role_num[1]= mafia;
   role_num[2] = doctor;
   role_num[3] = detective;
+  role_num[4] = lead_mafia;
+  role_num[5] = hunter;
 
   return role_num;
 }
@@ -28,19 +30,15 @@ int main() {
 
   sd = server_setup();
 
-  char* roles[4] = {"civilian", "mafia", "doctor","detective"};
+  char* roles[6] = {"civilian", "mafia", "doctor","detective", "lead mafia", "hunter"};
 
   // set number of people per role
-  // now it's set to be 2 civilians and 1 mafia
-  int * num_player_per_role = role_setup(2,1,0,0);
+  int * num_player_per_role = role_setup(2,1,0,0,1,0);
 
   srand(time (NULL));
     while (1)
     {
       to_client = server_connect(sd);
-
-      if (fork() == 0)
-      {
 
         // when there's more client than positions, goes forever loop
         // no error checking yet, relying on semaphores.
@@ -50,14 +48,14 @@ int main() {
               printf("client name: %s\n", name);
               printf("Roles left:\n");
               int i;
-              for(i=0;i<4;i++){
+              for(i=0;i<6;i++){
                 printf("%s:%d\n", roles[i], num_player_per_role[i]);
               }
               char* client_role = NULL;
-              int r = rand()%4;
+              int r = rand()%6;
 
               while(num_player_per_role[r] == 0){
-                r = rand()%4;
+                r = rand()%6;
               }
 
               // role is takable, reduce role number left by 1
@@ -67,7 +65,7 @@ int main() {
               printf("Gave client %s\n", roles[r]);
 
               // tell client its role
-              write(to_client, client_role, 10);
+              write(to_client, client_role, 15);
       /*
       while(1){
         char input[BUFFER_SIZE] = {0};
@@ -92,9 +90,7 @@ int main() {
         write(to_client, input, sizeof(input));
       }
       */
-    }
-    else{
+
       remove_shm();
-    }
   }
 }

@@ -31,7 +31,7 @@ int main() {
   char * name = get_name(from_server);
   printf("Your name is: %s",name);
 
-  char role[10] = {0};
+  char role[15] = {0};
   read(from_server, role, sizeof(role));
   printf("You are a %s\n", role);
 
