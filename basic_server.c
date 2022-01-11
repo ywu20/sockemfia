@@ -1,5 +1,9 @@
 #include "pipe_networking.h"
+struct player{
 
+  char role[10];
+  int alive; // 1 alive, 0 dead
+};
 int* role_setup(int civilian, int mafia, int doctor, int detective){
   int shmd = shmget(ROLE_NUM_MEM, sizeof(int) * 4, IPC_CREAT | 0644);
   int* role_num = shmat (shmd,0,0);
@@ -41,7 +45,9 @@ int main() {
         // when there's more client than positions, goes forever loop
         // no error checking yet, relying on semaphores.
               printf("===============Client connected===============\n");
-
+              char name[50];
+              read(to_client, name,sizeof(name));
+              printf("client name: %s\n", name);
               printf("Roles left:\n");
               int i;
               for(i=0;i<4;i++){
