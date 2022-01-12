@@ -107,8 +107,6 @@ void role_assign(int num_player, int num_player_per_role[6]){
 }
 
 void sigint_handle(){
-  open("file.txt",O_CREAT,0644);
-  printf("ctrl c\n");
   remove_shm();
   free_struct(players);
   exit(SIGINT);
