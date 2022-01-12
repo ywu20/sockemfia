@@ -1,43 +1,40 @@
 #include "pipe_networking.h"
 
 int main() {
-
-  int to_client;
-  int sd;
+    // only for setting up separate chatrooms
+    int sd;
 
     sd = server_setup();
 
-    printf("dng");
+    chatroom(1,sd);
+}
 
-    while (1)
-    {
-      to_client = server_connect(sd);
+int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat time
+    // preparing set of socket descriptors
+    fd_set read_fds;
 
-      if (fork() == 0)
-      {
+    printf("waiting for connection...\n");
 
-      while(1){
-        char input[BUFFER_SIZE] = {0};
-        read(to_client, input, sizeof(input));
-        int i;
-        for (i = 0; i < BUFFER_SIZE && input[i]; i++)
-        {
-          input[i] += 1;
-          if (input[i] == 'a' || input[i] == 'A')
-          {
-            input[i] = '4';
-          }
-          else if (input[i] == 'e' || input[i] == 'E')
-          {
-            input[i] = '3';
-          }
-          else if (input[i] == 'I' || input[i] == 'i')
-          {
-            input[i] = '1';
-          }
+    // int to_client = select(5, &read_fds, NULL, NULL, NULL);
+    while (seconds) {
+        FD_ZERO(&read_fds); // clears set    
+        FD_SET(sd, &read_fds); // adds server socket to set
+        int client = server_connect(sd);
+        FD_SET(client, &read_fds);
+        printf("sd: %d\tclient: %d\n",sd,client);
+
+        if (client > sd) {
+            sd = client;
         }
-        write(to_client, input, sizeof(input));
-      }
+
+        int to_client = select(sd+1, &read_fds, NULL, NULL, NULL);
+        printf("to_client: %d\n",to_client);
+        if (to_client > 2) {
+            char input[BUFFER_SIZE] = {0};
+            read(to_client, input, sizeof(input));
+            printf("from client: %s\n",input);
+            // write(to_client, "[client]: ", 10);
+            // write(to_client, input, sizeof(input));
+        }
     }
-  }
 }
