@@ -27,7 +27,7 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
             sd = client;
         }
 
-        int to_client = select(sd+1, &read_fds, NULL, NULL, NULL);
+        int to_client = select(sd+1, &read_fds, NULL, NULL, NULL); // only returns 1 or -1???
         printf("to_client: %d\n",to_client);
         if (to_client > 2) {
             char input[BUFFER_SIZE] = {0};
