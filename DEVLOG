@@ -20,3 +20,16 @@ yuqingW -- 2022-01-11 13:53
 Did client enter names and print rules for clients before game starts.
 Made an array that contains all the struct of player data.
 Add signal handler to free memory when exiting. 
+
+andyL -- 2022-01-11 11:47
+Attempted to get the game backend working without success.
+
+andyL -- 2022-01-11 21:00
+Managed to fix the backend (wrong IP address used)
+All clients now close if server closes
+Roles are now given out when the game starts
+Tried to implement a system where a key is pressed to start the game (idea since abandoned)
+
+andyL -- 2022-01-12 11:47
+Started to work on the beginning of game (role distribution) and main game loop logic
+Started to work on the component of game where user can get a readout of whos still alive
