@@ -27,6 +27,7 @@ int main() {
   rules();
   int from_server;
   char serverComms[BUFFER_SIZE] = {0};
+  char in[BUFFER_SIZE] = {0};
 
   from_server = client_handshake();
   char * name = get_name(from_server);
@@ -39,9 +40,16 @@ int main() {
   while(1){
     read(from_server, serverComms, sizeof(serverComms));
 
-    if (strcmp(serverComms, "gameEnd") == 0){
+    if (strcmp(serverComms, END_GAME) == 0){
       printf("Game has ended!\n");
       break;
+    }else if(strcmp(serverComms, TELL_ROLE) == 0){
+      read(from_server, serverComms, sizeof(serverComms));
+      printf("Your role is: %s\n", serverComms);
+    }else{
+      printf("%s\n", serverComms);
+      read(STDIN_FILENO, in, sizeof(in));
+      write(from_server, in, sizeof(in));
     }
   }
 }
