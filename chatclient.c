@@ -6,13 +6,15 @@ int main() {
 
   from_server = client_handshake();
 
+  if (errno) printf("error %d: %s\n", errno, strerror(errno));
+  
+  printf("You have entered the chatroom!\n");
   while(1){
     char input[BUFFER_SIZE] = {0};
-    printf("Enter something...\n");
     read(STDIN_FILENO, input, sizeof(input));
     write(from_server, input, sizeof(input));
     char result[BUFFER_SIZE] = {0};
     read(from_server, result, sizeof(result));
-    printf("Result: %s\n", result);
+    printf("%s", result);
   }
 }
