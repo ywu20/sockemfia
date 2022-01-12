@@ -22,6 +22,12 @@ int server_setup() {
   hints->ai_flags = AI_PASSIVE;
   getaddrinfo(NULL, "9846", hints, &results);
   int sd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
+
+  // socket opened for multiple connections
+  int opt = 1;
+  setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt,
+  sizeof(opt) < 0);
+
   bind(sd, results->ai_addr, results->ai_addrlen);
   listen(sd, 10);
   free(hints);
