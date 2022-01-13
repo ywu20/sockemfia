@@ -1,6 +1,4 @@
-#include "pipe_networking.h"
-
-#include <sys/select.h>
+#include "chat.h"
 
 int main() {
     // only for setting up separate chatrooms
@@ -17,7 +15,6 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
     char input[100];
     int max_fd = sd;
     int max_clients = 2;
-    // int clients[8] = {0}; // 8 max clients can connect
 
     // gather the clients
     int clients[max_clients];
@@ -37,21 +34,10 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
     // int c = 0;
     // int i;
 
+    // start the chatroom
     while (seconds) {
         FD_ZERO(&read_fds); // clears set
         FD_SET(sd, &read_fds);  // adds server socket to set
-
-        // int client = server_connect(sd); // checks for who's connecting
-        // if (clients[c]==0) { // keeps track of clients fds
-        //     clients[c] = client;
-        //     c++;
-        // } else {
-        //     printf("no more clients can connect\n");
-        // }
-
-        // if (max_fd < client) {
-        //     max_fd = client;
-        // }
 
         // add fds to set
         for (i = 0; i < max_clients; i++) { // adds all the fds to check up on
@@ -70,13 +56,13 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
         int sel = select(max_fd+1, &read_fds, NULL, NULL, NULL);
         printf("sel: %d\n", sel);
 
-        if (sel) { // if there is only one file left in set
+        if (sel) { // if there is only one file left in read set
             for (int i = 0; i < max_clients; i++) { // loops to find the active client
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
                     printf("going to read from %d\n", clients[i]);
                     read(clients[i], input, 100);
                     printf("got data: %s\n",input);
-            }
+                }
             }
         }
         printf("loop complete\n\n");
