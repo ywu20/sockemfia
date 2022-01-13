@@ -171,6 +171,7 @@ void gameCycle(int playerCount){
         read(players[i]->socket, in, sizeof(in));
       }
     }
+    // announce the deaths of the day here
   }
 }
 
