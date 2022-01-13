@@ -13,6 +13,7 @@
 #include <sys/sem.h>
 #include <sys/shm.h>
 #include <signal.h>
+#include <sys/wait.h>
 
 #ifndef NETWORKING_H
 #define NETWORKING_H
@@ -20,6 +21,14 @@
 #define HANDSHAKE_BUFFER_SIZE 10
 #define BUFFER_SIZE 1000
 #define ROLE_NUM_MEM 11111
+
+#define DETECTIVE_PROMPT "Who do you want to know about?"
+#define MAFIA_PROMPT "Who do you want to kill?"
+#define DOCTOR_PROMPT "Who do you want to save?"
+
+#define TELL_ROLE "tellRole"
+#define END_GAME "gameEnd"
+#define RECEIVED_MSG "msgGot"
 
 //for forking server
 int server_setup();

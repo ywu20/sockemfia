@@ -49,10 +49,17 @@ void print_struct(struct player * s [20], int num_player){
   }
 }
 
+void disclose_players_to_player(struct player * s [20], int currentPlayer){
+  int i;
+  for (i = 0; s[i]; i++){
+    
+  }
+}
+
 void free_struct(struct player * s[20]){
   int i;
   for(i=0;i<20;i++){
-    write(s[i]->socket, "gameEnd", sizeof("gameEnd"));
+    write(s[i]->socket, END_GAME, sizeof(END_GAME));
     free(s[i]);
   }
 }
@@ -84,6 +91,7 @@ void role_assign(int num_player, int num_player_per_role[6]){
 
   return client_role;
   */
+  char out[BUFFER_SIZE] = {0};
   int i;
   for (i = 0; i < num_player && players[i]; i++)
   {
@@ -100,15 +108,19 @@ void role_assign(int num_player, int num_player_per_role[6]){
 
     // assign role in player struct
     strcpy(players[i]->role, client_role);
+    printf("%s\n", players[i]->role);
 
     // tell client its role
-    write(players[i]->socket, client_role, 15);
+    char in[BUFFER_SIZE] = {0};
+    strcat(in, TELL_ROLE);
+    strcat(in, ",");
+    strcat(in, client_role);
+    write(players[i]->socket, in, sizeof(in));
+    // read(players[i]->socket, out, sizeof(out));
   }
 }
 
 void sigint_handle(){
-  open("file.txt",O_CREAT,0644);
-  printf("ctrl c\n");
   remove_shm();
   free_struct(players);
   exit(SIGINT);
@@ -120,6 +132,31 @@ static void sighandler(int signo){
  }
 }
 
+void gameCycle(int playerCount){
+  int i;
+  char in[BUFFER_SIZE] = {0};
+  for (i = 0; i<playerCount; i++)
+  {
+    printf("%d\n", i);
+    if (strcmp("detective", players[i]->role) == 0 && players[i]->alive)
+    {
+      write(players[i]->socket, DETECTIVE_PROMPT, sizeof(DETECTIVE_PROMPT));
+      read(players[i]->socket, in, sizeof(in));
+    }
+    else if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
+    {
+      write(players[i]->socket, MAFIA_PROMPT, sizeof(MAFIA_PROMPT));
+      read(players[i]->socket, in, sizeof(in));
+    }
+    else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
+    {
+      write(players[i]->socket, DOCTOR_PROMPT, sizeof(DOCTOR_PROMPT));
+      read(players[i]->socket, in, sizeof(in));
+    }
+    printf("%s\n", in);
+  }
+}
+
 int main() {
 
   int to_client;
@@ -128,37 +165,50 @@ int main() {
   sd = server_setup();
 
   // set number of people per role
-  int * num_player_per_role = role_setup(2,1,0,0,1,0);
+  int * num_player_per_role = role_setup(2,1,0,1,0,0);
   int num_player = 0;
+  int gameCapacity = 0;
+  char in[BUFFER_SIZE] = {0};
 
   srand(time (NULL));
-  int pid = fork();
-  if (pid)
-  {
-    char in[100] = {0};
+  while (gameCapacity < 4){
+    printf("How many players will be playing this game of Mafia?\nYou need at least 4 people to play this game.\n");
     read(STDIN_FILENO, in, sizeof(in));
-    kill(pid, 0);
+    sscanf(in, "%d", &gameCapacity);
   }
-  else
-  {
-    signal(SIGINT, sighandler);
-    while (1)
-    {
-      to_client = server_connect(sd);
-      printf("===============Client connected===============\n");
-      char name [50];
-      read(to_client, name,50);
-      printf("client name: %s\n", name);
 
-      // char * client_role = role_assign(to_client, roles, num_player_per_role);
-      players[num_player] = player_setup(name, to_client);
-      print_struct(players, num_player);
-      num_player++;
-      //remove_shm();
+  // int pid = fork();
+  // if (pid)
+  // {
+  //   char in[100] = {0};
+  //   read(STDIN_FILENO, in, sizeof(in));
+  //   kill(pid, 0);
+  // }
+  // else
+  // {
+  signal(SIGINT, sighandler);
+  while (num_player < gameCapacity)
+  {
+    to_client = server_connect(sd);
+    printf("===============Client connected===============\n");
+    char name[50];
+    read(to_client, name, 50);
+    printf("client name: %s\n", name);
+
+    // char * client_role = role_assign(to_client, roles, num_player_per_role);
+    players[num_player] = player_setup(name, to_client);
+    print_struct(players, num_player);
+    num_player++;
+    //remove_shm();
     //  free_struct(players);
     }
-  }
+  // }
   // here we assign roles
   role_assign(num_player, num_player_per_role);
+  gameCycle(num_player);
+  // while(1){
+  //   printf("rickroll\n");
+  // }
   printf("done\n");
+  exit(SIGINT);
 }
