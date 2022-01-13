@@ -5,6 +5,7 @@ struct player{
   char role[15];
   int alive; // 1 alive, 0 dead
   int socket;
+  int votes;
 };
 
 struct player * players[20];
@@ -118,7 +119,6 @@ void role_assign(int num_player, int num_player_per_role[6]){
     strcat(in, sep);
     strcat(in, client_role);
     write(players[i]->socket, in, sizeof(in));
-    // read(players[i]->socket, out, sizeof(out));
   }
 }
 
@@ -151,27 +151,45 @@ void gameCycle(int playerCount){
     // day cycle
     for (i = 0; i < playerCount; i++){
       if (players[i]->alive){
-        write(players[i]->socket, VOTE_PLAYER, sizeof(VOTE_PLAYER));
-        read(players[i]->socket, in, sizeof(in));
+        int votedPlayer = playerCount;
+        while (votedPlayer < 0 || votedPlayer >= playerCount)
+        {
+          write(players[i]->socket, VOTE_PLAYER, sizeof(VOTE_PLAYER));
+          read(players[i]->socket, in, sizeof(in));
+          sscanf(in, "%d", &votedPlayer);
+        }
       }
     }
     // night cycle
     for (i = 0; i < playerCount; i++)
     {
+      int votedPlayer = playerCount;
       if (strcmp("detective", players[i]->role) == 0 && players[i]->alive)
       {
-        write(players[i]->socket, DETECTIVE_PROMPT, sizeof(DETECTIVE_PROMPT));
-        read(players[i]->socket, in, sizeof(in));
+        while (votedPlayer < 0 || votedPlayer >= playerCount)
+        {
+          write(players[i]->socket, DETECTIVE_PROMPT, sizeof(DETECTIVE_PROMPT));
+          read(players[i]->socket, in, sizeof(in));
+          sscanf(in, "%d", &votedPlayer);
+        }
       }
       else if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
       {
-        write(players[i]->socket, MAFIA_PROMPT, sizeof(MAFIA_PROMPT));
-        read(players[i]->socket, in, sizeof(in));
+        while (votedPlayer < 0 || votedPlayer >= playerCount)
+        {
+          write(players[i]->socket, MAFIA_PROMPT, sizeof(MAFIA_PROMPT));
+          read(players[i]->socket, in, sizeof(in));
+          sscanf(in, "%d", &votedPlayer);
+        }
       }
       else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
       {
-        write(players[i]->socket, DOCTOR_PROMPT, sizeof(DOCTOR_PROMPT));
-        read(players[i]->socket, in, sizeof(in));
+        while (votedPlayer < 0 || votedPlayer >= playerCount)
+        {
+          write(players[i]->socket, DOCTOR_PROMPT, sizeof(DOCTOR_PROMPT));
+          read(players[i]->socket, in, sizeof(in));
+          sscanf(in, "%d", &votedPlayer);
+        }
       }
     }
     // announce the deaths of the day here
@@ -197,6 +215,8 @@ int main() {
     read(STDIN_FILENO, in, sizeof(in));
     sscanf(in, "%d", &gameCapacity);
   }
+
+  printf("Game is now open for users to log on!\n");
 
   signal(SIGINT, sighandler);
   while (num_player < gameCapacity)
