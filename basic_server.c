@@ -113,7 +113,9 @@ void role_assign(int num_player, int num_player_per_role[6]){
     // tell client its role
     char in[BUFFER_SIZE] = {0};
     strcat(in, TELL_ROLE);
-    strcat(in, ",");
+    char sep[2] = {0};
+    sep[0] = STRING_SEPERATOR;
+    strcat(in, sep);
     strcat(in, client_role);
     write(players[i]->socket, in, sizeof(in));
     // read(players[i]->socket, out, sizeof(out));
@@ -135,25 +137,39 @@ static void sighandler(int signo){
 void gameCycle(int playerCount){
   int i;
   char in[BUFFER_SIZE] = {0};
-  for (i = 0; i<playerCount; i++)
+  for (i = 0; i < playerCount; i++)
   {
-    printf("%d\n", i);
-    if (strcmp("detective", players[i]->role) == 0 && players[i]->alive)
+    if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
     {
-      write(players[i]->socket, DETECTIVE_PROMPT, sizeof(DETECTIVE_PROMPT));
+      write(players[i]->socket, "Mafia, look up. See your fellow members. Press enter when you look back here.", BUFFER_SIZE);
       read(players[i]->socket, in, sizeof(in));
+      i = playerCount;
     }
-    else if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
+  }
+  while(1){
+    // night cycle
+    for (i = 0; i < playerCount; i++)
     {
-      write(players[i]->socket, MAFIA_PROMPT, sizeof(MAFIA_PROMPT));
-      read(players[i]->socket, in, sizeof(in));
+      if (strcmp("detective", players[i]->role) == 0 && players[i]->alive)
+      {
+        write(players[i]->socket, DETECTIVE_PROMPT, sizeof(DETECTIVE_PROMPT));
+        read(players[i]->socket, in, sizeof(in));
+      }
+      else if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
+      {
+        write(players[i]->socket, MAFIA_PROMPT, sizeof(MAFIA_PROMPT));
+        read(players[i]->socket, in, sizeof(in));
+      }
+      else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
+      {
+        write(players[i]->socket, DOCTOR_PROMPT, sizeof(DOCTOR_PROMPT));
+        read(players[i]->socket, in, sizeof(in));
+      }
     }
-    else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
-    {
-      write(players[i]->socket, DOCTOR_PROMPT, sizeof(DOCTOR_PROMPT));
-      read(players[i]->socket, in, sizeof(in));
+    // day cycle
+    for (i = 0; i < playerCount; i++){
+
     }
-    printf("%s\n", in);
   }
 }
 
@@ -177,15 +193,6 @@ int main() {
     sscanf(in, "%d", &gameCapacity);
   }
 
-  // int pid = fork();
-  // if (pid)
-  // {
-  //   char in[100] = {0};
-  //   read(STDIN_FILENO, in, sizeof(in));
-  //   kill(pid, 0);
-  // }
-  // else
-  // {
   signal(SIGINT, sighandler);
   while (num_player < gameCapacity)
   {
@@ -210,5 +217,4 @@ int main() {
   //   printf("rickroll\n");
   // }
   printf("done\n");
-  exit(SIGINT);
 }

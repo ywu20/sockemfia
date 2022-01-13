@@ -29,6 +29,8 @@
 #define TELL_ROLE "tellRole"
 #define END_GAME "gameEnd"
 #define RECEIVED_MSG "msgGot"
+#define NOTIFY_PLAYER "notifyPlayer"
+#define STRING_SEPERATOR '\\'
 
 //for forking server
 int server_setup();
