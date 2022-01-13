@@ -11,8 +11,9 @@ int main() {
   
   printf("You have entered the chatroom!\n");
   while(1){
-    char input[BUFFER_SIZE] = {0};
-    read(STDIN_FILENO, input, sizeof(input));
-    write(from_server, input, sizeof(input));
+    char input[100] = {0};
+    // read(STDIN_FILENO, input, sizeof(input));
+    fgets(input, 100, stdin);
+    write(from_server, input, 100);
   }
 }
