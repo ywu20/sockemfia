@@ -33,3 +33,6 @@ Tried to implement a system where a key is pressed to start the game (idea since
 andyL -- 2022-01-12 11:47
 Started to work on the beginning of game (role distribution) and main game loop logic
 Started to work on the component of game where user can get a readout of whos still alive
+
+andyL -- 2022-01-12 19:31
+Got the night cycle done (which involved fixing an issue where roles were not being rendered out correctly)
