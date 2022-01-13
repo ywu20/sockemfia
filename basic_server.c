@@ -122,6 +122,13 @@ void role_assign(int num_player, int num_player_per_role[6]){
   }
 }
 
+void reset_votes(int playerCount){
+  int i;
+  for (i = 0; i < playerCount; i++){
+    players[i]->votes = 0;
+  }
+}
+
 void sigint_handle(){
   remove_shm();
   free_struct(players);
@@ -158,9 +165,12 @@ void gameCycle(int playerCount){
           read(players[i]->socket, in, sizeof(in));
           sscanf(in, "%d", &votedPlayer);
         }
+        players[i]->votes++;
       }
     }
+    reset_votes(playerCount);
     // night cycle
+    // TODO: this should be mafia first, then doctors, then detective
     for (i = 0; i < playerCount; i++)
     {
       int votedPlayer = playerCount;
@@ -172,6 +182,7 @@ void gameCycle(int playerCount){
           read(players[i]->socket, in, sizeof(in));
           sscanf(in, "%d", &votedPlayer);
         }
+        players[i]->votes++;
       }
       else if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
       {
@@ -181,6 +192,7 @@ void gameCycle(int playerCount){
           read(players[i]->socket, in, sizeof(in));
           sscanf(in, "%d", &votedPlayer);
         }
+        players[i]->votes++;
       }
       else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
       {
@@ -190,8 +202,10 @@ void gameCycle(int playerCount){
           read(players[i]->socket, in, sizeof(in));
           sscanf(in, "%d", &votedPlayer);
         }
+        players[i]->votes++;
       }
     }
+    reset_votes(playerCount);
     // announce the deaths of the day here
   }
 }
