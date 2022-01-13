@@ -91,6 +91,7 @@ void role_assign(int num_player, int num_player_per_role[6]){
 
   return client_role;
   */
+  char out[BUFFER_SIZE] = {0};
   int i;
   for (i = 0; i < num_player && players[i]; i++)
   {
@@ -110,8 +111,12 @@ void role_assign(int num_player, int num_player_per_role[6]){
     printf("%s\n", players[i]->role);
 
     // tell client its role
-    write(players[i]->socket, TELL_ROLE, sizeof(TELL_ROLE));
-    write(players[i]->socket, client_role, 15);
+    char in[BUFFER_SIZE] = {0};
+    strcat(in, TELL_ROLE);
+    strcat(in, ",");
+    strcat(in, client_role);
+    write(players[i]->socket, in, sizeof(in));
+    // read(players[i]->socket, out, sizeof(out));
   }
 }
 
@@ -127,21 +132,28 @@ static void sighandler(int signo){
  }
 }
 
-void gameCycle(){
+void gameCycle(int playerCount){
   int i;
   char in[BUFFER_SIZE] = {0};
-  for (i = 0; players[i]; i++)
+  for (i = 0; i<playerCount; i++)
   {
-    if (strcmp("detective", players[i]->role) && players[i]->alive){
+    printf("%d\n", i);
+    if (strcmp("detective", players[i]->role) == 0 && players[i]->alive)
+    {
       write(players[i]->socket, DETECTIVE_PROMPT, sizeof(DETECTIVE_PROMPT));
       read(players[i]->socket, in, sizeof(in));
-    }else if (strcmp("mafia", players[i]->role) && players[i]->alive){
+    }
+    else if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
+    {
       write(players[i]->socket, MAFIA_PROMPT, sizeof(MAFIA_PROMPT));
       read(players[i]->socket, in, sizeof(in));
-    }else if (strcmp("doctor", players[i]->role) && players[i]->alive){
+    }
+    else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
+    {
       write(players[i]->socket, DOCTOR_PROMPT, sizeof(DOCTOR_PROMPT));
       read(players[i]->socket, in, sizeof(in));
     }
+    printf("%s\n", in);
   }
 }
 
@@ -193,9 +205,10 @@ int main() {
   // }
   // here we assign roles
   role_assign(num_player, num_player_per_role);
-  gameCycle();
+  gameCycle(num_player);
   // while(1){
   //   printf("rickroll\n");
   // }
   printf("done\n");
+  exit(SIGINT);
 }

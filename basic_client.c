@@ -1,4 +1,5 @@
 #include "pipe_networking.h"
+#include "parse.h"
 
 char * get_name(int server){
   char * name;
@@ -23,31 +24,28 @@ void rules(){
     Doctor: can kill a person with poison and save a person with medicine during the entire game, but can't kill and save at the same night. \n \
     Hunter: can kill a person when the hunter dies.\n");
 }
+
 int main() {
   rules();
-  int from_server;
-  char serverComms[BUFFER_SIZE] = {0};
-  char in[BUFFER_SIZE] = {0};
-
-  from_server = client_handshake();
+  int from_server = client_handshake();
   char * name = get_name(from_server);
   printf("Your name is: %s",name);
 
-  // char role[15] = {0};
-  // read(from_server, role, sizeof(role));
-  // printf("You are a %s\n", role);
-
   while(1){
+    char serverComms[BUFFER_SIZE] = {0};
+    char in[BUFFER_SIZE] = {0};
     read(from_server, serverComms, sizeof(serverComms));
+    char **parsedIn = parse_args(serverComms, ',');
 
-    if (strcmp(serverComms, END_GAME) == 0){
+    if (strcmp(parsedIn[0], END_GAME) == 0){
       printf("Game has ended!\n");
       break;
-    }else if(strcmp(serverComms, TELL_ROLE) == 0){
-      read(from_server, serverComms, sizeof(serverComms));
-      printf("Your role is: %s\n", serverComms);
-    }else{
-      printf("%s\n", serverComms);
+    }else if(strcmp(parsedIn[0], TELL_ROLE) == 0){
+      printf("Your role is: %s\n", parsedIn[1]);
+    }
+    else
+    {
+      printf("%s\n", parsedIn[0]);
       read(STDIN_FILENO, in, sizeof(in));
       write(from_server, in, sizeof(in));
     }
