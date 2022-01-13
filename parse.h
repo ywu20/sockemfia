@@ -18,10 +18,3 @@ char ** parse_args(char *string, char delim);
  * @return int: Number of occurrences of a certain delimiter, plus one.
  */
 int countDelimiters(char *string, char delim);
-//
-/**
- * @brief Calculates the total length of a string that has been separated into an array.
- * 
- * @param array The array to loop through to count the length of the seperated array.
- * @return int: The total length of a string that has been separated into an array.
- */
