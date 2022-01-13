@@ -37,6 +37,9 @@ Started to work on the component of game where user can get a readout of whos st
 andyL -- 2022-01-12 19:31
 Got the night cycle done (which involved fixing an issue where roles were not being rendered out correctly)
 
+andyL -- 2022-01-13 11:47
+Added day 1 night things and started day 2. Fixed a segfault issue.
+
 sarahL -- 2022-01-13 12:32
 Learned how use select
 Chatroom server can read from multiple clients using (branch work)
