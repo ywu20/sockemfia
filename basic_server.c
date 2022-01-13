@@ -137,6 +137,7 @@ static void sighandler(int signo){
 void gameCycle(int playerCount){
   int i;
   char in[BUFFER_SIZE] = {0};
+  // day 1 night
   for (i = 0; i < playerCount; i++)
   {
     if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
@@ -147,6 +148,10 @@ void gameCycle(int playerCount){
     }
   }
   while(1){
+    // day cycle
+    for (i = 0; i < playerCount; i++){
+
+    }
     // night cycle
     for (i = 0; i < playerCount; i++)
     {
@@ -165,10 +170,6 @@ void gameCycle(int playerCount){
         write(players[i]->socket, DOCTOR_PROMPT, sizeof(DOCTOR_PROMPT));
         read(players[i]->socket, in, sizeof(in));
       }
-    }
-    // day cycle
-    for (i = 0; i < playerCount; i++){
-
     }
   }
 }
