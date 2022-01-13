@@ -5,6 +5,7 @@ int main() {
   int from_server;
 
   from_server = client_handshake();
+  printf("from_server: %d\n",from_server);
 
   if (errno) printf("error %d: %s\n", errno, strerror(errno));
   
