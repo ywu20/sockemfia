@@ -18,10 +18,11 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
     int max_fd = sd;
     int clients[8] = {0}; // 8 max clients can connect
     int c = 0;
+    int i;
 
     while (seconds) {
         FD_ZERO(&read_fds); // clears set
-        FD_SET(sd, &read_fds);  // adds normal socket to set
+        FD_SET(sd, &read_fds);  // adds server socket to set
 
         int client = server_connect(sd); // checks for who's connecting
         if (clients[c]==0) { // keeps track of clients fds
@@ -35,11 +36,17 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
             max_fd = client;
         }
 
-        if (FD_ISSET(client, &read_fds)) { // if already in set
-            printf("client %d was set\n", client);
-        } else { // if not in set
-            FD_SET(client, &read_fds); // add to set
-            printf("added fd %d to set\n", client);
+        // add fds to set
+        for (i = 0; i < c; i++) { // adds all the fds to check up on
+            if (FD_ISSET(clients[i], &read_fds)) { // if already in set
+                printf("client %d was set\n", clients[i]);
+            } else { // if not in set
+                FD_SET(clients[i], &read_fds); // add to set
+                printf("added fd %d to set\n", clients[i]);
+            }
+            if (max_fd < clients[i]) {
+                max_fd = clients[i];
+            }
         }
         // printf(">0 if 1 in set: %d\n", FD_ISSET(1,&read_fds)); // indeed its not
 
