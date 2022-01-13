@@ -150,7 +150,10 @@ void gameCycle(int playerCount){
   while(1){
     // day cycle
     for (i = 0; i < playerCount; i++){
-
+      if (players[i]->alive){
+        write(players[i]->socket, VOTE_PLAYER, sizeof(VOTE_PLAYER));
+        read(players[i]->socket, in, sizeof(in));
+      }
     }
     // night cycle
     for (i = 0; i < playerCount; i++)
@@ -215,8 +218,4 @@ int main() {
   // here we assign roles
   role_assign(num_player, num_player_per_role);
   gameCycle(num_player);
-  // while(1){
-  //   printf("rickroll\n");
-  // }
-  printf("done\n");
 }

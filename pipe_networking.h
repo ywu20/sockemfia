@@ -25,6 +25,7 @@
 #define DETECTIVE_PROMPT "Who do you want to know about?"
 #define MAFIA_PROMPT "Who do you want to kill?"
 #define DOCTOR_PROMPT "Who do you want to save?"
+#define VOTE_PLAYER "Who do you want to accuse?"
 
 #define TELL_ROLE "tellRole"
 #define END_GAME "gameEnd"
