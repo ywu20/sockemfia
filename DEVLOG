@@ -43,3 +43,7 @@ Added day 1 night things and started day 2. Fixed a segfault issue.
 sarahL -- 2022-01-13 12:32
 Learned how use select
 Chatroom server can read from multiple clients using (branch work)
+
+andyL -- 2022-01-13 18:37
+Day gameplay done minus processing inputted data.
+Added a voting system for voting who to eliminate, get info, etc
