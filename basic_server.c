@@ -1,7 +1,7 @@
 #include "pipe_networking.h"
 
 struct player{
-  char name [50]; // include the \n
+  char name [50];
   char role[15];
   int alive; // 1 alive, 0 dead
   int socket;
@@ -30,6 +30,7 @@ int* role_setup(int civilian, int mafia, int doctor, int detective, int lead_maf
 
 struct player * player_setup(char name[50], int socket){
   struct player * a = malloc(sizeof(struct player));
+  name[strlen(name) - 1] = '\0';
   strcpy(a->name, name);
   a->alive = 1;
   a->socket = socket;
@@ -47,7 +48,7 @@ void print_struct(struct player * s [20], int num_player){
     // if (strlen(s[i]->role) == 0){
     //   printf("Player name: %s Player alive status: %d\n", s[i]->name, s[i]->alive);
     // }else{
-     printf("Player name: %s Player role: %s\n Player alive status: %d\n", s[i]->name, s[i]->role, s[i]->alive);
+     printf("Player name: %s\n Player role: %s\n Player alive status: %d\n", s[i]->name, s[i]->role, s[i]->alive);
     // }
   }
 }
@@ -63,9 +64,11 @@ char* disclose_players_to_player(int currentPlayer){
       sprintf(cur, "%d", i);
       strcat(cur, ": ");
       strcat(cur, players[i]->name);
+      strcat(cur, "\n");
       strcat(out, cur);
     }
   }
+  out[strlen(out) - 1] = '\0';
   printf("%s\n", out);
   return out;
 }
