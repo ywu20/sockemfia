@@ -1,12 +1,14 @@
 #include "pipe_networking.h"
 
 struct player{
-  char name [50]; // I stored the \n in name since when people enter names the \n comes with it.
+  char name [50];
   char role[15];
   int alive; // 1 alive, 0 dead
   int socket;
   int votes;
 };
+
+char sep[2] = {STRING_SEPERATOR, 0};
 
 struct player * players[20];
 char* roles[6] = {"civilian", "mafia", "doctor","detective", "lead mafia", "hunter"};
@@ -28,6 +30,7 @@ int* role_setup(int civilian, int mafia, int doctor, int detective, int lead_maf
 
 struct player * player_setup(char name[50], int socket){
   struct player * a = malloc(sizeof(struct player));
+  name[strlen(name) - 1] = '\0';
   strcpy(a->name, name);
   a->alive = 1;
   a->socket = socket;
@@ -45,7 +48,7 @@ void print_struct(struct player * s [20], int num_player){
     // if (strlen(s[i]->role) == 0){
     //   printf("Player name: %s Player alive status: %d\n", s[i]->name, s[i]->alive);
     // }else{
-     printf("Player name: %s Player role: %s\n Player alive status: %d\n", s[i]->name, s[i]->role, s[i]->alive);
+     printf("Player name: %s\n Player role: %s\n Player alive status: %d\n", s[i]->name, s[i]->role, s[i]->alive);
     // }
   }
 }
@@ -114,8 +117,6 @@ void role_assign(int num_player, int num_player_per_role[6]){
     // tell client its role
     char in[BUFFER_SIZE] = {0};
     strcat(in, TELL_ROLE);
-    char sep[2] = {0};
-    sep[0] = STRING_SEPERATOR;
     strcat(in, sep);
     strcat(in, client_role);
     write(players[i]->socket, in, sizeof(in));
@@ -126,6 +127,28 @@ void reset_votes(int playerCount){
   int i;
   for (i = 0; i < playerCount; i++){
     players[i]->votes = 0;
+  }
+}
+
+void eliminate_player(int playerCount){
+  int playerOut = 0;
+  int votes = 0;
+  int i;
+  for (i = 0; i < playerCount; i++){
+    if (votes < players[i]->votes){
+      playerOut = i;
+      votes = players[i]->votes;
+    }
+  }
+  if (playerOut){
+    players[playerOut]->alive = false;
+    char msg[BUFFER_SIZE] = NOTIFY_PLAYER;
+    strcat(msg, sep);
+    strcat(msg, players[playerOut]->name);
+    strcat(msg, " was elimated.");
+    for (i = 0; i < playerCount; i++){
+      write(players[i]->socket, msg, sizeof(msg));
+    }
   }
 }
 
@@ -165,9 +188,10 @@ void gameCycle(int playerCount){
           read(players[i]->socket, in, sizeof(in));
           sscanf(in, "%d", &votedPlayer);
         }
-        players[i]->votes++;
+        players[votedPlayer]->votes++;
       }
     }
+    eliminate_player(playerCount);
     reset_votes(playerCount);
     // night cycle
     // TODO: this should be mafia first, then doctors, then detective

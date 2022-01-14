@@ -43,6 +43,9 @@ int main() {
     }else if(strcmp(parsedIn[0], TELL_ROLE) == 0){
       printf("Your role is: %s\n", parsedIn[1]);
     }
+    else if(strcmp(parsedIn[0], NOTIFY_PLAYER) == 0){
+      printf("%s\n", parsedIn[1]);
+    }
     else
     {
       printf("%s\n", parsedIn[0]);

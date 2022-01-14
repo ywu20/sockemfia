@@ -32,8 +32,8 @@
 #define RECEIVED_MSG "msgGot"
 #define NOTIFY_PLAYER "notifyPlayer"
 #define STRING_SEPERATOR '\\'
-#define ALIVE 1
-#define DEAD 0
+#define true 1
+#define false 0
 
 //for forking server
 int server_setup();
