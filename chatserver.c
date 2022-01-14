@@ -62,7 +62,7 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
             }
         }
 
-        int sel = select(max_fd+1, &read_fds, &write_fds, NULL, NULL);
+        int sel = select(max_fd+1, &read_fds, NULL, NULL, NULL);
         printf("sel: %d\n", sel);
 
         if (sel) { // if there is stuff left in read set
@@ -70,6 +70,12 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
                     printf("going to read from %d\n", clients[i]);
                     read(clients[i], input, 100);
+                    for (int j = 0; j < 100; j++) {
+                        if (input[j] == '\n') {
+                            input[j] = '\0';
+                            j = 100;
+                        }
+                    }
                     printf("got data: %s\n",input);
                     FD_CLR(clients[i], &write_fds);
                 }
