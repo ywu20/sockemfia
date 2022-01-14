@@ -35,7 +35,7 @@ int main() {
     char serverComms[BUFFER_SIZE] = {0};
     char in[BUFFER_SIZE] = {0};
     read(from_server, serverComms, sizeof(serverComms));
-    char **parsedIn = parse_args(serverComms, ',');
+    char **parsedIn = parse_args(serverComms, STRING_SEPERATOR);
 
     if (strcmp(parsedIn[0], END_GAME) == 0){
       printf("Game has ended!\n");
@@ -49,5 +49,6 @@ int main() {
       read(STDIN_FILENO, in, sizeof(in));
       write(from_server, in, sizeof(in));
     }
+    free(parsedIn);
   }
 }
