@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
     else
     {
       printf("%s\n", parsedIn[0]);
+      printf("%s\n", parsedIn[1]);
       read(STDIN_FILENO, in, sizeof(in));
       write(from_server, in, sizeof(in));
     }

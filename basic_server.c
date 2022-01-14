@@ -53,11 +53,23 @@ void print_struct(struct player * s [20], int num_player){
   }
 }
 
-void disclose_players_to_player(struct player * s [20], int currentPlayer){
+char* disclose_players_to_player(int currentPlayer){
   int i;
-  for (i = 0; s[i]; i++){
-    
+  char *out = malloc(BUFFER_SIZE);
+  for (i = 0; players[i]; i++)
+  {
+    if (players[i]->alive && i != currentPlayer)
+    {
+      char cur[BUFFER_SIZE];
+      sprintf(cur, "%d", i);
+      strcat(cur, ": ");
+      strcat(cur, players[i]->name);
+      strcat(cur, "\n");
+      strcat(out, cur);
+    }
   }
+  printf("%s\n", out);
+  return out;
 }
 
 void free_struct(struct player * s[20]){
@@ -112,7 +124,6 @@ void role_assign(int num_player, int num_player_per_role[6]){
 
     // assign role in player struct
     strcpy(players[i]->role, client_role);
-    printf("%s\n", players[i]->role);
 
     // tell client its role
     char in[BUFFER_SIZE] = {0};
@@ -175,7 +186,10 @@ void nightCycle(int playerCount){
     {
       while (votedPlayer < 0 || votedPlayer >= playerCount)
       {
-        write(players[i]->socket, MAFIA_PROMPT, sizeof(MAFIA_PROMPT));
+        char out[BUFFER_SIZE] = MAFIA_PROMPT;
+        strcat(out, sep);
+        strcat(out, disclose_players_to_player(i));
+        write(players[i]->socket, out, BUFFER_SIZE);
         read(players[i]->socket, in, sizeof(in));
         sscanf(in, "%d", &votedPlayer);
       }
@@ -191,7 +205,10 @@ void nightCycle(int playerCount){
     {
       while (votedPlayer < 0 || votedPlayer >= playerCount)
       {
-        write(players[i]->socket, DOCTOR_PROMPT, sizeof(DOCTOR_PROMPT));
+        char out[BUFFER_SIZE] = DOCTOR_PROMPT;
+        strcat(out, sep);
+        strcat(out, disclose_players_to_player(i));
+        write(players[i]->socket, out, BUFFER_SIZE);
         read(players[i]->socket, in, sizeof(in));
         sscanf(in, "%d", &votedPlayer);
       }
@@ -207,7 +224,10 @@ void nightCycle(int playerCount){
     {
       while (votedPlayer < 0 || votedPlayer >= playerCount)
       {
-        write(players[i]->socket, DETECTIVE_PROMPT, sizeof(DETECTIVE_PROMPT));
+        char out[BUFFER_SIZE] = DETECTIVE_PROMPT;
+        strcat(out, sep);
+        strcat(out, disclose_players_to_player(i));
+        write(players[i]->socket, out, BUFFER_SIZE);
         read(players[i]->socket, in, sizeof(in));
         sscanf(in, "%d", &votedPlayer);
       }
@@ -237,7 +257,11 @@ void gameCycle(int playerCount){
         int votedPlayer = playerCount;
         while (votedPlayer < 0 || votedPlayer >= playerCount)
         {
-          write(players[i]->socket, VOTE_PLAYER, sizeof(VOTE_PLAYER));
+          char out[BUFFER_SIZE] = VOTE_PLAYER;
+          strcat(out, sep);
+          strcat(out, disclose_players_to_player(i));
+          printf("%s\n", out);
+          write(players[i]->socket, out, BUFFER_SIZE);
           read(players[i]->socket, in, sizeof(in));
           sscanf(in, "%d", &votedPlayer);
         }
@@ -270,7 +294,7 @@ int main() {
     sscanf(in, "%d", &gameCapacity);
   }
 
-  printf("Game is now open for users to log on!\n");
+  printf("Game is now open for players to log on!\n");
 
   signal(SIGINT, sighandler);
   while (num_player < gameCapacity)
