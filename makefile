@@ -1,5 +1,4 @@
-all: client server
-
+all: client server clean
 
 client: basic_client.o pipe_networking.o parse.o
 	gcc -o client basic_client.o pipe_networking.o parse.o
@@ -21,4 +20,3 @@ parse.o: parse.c parse.h
 
 clean:
 	rm *.o
-	rm *~
