@@ -19,7 +19,6 @@ int chat(int server) {
   if (f == 0) { // child waits for input to send
     while (1) {
       char input[100];
-      printf("[You] ");
       read(STDIN_FILENO, input, sizeof(input));
       // fgets(input, 100, stdin);
       write(server, input, 100);
