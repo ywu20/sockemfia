@@ -24,6 +24,11 @@ cserver: chatserver.c pipe_networking.o
 cclient: chatclient.c pipe_networking.o
 	gcc -o cclient chatclient.c pipe_networking.o
 
+parse.o: parse.c parse.h
+	gcc -c parse.c
+
 clean:
 	rm *.o
 	rm *~
+
+
