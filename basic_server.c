@@ -53,12 +53,12 @@ void print_struct(struct player * s [20], int num_player){
   }
 }
 
-char* disclose_players_to_player(int currentPlayer){
+char* disclose_players_to_player(){
   int i;
   char *out = malloc(BUFFER_SIZE);
   for (i = 0; players[i]; i++)
   {
-    if (players[i]->alive && i != currentPlayer)
+    if (players[i]->alive)
     {
       char cur[BUFFER_SIZE];
       sprintf(cur, "%d", i);
