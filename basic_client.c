@@ -25,9 +25,13 @@ void rules(){
     Hunter: can kill a person when the hunter dies.\n");
 }
 
-int main() {
+int main(int argc, char *argv[]) {
   rules();
-  int from_server = client_handshake();
+  char *ipAddress = "localhost";
+  if (argc > 1){
+    ipAddress = argv[1];
+  }
+  int from_server = client_handshake(ipAddress);
   char * name = get_name(from_server);
   printf("Your name is: %s",name);
 
