@@ -47,3 +47,4 @@ Chatroom server can read from multiple clients using (branch work)
 andyL -- 2022-01-13 18:37
 Day gameplay done minus processing inputted data.
 Added a voting system for voting who to eliminate, get info, etc
+Added macros for dead or alive
