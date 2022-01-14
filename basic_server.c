@@ -164,6 +164,59 @@ static void sighandler(int signo){
  }
 }
 
+void nightCycle(int playerCount){
+  int i;
+  char in[BUFFER_SIZE] = {0};
+  // mafia
+  for (i = 0; i < playerCount; i++)
+  {
+    int votedPlayer = playerCount;
+    if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
+    {
+      while (votedPlayer < 0 || votedPlayer >= playerCount)
+      {
+        write(players[i]->socket, MAFIA_PROMPT, sizeof(MAFIA_PROMPT));
+        read(players[i]->socket, in, sizeof(in));
+        sscanf(in, "%d", &votedPlayer);
+      }
+      players[votedPlayer]->votes++;
+    }
+  }
+  reset_votes(playerCount);
+  // doctor
+  for (i = 0; i < playerCount; i++)
+  {
+    int votedPlayer = playerCount;
+    if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
+    {
+      while (votedPlayer < 0 || votedPlayer >= playerCount)
+      {
+        write(players[i]->socket, DOCTOR_PROMPT, sizeof(DOCTOR_PROMPT));
+        read(players[i]->socket, in, sizeof(in));
+        sscanf(in, "%d", &votedPlayer);
+      }
+      players[votedPlayer]->votes++;
+    }
+  }
+  reset_votes(playerCount);
+  // detective
+  for (i = 0; i < playerCount; i++)
+  {
+    int votedPlayer = playerCount;
+    if (strcmp("detective", players[i]->role) == 0 && players[i]->alive)
+    {
+      while (votedPlayer < 0 || votedPlayer >= playerCount)
+      {
+        write(players[i]->socket, DETECTIVE_PROMPT, sizeof(DETECTIVE_PROMPT));
+        read(players[i]->socket, in, sizeof(in));
+        sscanf(in, "%d", &votedPlayer);
+      }
+      players[votedPlayer]->votes++;
+    }
+  }
+  reset_votes(playerCount);
+}
+
 void gameCycle(int playerCount){
   int i;
   char in[BUFFER_SIZE] = {0};
@@ -194,42 +247,7 @@ void gameCycle(int playerCount){
     eliminate_player(playerCount);
     reset_votes(playerCount);
     // night cycle
-    // TODO: this should be mafia first, then doctors, then detective
-    for (i = 0; i < playerCount; i++)
-    {
-      int votedPlayer = playerCount;
-      if (strcmp("detective", players[i]->role) == 0 && players[i]->alive)
-      {
-        while (votedPlayer < 0 || votedPlayer >= playerCount)
-        {
-          write(players[i]->socket, DETECTIVE_PROMPT, sizeof(DETECTIVE_PROMPT));
-          read(players[i]->socket, in, sizeof(in));
-          sscanf(in, "%d", &votedPlayer);
-        }
-        players[i]->votes++;
-      }
-      else if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
-      {
-        while (votedPlayer < 0 || votedPlayer >= playerCount)
-        {
-          write(players[i]->socket, MAFIA_PROMPT, sizeof(MAFIA_PROMPT));
-          read(players[i]->socket, in, sizeof(in));
-          sscanf(in, "%d", &votedPlayer);
-        }
-        players[i]->votes++;
-      }
-      else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
-      {
-        while (votedPlayer < 0 || votedPlayer >= playerCount)
-        {
-          write(players[i]->socket, DOCTOR_PROMPT, sizeof(DOCTOR_PROMPT));
-          read(players[i]->socket, in, sizeof(in));
-          sscanf(in, "%d", &votedPlayer);
-        }
-        players[i]->votes++;
-      }
-    }
-    reset_votes(playerCount);
+    nightCycle(playerCount);
     // announce the deaths of the day here
   }
 }
