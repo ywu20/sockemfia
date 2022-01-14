@@ -11,8 +11,7 @@ int main() {
 }
 
 int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat time
-    fd_set read_fds;
-    char input[100];
+    fd_set read_fds, write_fds;
     int max_fd = sd;
     int max_clients = 2;
 
@@ -36,32 +35,51 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
 
     // start the chatroom
     while (seconds) {
+        char input[100], dummy[100] = {0};
         FD_ZERO(&read_fds); // clears set
+        FD_ZERO(&write_fds);
         FD_SET(sd, &read_fds);  // adds server socket to set
+        FD_SET(sd, &read_fds);
 
         // add fds to set
         for (i = 0; i < max_clients; i++) { // adds all the fds to check up on
-            if (FD_ISSET(clients[i], &read_fds)) { // if already in set
+            if (FD_ISSET(clients[i], &read_fds)) { // if already in read set
                 printf("client %d was set\n", clients[i]);
             } else { // if not in set
-                FD_SET(clients[i], &read_fds); // add to set
+                FD_SET(clients[i], &read_fds); // add to read set
                 printf("added fd %d to set\n", clients[i]);
             }
+
+            if (FD_ISSET(clients[i], &write_fds)) { // if already in write set
+                printf("client %d was set\n", clients[i]);
+            } else { // if not in set
+                FD_SET(clients[i], &write_fds); // add to write set
+                printf("added fd %d to set\n", clients[i]);
+            }
+
             if (max_fd < clients[i]) {
                 max_fd = clients[i];
             }
         }
-        // printf(">0 if 1 in set: %d\n", FD_ISSET(1,&read_fds)); // indeed its not
 
-        int sel = select(max_fd+1, &read_fds, NULL, NULL, NULL);
+        int sel = select(max_fd+1, &read_fds, &write_fds, NULL, NULL);
         printf("sel: %d\n", sel);
 
-        if (sel) { // if there is only one file left in read set
+        if (sel) { // if there is stuff left in read set
             for (int i = 0; i < max_clients; i++) { // loops to find the active client
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
                     printf("going to read from %d\n", clients[i]);
                     read(clients[i], input, 100);
                     printf("got data: %s\n",input);
+                }
+            }
+
+            printf("input: %sdummy: %s\n",input, dummy);
+             // if there is stuff left in write set
+            for (int i = 0; i < max_clients && strcmp(input, dummy); i++) { // loops to find the active client
+                if (FD_ISSET(clients[i], &write_fds)) { // if the client is in remaining one
+                    printf("going to write to %d: %s\n", clients[i], input);
+                    write(clients[i], input, 100);
                 }
             }
         }
