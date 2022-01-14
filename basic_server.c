@@ -5,6 +5,7 @@ struct player{
   char role[15];
   int alive; // 1 alive, 0 dead
   int socket;
+  int votes;
 };
 
 struct player * players[20];
@@ -113,10 +114,18 @@ void role_assign(int num_player, int num_player_per_role[6]){
     // tell client its role
     char in[BUFFER_SIZE] = {0};
     strcat(in, TELL_ROLE);
-    strcat(in, ",");
+    char sep[2] = {0};
+    sep[0] = STRING_SEPERATOR;
+    strcat(in, sep);
     strcat(in, client_role);
     write(players[i]->socket, in, sizeof(in));
-    // read(players[i]->socket, out, sizeof(out));
+  }
+}
+
+void reset_votes(int playerCount){
+  int i;
+  for (i = 0; i < playerCount; i++){
+    players[i]->votes = 0;
   }
 }
 
@@ -135,25 +144,69 @@ static void sighandler(int signo){
 void gameCycle(int playerCount){
   int i;
   char in[BUFFER_SIZE] = {0};
-  for (i = 0; i<playerCount; i++)
+  // day 1 night
+  for (i = 0; i < playerCount; i++)
   {
-    printf("%d\n", i);
-    if (strcmp("detective", players[i]->role) == 0 && players[i]->alive)
+    if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
     {
-      write(players[i]->socket, DETECTIVE_PROMPT, sizeof(DETECTIVE_PROMPT));
+      write(players[i]->socket, "Mafia, look up. See your fellow members. Press enter when you look back here.", BUFFER_SIZE);
       read(players[i]->socket, in, sizeof(in));
+      i = playerCount;
     }
-    else if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
+  }
+  while(1){
+    // day cycle
+    for (i = 0; i < playerCount; i++){
+      if (players[i]->alive){
+        int votedPlayer = playerCount;
+        while (votedPlayer < 0 || votedPlayer >= playerCount)
+        {
+          write(players[i]->socket, VOTE_PLAYER, sizeof(VOTE_PLAYER));
+          read(players[i]->socket, in, sizeof(in));
+          sscanf(in, "%d", &votedPlayer);
+        }
+        players[i]->votes++;
+      }
+    }
+    reset_votes(playerCount);
+    // night cycle
+    // TODO: this should be mafia first, then doctors, then detective
+    for (i = 0; i < playerCount; i++)
     {
-      write(players[i]->socket, MAFIA_PROMPT, sizeof(MAFIA_PROMPT));
-      read(players[i]->socket, in, sizeof(in));
+      int votedPlayer = playerCount;
+      if (strcmp("detective", players[i]->role) == 0 && players[i]->alive)
+      {
+        while (votedPlayer < 0 || votedPlayer >= playerCount)
+        {
+          write(players[i]->socket, DETECTIVE_PROMPT, sizeof(DETECTIVE_PROMPT));
+          read(players[i]->socket, in, sizeof(in));
+          sscanf(in, "%d", &votedPlayer);
+        }
+        players[i]->votes++;
+      }
+      else if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
+      {
+        while (votedPlayer < 0 || votedPlayer >= playerCount)
+        {
+          write(players[i]->socket, MAFIA_PROMPT, sizeof(MAFIA_PROMPT));
+          read(players[i]->socket, in, sizeof(in));
+          sscanf(in, "%d", &votedPlayer);
+        }
+        players[i]->votes++;
+      }
+      else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
+      {
+        while (votedPlayer < 0 || votedPlayer >= playerCount)
+        {
+          write(players[i]->socket, DOCTOR_PROMPT, sizeof(DOCTOR_PROMPT));
+          read(players[i]->socket, in, sizeof(in));
+          sscanf(in, "%d", &votedPlayer);
+        }
+        players[i]->votes++;
+      }
     }
-    else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
-    {
-      write(players[i]->socket, DOCTOR_PROMPT, sizeof(DOCTOR_PROMPT));
-      read(players[i]->socket, in, sizeof(in));
-    }
-    printf("%s\n", in);
+    reset_votes(playerCount);
+    // announce the deaths of the day here
   }
 }
 
@@ -177,15 +230,8 @@ int main() {
     sscanf(in, "%d", &gameCapacity);
   }
 
-  // int pid = fork();
-  // if (pid)
-  // {
-  //   char in[100] = {0};
-  //   read(STDIN_FILENO, in, sizeof(in));
-  //   kill(pid, 0);
-  // }
-  // else
-  // {
+  printf("Game is now open for users to log on!\n");
+
   signal(SIGINT, sighandler);
   while (num_player < gameCapacity)
   {
@@ -206,9 +252,4 @@ int main() {
   // here we assign roles
   role_assign(num_player, num_player_per_role);
   gameCycle(num_player);
-  // while(1){
-  //   printf("rickroll\n");
-  // }
-  printf("done\n");
-  exit(SIGINT);
 }

@@ -37,6 +37,21 @@ Started to work on the component of game where user can get a readout of whos st
 andyL -- 2022-01-12 19:31
 Got the night cycle done (which involved fixing an issue where roles were not being rendered out correctly)
 
-sarahL -- 2022-01-13 12:32
+sarahL -- 2022-01-13 00:32
 Learned how use select
 Chatroom server can read from multiple clients using (branch work)
+
+andyL -- 2022-01-13 11:47
+Added day 1 night things and started day 2. Fixed a segfault issue.
+
+andyL -- 2022-01-13 18:37
+Day gameplay done minus processing inputted data.
+Added a voting system for voting who to eliminate, get info, etc
+Added macros for dead or alive
+
+sarahL -- 2022-01-14 01:46
+Merged main with branch
+Chatroom server operates at its most basic level:
+- client writes input to server
+- server removes extra newline and writes to other clients
+- other clients receive and view message from first client
