@@ -37,6 +37,12 @@ Started to work on the component of game where user can get a readout of whos st
 andyL -- 2022-01-12 19:31
 Got the night cycle done (which involved fixing an issue where roles were not being rendered out correctly)
 
-sarahL -- 2022-01-13 12:32
+sarahL -- 2022-01-13 00:32
 Learned how use select
 Chatroom server can read from multiple clients using (branch work)
+
+sarahL -- 2022-01-14 01:46
+Chatroom server operates at its most basic level:
+- client writes input to server
+- server removes extra newline and writes to other clients
+- other clients receive and view message from first client
