@@ -66,3 +66,7 @@ andyL -- 2022-01-14 12:20
 Added ability to log into the game server that is not localhost via command line arg
 Changed strings.h header to string.h
 Redid night mechanics for the most part
+
+andyL -- 2022-01-14 15:12
+Completed a function that gives a printout of each player for choosing player purposes.
+The previous parse func has been changed such that it doesn't split at \n
