@@ -35,7 +35,7 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
 
     // start the chatroom
     while (seconds) {
-        char input[100], dummy[100] = {0};
+        char input[100], dummy[100];
         FD_ZERO(&read_fds); // clears set
         FD_ZERO(&write_fds);
         FD_SET(sd, &read_fds);  // adds server socket to set
@@ -71,6 +71,7 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
                     printf("going to read from %d\n", clients[i]);
                     read(clients[i], input, 100);
                     printf("got data: %s\n",input);
+                    FD_CLR(clients[i], &write_fds);
                 }
             }
 
@@ -83,6 +84,7 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
                 }
             }
         }
+        strncpy(input, dummy, 100);
         printf("loop complete\n\n");
     }
 
