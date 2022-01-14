@@ -255,9 +255,7 @@ void gameCycle(int playerCount){
 int main() {
 
   int to_client;
-  int sd;
-
-  sd = server_setup();
+  int sd = server_setup();
 
   // set number of people per role
   int * num_player_per_role = role_setup(2,1,0,1,0,0);

@@ -61,3 +61,8 @@ Adjusted macros so that they became true booleans
 Added eliminating players
 Fixed issue where players ended up voting for themselves even though the player wanted to vote for someone else
 Stripped the \n from the player name because that was causing issues
+
+andyL -- 2022-01-14 12:20
+Added ability to log into the game server that is not localhost via command line arg
+Changed strings.h header to string.h
+Redid night mechanics for the most part
