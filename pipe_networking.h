@@ -4,7 +4,6 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <strings.h>
 #include <string.h>
 #include <errno.h>
 #include <time.h>
