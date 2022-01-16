@@ -39,7 +39,7 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
         FD_ZERO(&read_fds); // clears set
         FD_ZERO(&write_fds);
         FD_SET(sd, &read_fds);  // adds server socket to set
-        FD_SET(sd, &read_fds);
+        FD_SET(sd, &write_fds);
 
         // add fds to set
         for (i = 0; i < max_clients; i++) { // adds all the fds to check up on
@@ -69,7 +69,8 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
             for (int i = 0; i < max_clients; i++) { // loops to find the active client
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
                     printf("going to read from %d\n", clients[i]);
-                    read(clients[i], input, 100);
+                    int r = read(clients[i], input, 100);
+                    // printf("read value: %d\n",r);
                     for (int j = 0; j < 100; j++) {
                         if (input[j] == '\n') {
                             input[j] = '\0';
@@ -78,6 +79,11 @@ int chatroom(int seconds, int sd) { // seconds will but rn doesn't limit chat ti
                     }
                     printf("got data: %s\n",input);
                     FD_CLR(clients[i], &write_fds);
+                    if (r==0) {
+                        FD_CLR(clients[i], &read_fds);
+                        FD_CLR(clients[i], &write_fds);
+                        printf("client[%d] closed connection\n", i);
+                    }
                 }
             }
 
