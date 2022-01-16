@@ -17,8 +17,7 @@ char ** parse_args(char *string, char delim) {
     char *current;
     char ** result = malloc(num * sizeof(char *));
     int i = 0;
-    char seperatorChars[2] = "\n";
-        seperatorChars[1] = delim;
+    char seperatorChars[1] = {delim};
     while ((current = strsep(&string, seperatorChars)))
     {
         if (*current){

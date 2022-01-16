@@ -25,9 +25,13 @@ void rules(){
     Hunter: can kill a person when the hunter dies.\n");
 }
 
-int main() {
+int main(int argc, char *argv[]) {
   rules();
-  int from_server = client_handshake();
+  char *ipAddress = "localhost";
+  if (argc > 1){
+    ipAddress = argv[1];
+  }
+  int from_server = client_handshake(ipAddress);
   char * name = get_name(from_server);
   printf("Your name is: %s",name);
 
@@ -43,9 +47,15 @@ int main() {
     }else if(strcmp(parsedIn[0], TELL_ROLE) == 0){
       printf("Your role is: %s\n", parsedIn[1]);
     }
+    else if(strcmp(parsedIn[0], NOTIFY_PLAYER) == 0){
+      printf("%s\n", parsedIn[1]);
+    }
     else
     {
       printf("%s\n", parsedIn[0]);
+      if (parsedIn[1]){
+        printf("%s\n", parsedIn[1]);
+      }
       read(STDIN_FILENO, in, sizeof(in));
       write(from_server, in, sizeof(in));
     }

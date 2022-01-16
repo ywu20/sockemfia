@@ -55,3 +55,18 @@ Chatroom server operates at its most basic level:
 - client writes input to server
 - server removes extra newline and writes to other clients
 - other clients receive and view message from first client
+
+andyL -- 2022-01-14 08:40
+Adjusted macros so that they became true booleans
+Added eliminating players
+Fixed issue where players ended up voting for themselves even though the player wanted to vote for someone else
+Stripped the \n from the player name because that was causing issues
+
+andyL -- 2022-01-14 12:20
+Added ability to log into the game server that is not localhost via command line arg
+Changed strings.h header to string.h
+Redid night mechanics for the most part
+
+andyL -- 2022-01-14 15:12
+Completed a function that gives a printout of each player for choosing player purposes.
+The previous parse func has been changed such that it doesn't split at \n
