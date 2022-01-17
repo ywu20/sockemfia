@@ -26,7 +26,7 @@ int main() {
     // only for setting up separate chatrooms
     int sd;
 
-    struct player ** players = malloc(2*sizeof(struct player));
+    struct player * players[20];
     printf("here\n");
     players[0] = player_setup("steve",4);
     players[1] = player_setup("tony",5);
@@ -37,10 +37,10 @@ int main() {
     sd = server_setup();
     printf("sd: %d\n", sd);
 
-    chatroom(1,sd,2);
+    chatroom(1,sd,2,players);
 }
 
-int chatroom(int seconds, int sd, int max_clients) { // seconds will but rn doesn't limit chat time
+int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) { // seconds will but rn doesn't limit chat time
     fd_set read_fds, write_fds, clients_fds;
     int max_fd = sd;
     int r;
