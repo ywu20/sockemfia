@@ -71,7 +71,9 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
 
     // start the chatroom
     while (seconds) {
-        char input[100];
+        char input[100] = "";
+        char chatter[50] = "";
+        char final_message[150] = "";
         FD_ZERO(&read_fds); // clears set
         FD_ZERO(&write_fds);
 
@@ -87,22 +89,47 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
                     printf("going to read from %d\n", clients[i]);
                     r = read(clients[i], input, 100);
-                    for (int j = 0; j < 100; j++) {
-                        if (input[j] == '\n') {
-                            input[j] = '\0';
-                            j = 100;
-                        }
-                    }
+                    // for (int j = 0; j < 100; j++) {
+                    //     if (input[j] == '\n') {
+                    //         input[j] = '\0';
+                    //         j = 100;
+                    //     }
+                    // }
+                    strncpy(chatter, players[i]->name,50);
                     printf("got data: %s\n",input);
+                    printf("chatter: %s\n", chatter);
                     FD_CLR(clients[i], &write_fds);
+                }
+            }
+
+            // preparing the final message
+            int len = 0;
+            for (int i = 0; i < 50; i++) {
+                if (chatter[i]!='\0') {
+                    final_message[i] = chatter[i];
+                    printf("copying %c into final msg\n", chatter[i]);
+                } else {
+                    len = i+1;
+                    final_message[i] = ':';
+                    final_message[i+1] = ' ';
+                    i = 50;
+                }
+            }
+            for (int i = 0; i < 100;i++) {
+                if (input[i]!='\n') {
+                    final_message[i+len] = input[i];
+                    printf("copying %c into final msg\n", final_message[i+len]);
+                } else {
+                    final_message[i+len] = '\n';
+                    i = 100;
                 }
             }
 
              // if there is stuff left in write set
             for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
                 if (FD_ISSET(clients[i], &write_fds)) { // if the client is in remaining one
-                    printf("going to write to %d: %s\n", clients[i], input);
-                    write(clients[i], input, 100);
+                    printf("going to write to %d: %s\n", clients[i], final_message);
+                    write(clients[i], final_message, 150);
                 }
             }
         }
