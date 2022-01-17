@@ -1,5 +1,6 @@
 #include "pipe_networking.h"
 #include "parse.h"
+#include "constants.h"
 
 char * get_name(int server){
   char * name;
