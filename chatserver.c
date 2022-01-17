@@ -27,10 +27,11 @@ int chatroom(int seconds, int sd, int max_clients) { // seconds will but rn does
             printf("clients[i] %d joined\n", clients[i]);
         }
 
-        if (FD_ISSET(clients[i], &clients_fds)) { // if already in read set
+        FD_SET(sd, &clients_fds); // add server socket to set
+        if (FD_ISSET(clients[i], &clients_fds)) { // if already in client set
             printf("client %d was read set\n", clients[i]);
         } else { // if not in set
-            FD_SET(clients[i], &clients_fds); // add to read set
+            FD_SET(clients[i], &clients_fds); // add to client set
             printf("added fd %d to read set\n", clients[i]);
         }
 
@@ -44,32 +45,9 @@ int chatroom(int seconds, int sd, int max_clients) { // seconds will but rn does
         FD_ZERO(&read_fds); // clears set
         FD_ZERO(&write_fds);
 
+        // copy client set
         read_fds = clients_fds;
         write_fds = clients_fds;
-
-        // FD_SET(sd, &read_fds);  // adds server socket to set
-        // FD_SET(sd, &write_fds);
-
-        // // add fds to set
-        // for (i = 0; i < max_clients; i++) { // adds all the fds to check up on
-        //     if (FD_ISSET(clients[i], &read_fds)) { // if already in read set
-        //         printf("client %d was read set\n", clients[i]);
-        //     } else { // if not in set
-        //         FD_SET(clients[i], &read_fds); // add to read set
-        //         printf("added fd %d to read set\n", clients[i]);
-        //     }
-
-        //     if (FD_ISSET(clients[i], &write_fds)) { // if already in write set
-        //         printf("client %d was write set\n", clients[i]);
-        //     } else { // if not in set
-        //         FD_SET(clients[i], &write_fds); // add to write set
-        //         printf("added fd %d to write set\n", clients[i]);
-        //     }
-
-        //     if (max_fd < clients[i]) {
-        //         max_fd = clients[i];
-        //     }
-        // }
 
         int sel = select(max_fd+1, &read_fds, NULL, NULL, NULL);
         printf("sel: %d\n", sel);
