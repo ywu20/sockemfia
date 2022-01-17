@@ -4,7 +4,7 @@ int main() {
 
   int from_server;
 
-  from_server = client_handshake();
+  from_server = client_handshake("localhost");
   printf("from_server: %d\n",from_server);
 
   if (errno) printf("error %d: %s\n", errno, strerror(errno));
@@ -14,20 +14,19 @@ int main() {
 }
 
 int chat(int server) {
+  char input[100];
   int f = fork();
 
   if (f == 0) { // child waits for input to send
-    while (1) {
-      char input[100];
-      read(STDIN_FILENO, input, sizeof(input));
+    while (read(STDIN_FILENO, input, sizeof(input))) {
+      // read(STDIN_FILENO, input, sizeof(input));
       // fgets(input, 100, stdin);
       write(server, input, 100);
     }
   }
   // main program reads from server client msgs
-  while(1){
-    char input[100] = {0};
-    read(server, input, sizeof(input));
+  while(read(server, input, sizeof(input))){
+    // read(server, input, sizeof(input));
     // fgets(input, 100, stdin);
     // write(from_server, input, 100);
     printf("[other client]: %s\n", input);
