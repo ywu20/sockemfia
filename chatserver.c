@@ -1,8 +1,38 @@
 #include "chat.h"
 
+struct player * player_setup(char name[50], int socket){
+  printf("hereyee\n");
+  struct player * a = malloc(sizeof(struct player));
+  a->name[strlen(name) - 1] = '\0';
+  printf("herenah\n");
+  strcpy(a->name, name);
+  a->alive = 1;
+  a->socket = socket;
+  return a;
+}
+
+void print_struct(struct player * s [20], int num_player){
+  int i;
+  for(i=0;i<=num_player;i++){
+    // if (strlen(s[i]->role) == 0){
+    //   printf("Player name: %s Player alive status: %d\n", s[i]->name, s[i]->alive);
+    // }else{
+     printf("Player name: %s\n Player role: %s\n Player alive status: %d\n", s[i]->name, s[i]->role, s[i]->alive);
+    // }
+  }
+}
+
 int main() {
     // only for setting up separate chatrooms
     int sd;
+
+    struct player ** players = malloc(2*sizeof(struct player));
+    printf("here\n");
+    players[0] = player_setup("steve",4);
+    players[1] = player_setup("tony",5);
+    printf("here2\n");
+
+    print_struct(players,1);
 
     sd = server_setup();
     printf("sd: %d\n", sd);
