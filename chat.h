@@ -2,7 +2,7 @@
 #include <sys/select.h>
 #include <string.h>
 
-int chatroom(int seconds, int sd, int max_clients);
+// int chatroom(int seconds, int sd, int max_clients, struct player * players[20]);
 int chat(int server);
 
 // simulating game assignment
