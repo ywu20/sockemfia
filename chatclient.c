@@ -29,7 +29,7 @@ int chat(int server) {
     // read(server, input, sizeof(input));
     // fgets(input, 100, stdin);
     // write(from_server, input, 100);
-    printf("%s\n", input);
+    printf("%s", input);
   }
   return 0;
 }
