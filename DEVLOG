@@ -73,3 +73,8 @@ The previous parse func has been changed such that it doesn't split at \n
 
 sarahL -- 2022-01-16 22:31
 added ability to attach name based on player struct to chatroom
+
+andyL -- 2022-01-17 12:06
+Moved more parts of the cycle code into its own functions
+Fixed some complier warning triggers
+Moved some defined preprocessor things to another header file to keep things clean

@@ -22,19 +22,6 @@
 #define BUFFER_SIZE 1000
 #define ROLE_NUM_MEM 11111
 
-#define DETECTIVE_PROMPT "Who do you want to know about?"
-#define MAFIA_PROMPT "Who do you want to kill?"
-#define DOCTOR_PROMPT "Who do you want to save?"
-#define VOTE_PLAYER "Who do you want to accuse?"
-
-#define TELL_ROLE "tellRole"
-#define END_GAME "gameEnd"
-#define RECEIVED_MSG "msgGot"
-#define NOTIFY_PLAYER "notifyPlayer"
-#define STRING_SEPERATOR '\\'
-#define true 1
-#define false 0
-
 //for forking server
 int server_setup();
 int server_connect(int from_client);
