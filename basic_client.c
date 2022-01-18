@@ -3,7 +3,7 @@
 #include "constants.h"
 
 char * get_name(int server){
-  char * name;
+  char * name = malloc(sizeof(char) * 50);
   printf("Enter your name (less than 50 characters): ");
   fgets(name, 50, stdin);
   write(server, name, 50);
