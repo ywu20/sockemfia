@@ -39,11 +39,10 @@ special roles:
 
 ## Technical Design. 
    #### How you will be using the topics covered in class in the project.
-   - We will be using a sockets in order to create a server to connect multiple clients to a server.
-   - Semaphores will be used to cap the number of people who are in the game.
-   -  Working with files will be used to have a database of user information (roles, votes, whether they died or not etc). Write binary files so people can't cheat.
-   -  Using shared memory to keep track of things that multiple programs modify. 
-   -  Using forking in order to have a timer for voting and discussion phases of the game.
+   - We will be using a sockets in order to create a server to connect multiple clients to a server (for gameplay and chat with other players).
+   - Working with files will be used to have the server communicate with the client and the client with the server.
+   - Allocating memory will be used in order to work with structs to contain player data and in order to work with some user input.
+   - Using forking in order to have a timer for voting and discussion phases of the game.
    #### How you are breaking down the project and who is responsible for which parts.
    - Explain game rules at the start. - Yuqing
    - Semaphore - Andy
