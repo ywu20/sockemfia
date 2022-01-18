@@ -78,3 +78,10 @@ andyL -- 2022-01-17 12:06
 Moved more parts of the cycle code into its own functions
 Fixed some complier warning triggers
 Moved some defined preprocessor things to another header file to keep things clean
+
+andyL -- 2022-01-18 11:47
+Fixed issue where player 0 could not be eliminated
+Added medicine and posion slots to the player struct and default to 1
+
+andyL -- 2022-01-18 16:21
+Fixed issue where the player name input would cause a segfault when run client is run in Windows and Linux (and maybe Intel based Macs, but the Mac users in my team use M1 Macs).
