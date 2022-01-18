@@ -19,16 +19,11 @@ int chat(int server) {
 
   if (f == 0) { // child waits for input to send
     while (read(STDIN_FILENO, input, sizeof(input))) {
-      // read(STDIN_FILENO, input, sizeof(input));
-      // fgets(input, 100, stdin);
       write(server, input, 100);
     }
   }
   // main program reads from server client msgs
   while(read(server, input, sizeof(input))){
-    // read(server, input, sizeof(input));
-    // fgets(input, 100, stdin);
-    // write(from_server, input, 100);
     printf("%s", input);
   }
   return 0;

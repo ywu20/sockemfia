@@ -70,3 +70,6 @@ Redid night mechanics for the most part
 andyL -- 2022-01-14 15:12
 Completed a function that gives a printout of each player for choosing player purposes.
 The previous parse func has been changed such that it doesn't split at \n
+
+sarahL -- 2022-01-16 22:31
+added ability to attach name based on player struct to chatroom
