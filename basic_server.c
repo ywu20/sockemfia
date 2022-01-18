@@ -133,7 +133,7 @@ void reset_votes(int playerCount){
 }
 
 void eliminate_player(int playerCount){
-  int playerOut = 0;
+  int playerOut = -1;
   int votes = 0;
   int i;
   for (i = 0; i < playerCount; i++){
@@ -142,7 +142,7 @@ void eliminate_player(int playerCount){
       votes = players[i]->votes;
     }
   }
-  if (playerOut){
+  if (playerOut != -1){
     players[playerOut]->alive = false;
     char msg[BUFFER_SIZE] = NOTIFY_PLAYER;
     strcat(msg, sep);
