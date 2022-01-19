@@ -43,6 +43,8 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
     int max_fd = sd;
     int r;
 
+    struct timeval t = {seconds, 0};
+
     // gather the clients
     int clients[max_clients];
     printf("waiting for people to connect\n"); 
@@ -72,7 +74,7 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
 
     // start the chatroom
     while (time(NULL)-startTime < seconds) {
-        if (time(NULL)-startTime == 10) {
+        if (time(NULL)-startTime <= 10.5 && time(NULL)-startTime >= 9.5) {
             write_fds = clients_fds;
             for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
                 if (FD_ISSET(clients[i], &write_fds)) { // sends 10 second warning
@@ -92,7 +94,7 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
         read_fds = clients_fds;
         write_fds = clients_fds;
 
-        int sel = select(max_fd+1, &read_fds, NULL, NULL, NULL);
+        int sel = select(max_fd+1, &read_fds, NULL, NULL, &t);
         printf("sel: %d\n", sel);
 
         if (sel) { // if there is stuff left in read set
