@@ -218,7 +218,7 @@ void nightCycle(int playerCount){
         if((strcmp(players[votedPlayer] ->role,"mafia") == 0) || (strcmp(players[votedPlayer] -> role , "lead mafia") == 0)){
           strcat(message, " is a bad person. Hit enter to continue.\n");
         }else{
-          strcat(message, " is a good person.Hit enter to continue.\n");
+          strcat(message, " is a good person. Hit enter to continue.\n");
         }
         write (players[i] -> socket, message, 100);
         read(players[i]->socket, in, sizeof(in));
@@ -354,7 +354,7 @@ int main() {
 
   srand(time (NULL));
   while (gameCapacity < 4){
-    printf("How many players will be playing this game of Mafia?\nYou need at least 4 people to play this game.\n");
+    printf("How many players will be playing this game of Mafia?\nYou need at least 5 people to play this game.\n");
     read(STDIN_FILENO, in, sizeof(in));
     sscanf(in, "%d", &gameCapacity);
   }
