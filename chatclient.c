@@ -22,10 +22,12 @@ int chat(int server) {
       write(server, input, 100);
     }
   }
+
   // main program reads from server client msgs
   while(read(server, input, sizeof(input))){
     printf("%s", input);
   }
+  kill(f, SIGKILL); // removes child process
   printf("chatroom over\n");
   return 0;
 }

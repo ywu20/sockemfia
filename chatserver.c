@@ -74,6 +74,8 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
 
     // start the chatroom
     while (time(NULL)-startTime < seconds) {
+
+        // 10 second warning will be moved to a fork
         if (time(NULL)-startTime <= 10.5 && time(NULL)-startTime >= 9.5) {
             write_fds = clients_fds;
             for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
