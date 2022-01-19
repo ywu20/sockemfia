@@ -24,7 +24,7 @@ struct player * player_setup(char name[50], int socket){
   strcpy(a->name, name);
   a->alive = 1;
   a->medicineCount = 1;
-  a->posionCount = 1;
+  a->poisonCount = 1;
   a->socket = socket;
   return a;
 }
@@ -170,17 +170,18 @@ static void sighandler(int signo){
 }
 
 void healPlayer(int curPlayer, int playerNumToHeal){
-  
+
 }
 
 void nightCycle(int playerCount){
   int i;
   char in[BUFFER_SIZE] = {0};
+  int dead_player=-1;
   // mafia
   for (i = 0; i < playerCount; i++)
   {
     int votedPlayer = playerCount;
-    if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
+    if (strcmp("lead mafia", players[i]->role) == 0 && players[i]->alive)
     {
       while (votedPlayer < 0 || votedPlayer >= playerCount)
       {
@@ -190,31 +191,14 @@ void nightCycle(int playerCount){
         write(players[i]->socket, out, BUFFER_SIZE);
         read(players[i]->socket, in, sizeof(in));
         sscanf(in, "%d", &votedPlayer);
+        dead_player = votedPlayer;
+        players[votedPlayer]->alive = 0;
       }
-      players[votedPlayer]->votes++;
+      //players[votedPlayer]->votes++;
     }
   }
   reset_votes(playerCount);
-  // doctor
-  for (i = 0; i < playerCount; i++)
-  {
-    int votedPlayer = playerCount;
-    if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
-    {
-      while (votedPlayer < 0 || votedPlayer >= playerCount)
-      {
-        char out[BUFFER_SIZE] = DOCTOR_PROMPT;
-        strcat(out, sep);
-        strcat(out, disclose_players_to_player());
-        write(players[i]->socket, out, BUFFER_SIZE);
-        read(players[i]->socket, in, sizeof(in));
-        sscanf(in, "%d", &votedPlayer);
-      }
-      // players[votedPlayer]->votes++;
 
-    }
-  }
-  reset_votes(playerCount);
   // detective
   for (i = 0; i < playerCount; i++)
   {
@@ -229,11 +213,81 @@ void nightCycle(int playerCount){
         write(players[i]->socket, out, BUFFER_SIZE);
         read(players[i]->socket, in, sizeof(in));
         sscanf(in, "%d", &votedPlayer);
+        char message [100] = "Player ";
+        strcat(message, players[votedPlayer] -> name);
+        if((strcmp(players[votedPlayer] ->role,"mafia") == 0) || (strcmp(players[votedPlayer] -> role , "lead mafia") == 0)){
+          strcat(message, " is a bad person. Hit enter to continue.\n");
+        }else{
+          strcat(message, " is a good person.Hit enter to continue.\n");
+        }
+        write (players[i] -> socket, message, 100);
+        read(players[i]->socket, in, sizeof(in));
       }
-      players[votedPlayer]->votes++;
+      //players[votedPlayer]->votes++;
     }
   }
   reset_votes(playerCount);
+  // doctor
+  for (i = 0; i < playerCount; i++)
+  {
+    int invalid_input = 1;
+    int votedPlayer = -1;
+    if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
+    {
+      while (invalid_input)
+      {
+        if(players[i]->medicineCount > 0){
+        char save [BUFFER_SIZE] =  "";
+        strcat(save, players[dead_player]->name);
+        strcat(save, " is killed tonight, do you want to save this person? [y/n]");
+        write(players[i]->socket, save, BUFFER_SIZE);
+        read(players[i]->socket, in, sizeof(in));
+
+        char * a;
+        sscanf(in, "%c", a);
+
+        if(*a == 'y'){
+          players[i]->medicineCount--;
+          players[dead_player] -> alive = 1;
+          invalid_input = 0;
+        }else if (*a == 'n'){
+          invalid_input = 0;
+        }
+    }
+
+    if(players[i]->poisonCount > 0){
+      char kill [100] = "Do you want to poison anyone tonight? [y/n]";
+      write(players[i]->socket, kill, BUFFER_SIZE);
+      read(players[i]->socket, in, sizeof(in));
+
+      char * a;
+      sscanf(in, "%c", a);
+      printf("scanned: %c\n",*a);
+      char message [BUFFER_SIZE] = "";
+
+      if(*a == 'y'){
+        char out[BUFFER_SIZE] = DOCTOR_PROMPT;
+        strcat(out, sep);
+        strcat(out, disclose_players_to_player());
+        write(players[i]->socket, out, BUFFER_SIZE);
+        read(players[i]->socket, in, sizeof(in));
+        sscanf(in, "%d", &votedPlayer);
+        players[votedPlayer]->alive = 0;
+        players[i]->poisonCount--;
+        invalid_input = 0;
+      }else if (*a == 'n'){
+        invalid_input = 0;
+      }
+
+      }
+
+  //write(players[i]->socket, "success!\n", 100);
+//  read(players[i]->socket, in, sizeof(in));
+    }
+    }
+  }
+  reset_votes(playerCount);
+
 }
 
 void dayCycle(int playerCount){
@@ -265,7 +319,7 @@ void day1NightTask(int playerCount){
   char in[BUFFER_SIZE] = {0};
   for (i = 0; i < playerCount; i++)
   {
-    if (strcmp("mafia", players[i]->role) == 0 && players[i]->alive)
+    if (strcmp("lead mafia", players[i]->role) == 0 && players[i]->alive)
     {
       write(players[i]->socket, "Mafia, look up. See your fellow members. Press enter when you look back here.", BUFFER_SIZE);
       read(players[i]->socket, in, sizeof(in));
@@ -279,10 +333,10 @@ void gameCycle(int playerCount){
   day1NightTask(playerCount);
   while (1)
   {
-    // day cycle
-    dayCycle(playerCount);
     // night cycle
     nightCycle(playerCount);
+    // day cycle
+    dayCycle(playerCount);
     // announce the deaths of the day here
   }
 }
@@ -293,7 +347,7 @@ int main() {
   int sd = server_setup();
 
   // set number of people per role
-  int * num_player_per_role = role_setup(2,1,0,1,0,0);
+  int * num_player_per_role = role_setup(1,1,1,1,1,0);
   int num_player = 0;
   int gameCapacity = 0;
   char in[BUFFER_SIZE] = {0};

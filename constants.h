@@ -18,7 +18,7 @@ struct player{
   int socket;
   int votes;
   int medicineCount;
-  int posionCount;
+  int poisonCount;
 };
 
 char sep[2] = {STRING_SEPERATOR, 0};
