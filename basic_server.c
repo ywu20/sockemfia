@@ -74,32 +74,6 @@ void free_struct(struct player * s[20]){
 }
 
 void role_assign(int num_player, int num_player_per_role[6]){
-  /*
-  // when there's more client than positions, goes forever loop
-  // no error checking yet, relying on semaphores.
-  printf("Roles left:\n");
-  int i;
-  for(i=0;i<6;i++){
-    printf("%s:%d\n", roles[i], num_player_per_role[i]);
-  }
-  char* client_role = NULL;
-  int r = rand()%6;
-
-  while(num_player_per_role[r] == 0){
-    r = rand()%6;
-  }
-
-  // role is takable, reduce role number left by 1
-  client_role = roles[r];
-  (num_player_per_role[r])--;
-
-  printf("Gave client %s\n", roles[r]);
-
-  // tell client its role
-  write(to_client, client_role, 15);
-
-  return client_role;
-  */
   char out[BUFFER_SIZE] = {0};
   int i;
   for (i = 0; i < num_player && players[i]; i++)
@@ -169,8 +143,28 @@ static void sighandler(int signo){
  }
 }
 
-void healPlayer(int curPlayer, int playerNumToHeal){
-
+int checkForGameEnd(int playerCount, int mafiaCount, int civilianCount, int specialCount){
+  int i;
+  char toPlayers[BUFFER_SIZE] = NOTIFY_PLAYER;
+  if (mafiaCount == 0)
+  {
+    strcat(toPlayers, STRING_SEPERATOR);
+    strcat(toPlayers, INNOCENT_WIN);
+    for (i = 0; i < playerCount; i++){
+      write(players[i]->socket, toPlayers, sizeof(toPlayers));
+    }
+    return 1;
+  }
+  else if (specialCount == 0 || civilianCount == 0)
+  {
+    strcat(toPlayers, STRING_SEPERATOR);
+    strcat(toPlayers, MAFIA_WIN);
+    for (i = 0; i < playerCount; i++){
+      write(players[i]->socket, toPlayers, sizeof(toPlayers));
+    }
+    return 1;
+  }
+  return 0;
 }
 
 void nightCycle(int playerCount){
@@ -197,6 +191,7 @@ void nightCycle(int playerCount){
       //players[votedPlayer]->votes++;
     }
   }
+  checkForGameEnd(num_player, num_mafia, num_civilian, num_special);
   reset_votes(playerCount);
 
   // detective
@@ -239,7 +234,7 @@ void nightCycle(int playerCount){
         if(players[i]->medicineCount > 0){
         char save [BUFFER_SIZE] =  "";
         strcat(save, players[dead_player]->name);
-        strcat(save, " is killed tonight, do you want to save this person? [y/n]");
+        strcat(save, " was killed tonight, do you want to save this person? [y/n]");
         write(players[i]->socket, save, BUFFER_SIZE);
         read(players[i]->socket, in, sizeof(in));
 
@@ -278,14 +273,14 @@ void nightCycle(int playerCount){
       }else if (a == 'n'){
         invalid_input = 0;
       }
-
-      }
-
-  //write(players[i]->socket, "success!\n", 100);
-//  read(players[i]->socket, in, sizeof(in));
     }
+
+    //write(players[i]->socket, "success!\n", 100);
+    //  read(players[i]->socket, in, sizeof(in));
+      }
     }
   }
+  checkForGameEnd(num_player, num_mafia, num_civilian, num_special);
   reset_votes(playerCount);
 
 }
@@ -348,8 +343,11 @@ int main() {
 
   // set number of people per role
   int * num_player_per_role = role_setup(1,1,1,1,1,0);
-  int num_player = 0;
-  int gameCapacity = 0;
+  num_player = 0;
+  num_mafia = 0;
+  num_special = 0;
+  num_civilian = 0;
+  gameCapacity = 0;
   char in[BUFFER_SIZE] = {0};
 
   srand(time (NULL));
