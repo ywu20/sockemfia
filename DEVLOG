@@ -85,3 +85,9 @@ Added medicine and posion slots to the player struct and default to 1
 
 andyL -- 2022-01-18 16:21
 Fixed issue where the player name input would cause a segfault when run client is run in Windows and Linux (and maybe Intel based Macs, but the Mac users in my team use M1 Macs).
+
+yuqingW -- 2021-01-18 22:31
+Added detective actions for night cycle.
+Added doctor actions for night cycle.
+Made votes for lead mafia instead of just regular.
+Now the player needs to be 5 to be tested.
