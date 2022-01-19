@@ -23,6 +23,8 @@ struct player * player_setup(char name[50], int socket){
   name[strlen(name) - 1] = '\0';
   strcpy(a->name, name);
   a->alive = 1;
+  a->medicineCount = 1;
+  a->posionCount = 1;
   a->socket = socket;
   return a;
 }
@@ -133,7 +135,7 @@ void reset_votes(int playerCount){
 }
 
 void eliminate_player(int playerCount){
-  int playerOut = 0;
+  int playerOut = -1;
   int votes = 0;
   int i;
   for (i = 0; i < playerCount; i++){
@@ -142,7 +144,7 @@ void eliminate_player(int playerCount){
       votes = players[i]->votes;
     }
   }
-  if (playerOut){
+  if (playerOut != -1){
     players[playerOut]->alive = false;
     char msg[BUFFER_SIZE] = NOTIFY_PLAYER;
     strcat(msg, sep);
@@ -152,6 +154,7 @@ void eliminate_player(int playerCount){
       write(players[i]->socket, msg, sizeof(msg));
     }
   }
+  reset_votes(playerCount);
 }
 
 void sigint_handle(){
@@ -164,6 +167,10 @@ static void sighandler(int signo){
  if(signo == SIGINT){
    sigint_handle();
  }
+}
+
+void healPlayer(int curPlayer, int playerNumToHeal){
+  
 }
 
 void nightCycle(int playerCount){
@@ -203,7 +210,8 @@ void nightCycle(int playerCount){
         read(players[i]->socket, in, sizeof(in));
         sscanf(in, "%d", &votedPlayer);
       }
-      players[votedPlayer]->votes++;
+      // players[votedPlayer]->votes++;
+
     }
   }
   reset_votes(playerCount);
@@ -250,7 +258,6 @@ void dayCycle(int playerCount){
     }
   }
   eliminate_player(playerCount);
-  reset_votes(playerCount);
 }
 
 void day1NightTask(int playerCount){
