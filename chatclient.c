@@ -9,12 +9,11 @@ int main() {
 
   if (errno) printf("error %d: %s\n", errno, strerror(errno));
   
-  printf("You have entered the chatroom!\n");
   chat(from_server);
-  printf("chatroom over\n");
 }
 
 int chat(int server) {
+  printf("You have entered the chatroom!\n");
   char input[100];
   int f = fork();
 
@@ -27,5 +26,6 @@ int chat(int server) {
   while(read(server, input, sizeof(input))){
     printf("%s", input);
   }
+  printf("chatroom over\n");
   return 0;
 }
