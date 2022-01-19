@@ -72,6 +72,16 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
 
     // start the chatroom
     while (time(NULL)-startTime < seconds) {
+        if (time(NULL)-startTime == 10) {
+            write_fds = clients_fds;
+            for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
+                if (FD_ISSET(clients[i], &write_fds)) { // sends 10 second warning
+                    printf("going to write to %d: [server] 10 SECONDS LEFT TO CHAT!\n", clients[i]);
+                    write(clients[i], "[server] 10 SECONDS LEFT TO CHAT!\n", 34);
+                }
+            }
+        }
+
         char input[100] = "";
         char chatter[50] = "";
         char final_message[150] = "";
@@ -90,12 +100,6 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
                     printf("going to read from %d\n", clients[i]);
                     r = read(clients[i], input, 100);
-                    // for (int j = 0; j < 100; j++) {
-                    //     if (input[j] == '\n') {
-                    //         input[j] = '\0';
-                    //         j = 100;
-                    //     }
-                    // }
                     strncpy(chatter, players[i]->name,50);
                     printf("got data: %s\n",input);
                     printf("chatter: %s\n", chatter);
