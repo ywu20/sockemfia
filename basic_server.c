@@ -293,7 +293,9 @@ void nightCycle(int playerCount){
 
   if(players[dead_player]->alive == 0){
     int i;
-    char out [BUFFER_SIZE] = "Player ";
+    char out[BUFFER_SIZE] = NOTIFY_PLAYER;
+    strcat(out, sep);
+    strcat(out, "Player ");
     strcat(out, players[dead_player]->name);
     strcat(out, " died last night.\n");
     for (i=0;players[i];i++){
