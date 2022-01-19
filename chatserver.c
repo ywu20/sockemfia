@@ -1,10 +1,8 @@
 #include "chat.h"
 
 struct player * player_setup(char name[50], int socket){
-  printf("hereyee\n");
   struct player * a = malloc(sizeof(struct player));
   a->name[strlen(name) - 1] = '\0';
-  printf("herenah\n");
   strcpy(a->name, name);
   a->alive = 1;
   a->socket = socket;
@@ -27,17 +25,17 @@ int main() {
     int sd;
 
     struct player * players[20];
-    printf("here\n");
     players[0] = player_setup("steve",4);
     players[1] = player_setup("tony",5);
-    printf("here2\n");
+    players[2] = player_setup("polly",6);
+    players[3] = player_setup("santonio",7);
 
-    print_struct(players,1);
+    print_struct(players,3);
 
     sd = server_setup();
     printf("sd: %d\n", sd);
 
-    chatroom(1,sd,2,players);
+    chatroom(30,sd,4,players);
 }
 
 int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) { // seconds will but rn doesn't limit chat time
@@ -69,8 +67,11 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
     }
     printf("new max_fd: %d\n", max_fd);
 
+    // preparing the timings
+    time_t startTime = time(NULL);
+
     // start the chatroom
-    while (seconds) {
+    while (time(NULL)-startTime < seconds) {
         char input[100] = "";
         char chatter[50] = "";
         char final_message[150] = "";
