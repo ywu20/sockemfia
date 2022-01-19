@@ -11,6 +11,7 @@ int main() {
   
   printf("You have entered the chatroom!\n");
   chat(from_server);
+  printf("chatroom over\n");
 }
 
 int chat(int server) {
