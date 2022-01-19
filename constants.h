@@ -13,7 +13,7 @@
 #define STRING_SEPERATOR '\\'
 #define true 1
 #define false 0
-#define MIN_PLAYERS 5
+#define MIN_PLAYERS 6
 
 struct player{
   char name [50];

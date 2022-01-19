@@ -148,7 +148,7 @@ int checkForGameEnd(int playerCount, int mafiaCount, int civilianCount, int spec
   char toPlayers[BUFFER_SIZE] = NOTIFY_PLAYER;
   if (mafiaCount == 0)
   {
-    strcat(toPlayers, STRING_SEPERATOR);
+    strcat(toPlayers, sep);
     strcat(toPlayers, INNOCENT_WIN);
     for (i = 0; i < playerCount; i++){
       write(players[i]->socket, toPlayers, sizeof(toPlayers));
@@ -157,7 +157,7 @@ int checkForGameEnd(int playerCount, int mafiaCount, int civilianCount, int spec
   }
   else if (specialCount == 0 || civilianCount == 0)
   {
-    strcat(toPlayers, STRING_SEPERATOR);
+    strcat(toPlayers, sep);
     strcat(toPlayers, MAFIA_WIN);
     for (i = 0; i < playerCount; i++){
       write(players[i]->socket, toPlayers, sizeof(toPlayers));
