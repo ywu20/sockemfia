@@ -243,14 +243,14 @@ void nightCycle(int playerCount){
         write(players[i]->socket, save, BUFFER_SIZE);
         read(players[i]->socket, in, sizeof(in));
 
-        char * a;
-        sscanf(in, "%c", a);
+        char a;
+        sscanf(in, "%c", &a);
 
-        if(*a == 'y'){
+        if(a == 'y'){
           players[i]->medicineCount--;
           players[dead_player] -> alive = 1;
           invalid_input = 0;
-        }else if (*a == 'n'){
+        }else if (a == 'n'){
           invalid_input = 0;
         }
     }
@@ -260,12 +260,12 @@ void nightCycle(int playerCount){
       write(players[i]->socket, kill, BUFFER_SIZE);
       read(players[i]->socket, in, sizeof(in));
 
-      char * a;
-      sscanf(in, "%c", a);
-      printf("scanned: %c\n",*a);
+      char a;
+      sscanf(in, "%c", &a);
+      printf("scanned: %c\n",a);
       char message [BUFFER_SIZE] = "";
 
-      if(*a == 'y'){
+      if(a == 'y'){
         char out[BUFFER_SIZE] = DOCTOR_PROMPT;
         strcat(out, sep);
         strcat(out, disclose_players_to_player());
@@ -275,7 +275,7 @@ void nightCycle(int playerCount){
         players[votedPlayer]->alive = 0;
         players[i]->poisonCount--;
         invalid_input = 0;
-      }else if (*a == 'n'){
+      }else if (a == 'n'){
         invalid_input = 0;
       }
 
@@ -353,8 +353,8 @@ int main() {
   char in[BUFFER_SIZE] = {0};
 
   srand(time (NULL));
-  while (gameCapacity < 4){
-    printf("How many players will be playing this game of Mafia?\nYou need at least 5 people to play this game.\n");
+  while (gameCapacity < MIN_PLAYERS){
+    printf("How many players will be playing this game of Mafia?\nYou need at least %d people to play this game.\n", MIN_PLAYERS);
     read(STDIN_FILENO, in, sizeof(in));
     sscanf(in, "%d", &gameCapacity);
   }
