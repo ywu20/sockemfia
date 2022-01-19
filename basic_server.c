@@ -177,27 +177,6 @@ void nightCycle(int playerCount){
   int i;
   char in[BUFFER_SIZE] = {0};
   int dead_player=-1;
-  // mafia
-  for (i = 0; i < playerCount; i++)
-  {
-    int votedPlayer = playerCount;
-    if (strcmp("lead mafia", players[i]->role) == 0 && players[i]->alive)
-    {
-      while (votedPlayer < 0 || votedPlayer >= playerCount)
-      {
-        char out[BUFFER_SIZE] = MAFIA_PROMPT;
-        strcat(out, sep);
-        strcat(out, disclose_players_to_player());
-        write(players[i]->socket, out, BUFFER_SIZE);
-        read(players[i]->socket, in, sizeof(in));
-        sscanf(in, "%d", &votedPlayer);
-        dead_player = votedPlayer;
-        players[votedPlayer]->alive = 0;
-      }
-      //players[votedPlayer]->votes++;
-    }
-  }
-  reset_votes(playerCount);
 
   // detective
   for (i = 0; i < playerCount; i++)
@@ -227,11 +206,33 @@ void nightCycle(int playerCount){
     }
   }
   reset_votes(playerCount);
+
+  // mafia
+  for (i = 0; i < playerCount; i++)
+  {
+    int votedPlayer = playerCount;
+    if (strcmp("lead mafia", players[i]->role) == 0 && players[i]->alive)
+    {
+      while (votedPlayer < 0 || votedPlayer >= playerCount)
+      {
+        char out[BUFFER_SIZE] = MAFIA_PROMPT;
+        strcat(out, sep);
+        strcat(out, disclose_players_to_player());
+        write(players[i]->socket, out, BUFFER_SIZE);
+        read(players[i]->socket, in, sizeof(in));
+        sscanf(in, "%d", &votedPlayer);
+        dead_player = votedPlayer;
+        players[votedPlayer]->alive = 0;
+      }
+      //players[votedPlayer]->votes++;
+    }
+  }
+  reset_votes(playerCount);
   // doctor
   for (i = 0; i < playerCount; i++)
   {
     int invalid_input = 1;
-    int votedPlayer = -1;
+    int votedPlayer = playerCount;
     if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
     {
       while (invalid_input)
@@ -243,14 +244,14 @@ void nightCycle(int playerCount){
         write(players[i]->socket, save, BUFFER_SIZE);
         read(players[i]->socket, in, sizeof(in));
 
-        char * a;
-        sscanf(in, "%c", a);
+        char a;
+        sscanf(in, "%c", &a);
 
-        if(*a == 'y'){
+        if(a == 'y'){
           players[i]->medicineCount--;
           players[dead_player] -> alive = 1;
           invalid_input = 0;
-        }else if (*a == 'n'){
+        }else if (a == 'n'){
           invalid_input = 0;
         }
     }
@@ -260,12 +261,13 @@ void nightCycle(int playerCount){
       write(players[i]->socket, kill, BUFFER_SIZE);
       read(players[i]->socket, in, sizeof(in));
 
-      char * a;
-      sscanf(in, "%c", a);
-      printf("scanned: %c\n",*a);
+      char a;
+      sscanf(in, "%c", &a);
       char message [BUFFER_SIZE] = "";
 
-      if(*a == 'y'){
+      if(a == 'y'){
+        while (votedPlayer < 0 || votedPlayer >= playerCount)
+        {
         char out[BUFFER_SIZE] = DOCTOR_PROMPT;
         strcat(out, sep);
         strcat(out, disclose_players_to_player());
@@ -275,7 +277,8 @@ void nightCycle(int playerCount){
         players[votedPlayer]->alive = 0;
         players[i]->poisonCount--;
         invalid_input = 0;
-      }else if (*a == 'n'){
+      }
+      }else if (a == 'n'){
         invalid_input = 0;
       }
 
@@ -288,16 +291,57 @@ void nightCycle(int playerCount){
   }
   reset_votes(playerCount);
 
+  if(players[dead_player]->alive == 0){
+    int i;
+    char out [BUFFER_SIZE] = "Player ";
+    strcat(out, players[dead_player]->name);
+    strcat(out, " died last night.\n");
+    for (i=0;players[i];i++){
+      write(players[i]->socket, out, BUFFER_SIZE);
+    }
+    if(strcmp(players[dead_player]->role, "hunter") == 0){
+      int invalid_input = 1;
+      while(invalid_input){
+      int votedPlayer = playerCount;
+      write(players[dead_player]->socket, "You can bring a player with you when you die. Do you want to bring a player with you[y/n]?", BUFFER_SIZE);
+      read(players[dead_player]->socket, in, sizeof(in));
+
+      char a;
+      sscanf(in, "%c", &a);
+      printf("scanned character: %c\n", a);
+
+      if(a == 'y'){
+        while (votedPlayer < 0 || votedPlayer >= playerCount)
+        {
+        char out[BUFFER_SIZE] = HUNTER_PROMPT;
+        strcat(out, sep);
+        strcat(out, disclose_players_to_player());
+        write(players[dead_player]->socket, out, BUFFER_SIZE);
+        read(players[dead_player]->socket, in, sizeof(in));
+        sscanf(in, "%d", &votedPlayer);
+        printf("scanned: %d\n", votedPlayer);
+        players[votedPlayer]->alive = 0;
+      }
+      invalid_input = 0;
+      }else if (a == 'n'){
+        invalid_input = 0;
+      }
+    }
+  }
+
+  }
+
 }
 
 void dayCycle(int playerCount){
   int i;
   char in[BUFFER_SIZE] = {0};
+  int votedPlayer;
   for (i = 0; i < playerCount; i++)
   {
     if (players[i]->alive)
     {
-      int votedPlayer = playerCount;
+      votedPlayer = playerCount;
       while (votedPlayer < 0 || votedPlayer >= playerCount)
       {
         char out[BUFFER_SIZE] = VOTE_PLAYER;
@@ -312,6 +356,33 @@ void dayCycle(int playerCount){
     }
   }
   eliminate_player(playerCount);
+
+  if(strcmp(players[votedPlayer]->role, "hunter") == 0){
+    int invalid_input = 1;
+    int hunter_voted_player = playerCount;
+    while(invalid_input){
+    write(players[votedPlayer]->socket, "You can bring a player with you when you die. Do you want to bring a player with you[y/n]?", BUFFER_SIZE);
+    read(players[votedPlayer]->socket, in, sizeof(in));
+
+    char a;
+    sscanf(in, "%c", &a);
+    if(a == 'y'){
+      while (hunter_voted_player < 0 || hunter_voted_player >= playerCount)
+      {
+      char out[BUFFER_SIZE] = HUNTER_PROMPT;
+      strcat(out, sep);
+      strcat(out, disclose_players_to_player());
+      write(players[votedPlayer]->socket, out, BUFFER_SIZE);
+      read(players[votedPlayer]->socket, in, sizeof(in));
+      sscanf(in, "%d", &hunter_voted_player);
+      players[hunter_voted_player]->alive = 0;
+      invalid_input = 0;
+    }
+    }else if (a == 'n'){
+      invalid_input = 0;
+    }
+  }
+}
 }
 
 void day1NightTask(int playerCount){
@@ -347,14 +418,14 @@ int main() {
   int sd = server_setup();
 
   // set number of people per role
-  int * num_player_per_role = role_setup(1,1,1,1,1,0);
+  int * num_player_per_role = role_setup(1,1,1,1,1,1);
   int num_player = 0;
   int gameCapacity = 0;
   char in[BUFFER_SIZE] = {0};
 
   srand(time (NULL));
   while (gameCapacity < 4){
-    printf("How many players will be playing this game of Mafia?\nYou need at least 5 people to play this game.\n");
+    printf("How many players will be playing this game of Mafia?\nYou need at least 6 people to play this game.\n");
     read(STDIN_FILENO, in, sizeof(in));
     sscanf(in, "%d", &gameCapacity);
   }
