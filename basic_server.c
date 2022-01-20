@@ -413,7 +413,8 @@ void gameCycle(int playerCount){
   }
 }
 
-int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) { // seconds will but rn doesn't limit chat time
+int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) {
+
     fd_set read_fds, write_fds, clients_fds;
     int max_fd = sd;
     int r;
@@ -425,13 +426,19 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
     printf("waiting for people to connect\n"); 
     int i = 0;
 
+    // tell clients to connect
+    for (i=0;players[i];i++){
+      write(players[i]->socket, "CHAT", 4);
+      printf("told player %s to connect\n", players[i]->name);
+    }
+
+    i = 0;
     while (i<max_clients) {
-        clients[i] = players[i] -> socket;
+        clients[i] = (players[i] -> socket);
         if (clients[i] > max_fd) {
             max_fd = clients[i];
             printf("clients[%d] joined\n", clients[i]);
         }
-
         FD_SET(sd, &clients_fds); // add server socket to set
         if (FD_ISSET(clients[i], &clients_fds)) { // if already in client set
             printf("client %d was read set\n", clients[i]);
