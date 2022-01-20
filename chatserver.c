@@ -15,7 +15,11 @@ void print_struct(struct player * s [20], int num_player){
     // if (strlen(s[i]->role) == 0){
     //   printf("Player name: %s Player alive status: %d\n", s[i]->name, s[i]->alive);
     // }else{
-     printf("Player name: %s\n Player role: %s\n Player alive status: %d\n", s[i]->name, s[i]->role, s[i]->alive);
+     printf("Player name: %s\n Player role: %s\n Player alive status: %d\nsocket: %d\n", 
+     s[i]->name, 
+     s[i]->role, 
+     s[i]->alive,
+     s[i]->socket);
     // }
   }
 }
@@ -27,13 +31,13 @@ int main() {
     struct player * players[20];
     players[0] = player_setup("steve",4);
     players[1] = player_setup("tony",5);
-    players[2] = player_setup("polly",6);
-    players[3] = player_setup("santonio",7);
+    // players[2] = player_setup("polly",6);
+    // players[3] = player_setup("santonio",7);
 
-    print_struct(players,3);
+    print_struct(players,1);
 
     sd = server_setup();
-    int i = 4;
+    int i = 2;
     while (i) {
         int s = server_connect(sd);
         i--;
@@ -42,12 +46,12 @@ int main() {
     printf("sd: %d\n", sd);
 
     // printf("socket #: %d\n",players[2]->socket);
-    chatroom(30,sd,4,players);
+    chatroom(30,2,players);
 }
 
-int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) { // seconds will but rn doesn't limit chat time
+int chatroom(int seconds, int max_clients, struct player * players[20]) { // seconds will but rn doesn't limit chat time
     fd_set read_fds, write_fds, clients_fds;
-    int max_fd = sd;
+    int max_fd = 0;
     int r;
 
     struct timeval t = {seconds, 0};
@@ -57,14 +61,24 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
     printf("waiting for people to connect\n"); 
     int i = 0;
 
+    // tell clients to connect
+    for (i=0;players[i];i++){
+      write(players[i]->socket, "CHAT", 4);
+      printf("told player %s to connect\n", players[i]->name);
+      if (!(players[i]->alive)) {
+          write(players[i]->socket, "DEAD", 4);
+          printf("told player %s to be view only", players[i]->name);
+      }
+    }
+
+    i = 0;
     while (i<max_clients) {
-        clients[i] = players[i] -> socket;
+        clients[i] = (players[i] -> socket);
         if (clients[i] > max_fd) {
             max_fd = clients[i];
             printf("clients[%d] joined\n", clients[i]);
         }
-
-        FD_SET(sd, &clients_fds); // add server socket to set
+        // FD_SET(sd, &clients_fds); // add server socket to set
         if (FD_ISSET(clients[i], &clients_fds)) { // if already in client set
             printf("client %d was read set\n", clients[i]);
         } else { // if not in set
@@ -149,6 +163,12 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
             }
         }
         printf("loop complete\n\n");
+    }
+    
+    
+    for (i=0;players[i];i++){
+      write(players[i]->socket, "STOPTALKING", 11);
+      printf("told player %s to stop talking\n", players[i]->name);
     }
 
     return 0;
