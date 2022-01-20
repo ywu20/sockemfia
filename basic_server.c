@@ -299,20 +299,18 @@ void nightCycle(int playerCount)
       while (invalid_input)
       {
         int votedPlayer = playerCount;
-        write(players[dead_player]->socket, "You can take a player down with you when you die. Do you want to bring a player with you[ y/n]?", BUFFER_SIZE);
+        write(players[dead_player]->socket, "You can take a player down with you when you die. Do you want to bring a player with you [y/n]?", BUFFER_SIZE);
         read(players[dead_player]->socket, in, sizeof(in));
 
         char a;
         sscanf(in, "%c", &a);
-        printf("scanned character: %c\n", a);
 
         if (a == 'y')
         {
           char out[BUFFER_SIZE] = HUNTER_PROMPT;
           strcat(out, sep);
           strcat(out, disclose_players_to_player());
-          votedPlayer = getPlayerNumInput(out, i, playerCount);
-          printf("scanned: %d\n", votedPlayer);
+          votedPlayer = getPlayerNumInput(out, dead_player, playerCount);
           players[votedPlayer]->alive = 0;
           invalid_input = 0;
         }
