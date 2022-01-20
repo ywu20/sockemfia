@@ -118,27 +118,30 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
             }
 
             // preparing the final message
-            int len = 0;
-            for (int i = 0; i < 50; i++) {
-                if (chatter[i]!='\0') {
-                    final_message[i] = chatter[i];
-                    printf("copying %c into final msg\n", chatter[i]);
-                } else {
-                    len = i+1;
-                    final_message[i] = ':';
-                    final_message[i+1] = ' ';
-                    i = 50;
-                }
-            }
-            for (int i = 0; i < 100;i++) {
-                if (input[i]!='\n') {
-                    final_message[i+len] = input[i];
-                    printf("copying %c into final msg\n", final_message[i+len]);
-                } else {
-                    final_message[i+len] = '\n';
-                    i = 100;
-                }
-            }
+            strcat(final_message, chatter);
+            strcat(final_message, ": ");
+            strcat(final_message,input);
+            // int len = 0;
+            // for (int i = 0; i < 50; i++) {
+            //     if (chatter[i]!='\0') {
+            //         final_message[i] = chatter[i];
+            //         printf("copying %c into final msg\n", chatter[i]);
+            //     } else {
+            //         len = i+1;
+            //         final_message[i] = ':';
+            //         final_message[i+1] = ' ';
+            //         i = 50;
+            //     }
+            // }
+            // for (int i = 0; i < 100;i++) {
+            //     if (input[i]!='\n') {
+            //         final_message[i+len] = input[i];
+            //         printf("copying %c into final msg\n", final_message[i+len]);
+            //     } else {
+            //         final_message[i+len] = '\n';
+            //         i = 100;
+            //     }
+            // }
 
              // if there is stuff left in write set
             for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
