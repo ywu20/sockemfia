@@ -417,8 +417,6 @@ int main() {
   int to_client;
   int sd = server_setup();
 
-  // set number of people per role
-  int * num_player_per_role = role_setup(1,1,1,1,1,1);
   num_player = 0;
   num_mafia = 0;
   num_special = 0;
@@ -432,6 +430,7 @@ int main() {
     read(STDIN_FILENO, in, sizeof(in));
     sscanf(in, "%d", &gameCapacity);
   }
+
 
   printf("Game is now open for players to log on!\n");
 
@@ -452,6 +451,16 @@ int main() {
     //  free_struct(players);
     }
   // }
+  int special_role = 1;
+  int civilians = (num_player - 3*special_role)/2;
+  int mafia = num_player- 3*special_role-civilians-1;
+  if(mafia > 5){
+    mafia = 5;
+    civilians = num_player-3*special_role-mafia-1;
+  }
+
+  // set number of people per role
+  int * num_player_per_role = role_setup(civilians,mafia,special_role,special_role,1,special_role);
   // here we assign roles
   role_assign(num_player, num_player_per_role);
   gameCycle(num_player);
