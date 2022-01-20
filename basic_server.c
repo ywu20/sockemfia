@@ -198,11 +198,11 @@ void nightCycle(int playerCount)
       strcat(message, players[votedPlayer]->name);
       if ((strcmp(players[votedPlayer]->role, "mafia") == 0) || (strcmp(players[votedPlayer]->role, "lead mafia") == 0))
       {
-        strcat(message, " is a bad person. Hit enter to continue.\n");
+        strcat(message, " is a bad person. Hit enter to continue.");
       }
       else
       {
-        strcat(message, " is a good person. Hit enter to continue.\n");
+        strcat(message, " is a good person. Hit enter to continue.");
       }
       write(players[i]->socket, message, 100);
       read(players[i]->socket, in, sizeof(in));
