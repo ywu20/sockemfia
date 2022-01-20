@@ -334,7 +334,7 @@ void nightCycle(int playerCount){
 }
 
 void dayCycle(int playerCount){
-  chatroom(20, "localhost", playerCount, players);
+  chatroom(20, 3, playerCount, players); // doesn't have access to its own socket but maybe that can be fixed later
   int i;
   char in[BUFFER_SIZE] = {0};
   int votedPlayer;
@@ -414,7 +414,6 @@ void gameCycle(int playerCount){
 }
 
 int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) {
-
     fd_set read_fds, write_fds, clients_fds;
     int max_fd = sd;
     int r;
