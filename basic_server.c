@@ -296,38 +296,41 @@ void nightCycle(int playerCount){
     for (i=0;players[i];i++){
       write(players[i]->socket, out, BUFFER_SIZE);
     }
-    if(strcmp(players[dead_player]->role, "hunter") == 0){
+    if (strcmp(players[dead_player]->role, "hunter") == 0)
+    {
       int invalid_input = 1;
-      while(invalid_input){
-      int votedPlayer = playerCount;
-      write(players[dead_player]->socket, "You can bring a player with you when you die. Do you want to bring a player with you[y/n]?", BUFFER_SIZE);
-      read(players[dead_player]->socket, in, sizeof(in));
-
-      char a;
-      sscanf(in, "%c", &a);
-      printf("scanned character: %c\n", a);
-
-      if(a == 'y'){
-        while (votedPlayer < 0 || votedPlayer >= playerCount)
-        {
-        char out[BUFFER_SIZE] = HUNTER_PROMPT;
-        strcat(out, sep);
-        strcat(out, disclose_players_to_player());
-        write(players[dead_player]->socket, out, BUFFER_SIZE);
+      while (invalid_input)
+      {
+        int votedPlayer = playerCount;
+        write(players[dead_player]->socket, "You can bring a player with you when you die. Do you want to bring a player with you[y/n]?", BUFFER_SIZE);
         read(players[dead_player]->socket, in, sizeof(in));
-        sscanf(in, "%d", &votedPlayer);
-        printf("scanned: %d\n", votedPlayer);
-        players[votedPlayer]->alive = 0;
-      }
-      invalid_input = 0;
-      }else if (a == 'n'){
-        invalid_input = 0;
+
+        char a;
+        sscanf(in, "%c", &a);
+        printf("scanned character: %c\n", a);
+
+        if (a == 'y')
+        {
+          while (votedPlayer < 0 || votedPlayer >= playerCount)
+          {
+            char out[BUFFER_SIZE] = HUNTER_PROMPT;
+            strcat(out, sep);
+            strcat(out, disclose_players_to_player());
+            write(players[dead_player]->socket, out, BUFFER_SIZE);
+            read(players[dead_player]->socket, in, sizeof(in));
+            sscanf(in, "%d", &votedPlayer);
+            printf("scanned: %d\n", votedPlayer);
+            players[votedPlayer]->alive = 0;
+          }
+          invalid_input = 0;
+        }
+        else if (a == 'n')
+        {
+          invalid_input = 0;
+        }
       }
     }
   }
-
-  }
-
 }
 
 void dayCycle(int playerCount){
