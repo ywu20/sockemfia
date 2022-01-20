@@ -334,6 +334,7 @@ void nightCycle(int playerCount){
 }
 
 void dayCycle(int playerCount){
+  chatroom(20, "localhost", playerCount, players);
   int i;
   char in[BUFFER_SIZE] = {0};
   int votedPlayer;
