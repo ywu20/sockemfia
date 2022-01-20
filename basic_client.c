@@ -79,7 +79,7 @@ int chat(int server) {
   }
 
   // main program reads from server client msgs
-  while(read(server, input, sizeof(input))){
+  while(read(server, input, sizeof(input)) && strcmp(input, "STOPTALKING")){
     printf("%s", input);
   }
   kill(f, SIGKILL); // removes child process
