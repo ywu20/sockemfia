@@ -95,3 +95,7 @@ Now the player needs to be 5 to be tested.
 andyL -- 2022-01-19 11:47
 Fixed issue where inputting y/n would cause a segfault
 Added functions related to the end of game handling (incomplete rn)
+
+andyL -- 2022-01-19 17:00
+Fixed issue where hunter takedown notice would end up causing a segfault and would not respond the first time
+Fixed some merge conflicts between Yuqing's work and my work
