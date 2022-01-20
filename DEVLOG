@@ -103,10 +103,15 @@ andyL -- 2022-01-19 17:00
 Fixed issue where hunter takedown notice would end up causing a segfault and would not respond the first time
 Fixed some merge conflicts between Yuqing's work and my work
 
-sarahL -- 2022-1-19 19:36
+sarahL -- 2022-01-19 19:36
 Started working on integrating chatroom with game
 Added a basic timer for chatroom
 Added defines for adding chat colors later
 
-sarahL -- 2022-1-19 20:49
+sarahL -- 2022-01-19 20:49
 Successfully integrated chat into the game (in branch; not merged yet)
+
+andyL —- 2022-01-20 11:47
+Fixed an issue where out of bound player count num input would cause the game to crash (which necessitated splitting off a new function)
+Fixed some line indentation issues
+Added a check to see if end game condition is met
