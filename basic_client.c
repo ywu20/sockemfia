@@ -83,6 +83,6 @@ int chat(int server) {
     printf("%s", input);
   }
   kill(f, SIGKILL); // removes child process
-  printf("chatroom over\n");
+  printf("\nchatroom over\n\n");
   return 0;
 }
