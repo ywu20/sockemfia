@@ -33,8 +33,15 @@ int main() {
     print_struct(players,3);
 
     sd = server_setup();
+    int i = 4;
+    while (i) {
+        int s = server_connect(sd);
+        i--;
+    }
+
     printf("sd: %d\n", sd);
 
+    // printf("socket #: %d\n",players[2]->socket);
     chatroom(30,sd,4,players);
 }
 
@@ -42,11 +49,7 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
     fd_set read_fds, write_fds, clients_fds;
     int max_fd = sd;
     int r;
-    char * colors = {GREEN, YELLOW, BLUE, MAGENTA, CYAN};
 
-
-    // preparing the timers
-    time_t startTime = time(NULL);
     struct timeval t = {seconds, 0};
 
     // gather the clients
@@ -55,7 +58,7 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
     int i = 0;
 
     while (i<max_clients) {
-        clients[i] = server_connect(sd);
+        clients[i] = players[i] -> socket;
         if (clients[i] > max_fd) {
             max_fd = clients[i];
             printf("clients[%d] joined\n", clients[i]);
@@ -68,11 +71,12 @@ int chatroom(int seconds, int sd, int max_clients, struct player * players[20]) 
             FD_SET(clients[i], &clients_fds); // add to client set
             printf("added fd %d to read set\n", clients[i]);
         }
-
         i++;
     }
     printf("new max_fd: %d\n", max_fd);
 
+    // preparing the timings
+    time_t startTime = time(NULL);
 
     // start the chatroom
     while (time(NULL)-startTime < seconds) {
