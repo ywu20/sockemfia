@@ -96,6 +96,17 @@ andyL -- 2022-01-19 11:47
 Fixed issue where inputting y/n would cause a segfault
 Added functions related to the end of game handling (incomplete rn)
 
+yuqingW -- 2022-01-19 11:47
+Added hunter prompts. Hunter now can kill a person when they die. 
+
 andyL -- 2022-01-19 17:00
 Fixed issue where hunter takedown notice would end up causing a segfault and would not respond the first time
 Fixed some merge conflicts between Yuqing's work and my work
+
+sarahL -- 2022-1-19 19:36
+Started working on integrating chatroom with game
+Added a basic timer for chatroom
+Added defines for adding chat colors later
+
+sarahL -- 2022-1-19 20:49
+Successfully integrated chat into the game (in branch; not merged yet)
