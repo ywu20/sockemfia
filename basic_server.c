@@ -4,8 +4,7 @@
 struct player * players[20];
 
 int* role_setup(int civilian, int mafia, int doctor, int detective, int lead_mafia, int hunter){
-  int shmd = shmget(ROLE_NUM_MEM, sizeof(int) * 6, IPC_CREAT | 0644);
-  int* role_num = shmat (shmd,0,0);
+  int role_num[6];
 
   // set up number of each role
   role_num[0] = civilian;
@@ -27,11 +26,6 @@ struct player * player_setup(char name[50], int socket){
   a->poisonCount = 1;
   a->socket = socket;
   return a;
-}
-
-void remove_shm(){
-  int shmd = shmget(ROLE_NUM_MEM,0,0);
-  shmctl(shmd, IPC_RMID,0);
 }
 
 void print_struct(struct player * s [20], int num_player){
@@ -133,7 +127,6 @@ int eliminate_player(int playerCount, int specifiedPlayer){
 }
 
 void sigint_handle(){
-  remove_shm();
   free_struct(players);
   exit(SIGINT);
 }
