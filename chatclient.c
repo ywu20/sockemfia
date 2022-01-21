@@ -5,7 +5,8 @@ int chat(int server, char living) {
   char input[100];
   int f = 0;
 
-  if (living == '0') {
+  if (living == '1') {
+    // printf("living: %c\tliving='0': %d\n", living,(living == '0'));
     f = fork();
 
     if (f == 0) { // child waits for input to send
