@@ -122,3 +122,7 @@ If a player is killed, their category headcount decrements by one (regardless of
 
 sarahL -- 2022-1-21 00:27
 Worked on limiting factors of the chatroom (mafia only chat and no dead talkers)
+
+andyL -- 2022-01-21 11:47
+removed unnecessary shared memory component of project
+tried to fix issue where if one special role dies, then mafia wins
