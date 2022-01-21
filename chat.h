@@ -9,6 +9,7 @@
 #define MAGENTA "\x1b[35m"
 #define CYAN    "\x1b[36m"
 #define WHITE   "\x1b[0m"
+#define STOP_TALKING "STOPTALKING"
 
  int chatroom(int seconds, int max_clients, struct player * players[20]);
  int chat(int server);

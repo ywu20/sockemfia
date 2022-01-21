@@ -69,17 +69,17 @@ int main(int argc, char *argv[]) {
 
 int chat(int server) {
   printf("You have entered the chatroom!\n");
-  char input[100];
+  char input[BUFFER_SIZE];
   int f = fork();
 
   if (f == 0) { // child waits for input to send
     while (read(STDIN_FILENO, input, sizeof(input))) {
-      write(server, input, 100);
+      write(server, input, sizeof(input));
     }
   }
 
   // main program reads from server client msgs
-  while(read(server, input, sizeof(input)) && strcmp(input, "STOPTALKING")){
+  while(read(server, input, sizeof(input)) && strcmp(input, STOP_TALKING)){
     printf("%s", input);
   }
   kill(f, SIGKILL); // removes child process
