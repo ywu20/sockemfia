@@ -106,7 +106,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) { // sec
             }
         }
 
-        char input[100] = "";
+        char input[BUFFER_SIZE] = {0};
         char chatter[50] = "";
         char final_message[150] = "";
         FD_ZERO(&read_fds); // clears set
@@ -123,7 +123,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) { // sec
             for (int i = 0; i < max_clients; i++) { // loops to find the active client
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
                     printf("going to read from %d\n", clients[i]);
-                    r = read(clients[i], input, 100);
+                    r = read(clients[i], input, sizeof(input));
                     strncpy(chatter, players[i]->name,50);
                     printf("got data: %s\n",input);
                     printf("chatter: %s\n", chatter);
