@@ -14,7 +14,7 @@ int main() {
 
 int chat(int server) {
   printf("You have entered the chatroom!\n");
-  char input[BUFFER_SIZE] = {0};
+  char input[100] = {0};
   int f = 0;
 
   if (read(server,input,sizeof(input)) && !strcmp(input, "DEAD")){

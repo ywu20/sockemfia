@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 
 int chat(int server) {
   printf("You have entered the chatroom!\n");
-  char input[BUFFER_SIZE];
+  char input[100] = {0};
   int f = fork();
 
   if (f == 0) { // child waits for input to send
