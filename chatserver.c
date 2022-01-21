@@ -39,7 +39,9 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
     // tell clients to connect
     for (i=0;players[i];i++){
       if (mafiaChat) {
-        if (!strcmp(players[i]->role, "mafia") || !strcmp(players[i]->role, "lead mafia")) {
+          printf("funning\n");
+          printf("comparing the strings: %d\n", strcmp(players[i]->role, "mafia") == 0);
+        if (strcmp(players[i]->role, "mafia") == 0 || strcmp(players[i]->role, "lead mafia") == 0) {
             if ((players[i]->alive)==0) { // dead people
                 write(players[i]->socket, "CHAT0", 5);
                 printf("told player %s to be view only\n", players[i]->name);
@@ -49,6 +51,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
             }
         }
       } else {
+          printf("shoudl nto be runnign\n");
         if ((players[i]->alive)==0) { // dead people
             write(players[i]->socket, "CHAT0", 5);
             printf("told player %s to be view only\n", players[i]->name);
@@ -170,6 +173,8 @@ int main() {
     players[0] = player_setup("steve",4);
     players[1] = player_setup("tony",5);
     players[1]->alive = 0;
+    strncpy(players[0]->role, "mafia",5);
+    strncpy(players[1]->role, "civilian",5);
     // players[2] = player_setup("polly",6);
     // players[3] = player_setup("santonio",7);
 
@@ -185,5 +190,5 @@ int main() {
     printf("sd: %d\n", sd);
 
     // printf("socket #: %d\n",players[2]->socket);
-    chatroom(30,0,players,1);
+    chatroom(20,2,players,1);
 }

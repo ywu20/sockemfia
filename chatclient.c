@@ -36,5 +36,5 @@ int main() {
 
   if (errno) printf("error %d: %s\n", errno, strerror(errno));
   
-  chat(from_server, '0');
+  chat(from_server, '1');
 }
