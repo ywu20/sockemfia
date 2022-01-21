@@ -224,6 +224,7 @@ void nightCycle(int playerCount)
   char in[BUFFER_SIZE] = {0};
   int dead_player = -1;
   int votedPlayer;
+  char a;
 
   // detective
   for (i = 0; i < playerCount; i++)
@@ -278,7 +279,6 @@ void nightCycle(int playerCount)
           write(players[i]->socket, save, BUFFER_SIZE);
           read(players[i]->socket, in, sizeof(in));
 
-          char a;
           sscanf(in, "%c", &a);
 
           if (a == 'y')
@@ -299,7 +299,6 @@ void nightCycle(int playerCount)
           write(players[i]->socket, kill, BUFFER_SIZE);
           read(players[i]->socket, in, sizeof(in));
 
-          char a;
           sscanf(in, "%c", &a);
           char message[BUFFER_SIZE] = "";
     
