@@ -545,7 +545,7 @@ int main() {
     //  free_struct(players);
     }
   // }
-  num_special = 1;
+  num_special = 3;
   num_civilian = (num_player - 3*num_special)/2;
   num_mafia = num_player- 3*num_special-num_civilian-1;
   if(num_mafia > 5){
@@ -554,7 +554,7 @@ int main() {
   }
 
   // set number of people per role
-  int * num_player_per_role = role_setup(num_civilian,num_mafia,num_special,num_special,1,num_special);
+  int * num_player_per_role = role_setup(num_civilian,num_mafia,num_special/3,num_special/3,1,num_special/3);
   // here we assign roles
   role_assign(num_player, num_player_per_role);
   free(num_player_per_role);
