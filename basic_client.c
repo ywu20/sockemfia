@@ -1,7 +1,7 @@
 #include "pipe_networking.h"
 #include "parse.h"
 #include "constants.h"
-
+#include "chat.h"
 char * get_name(int server){
   char * name = malloc(sizeof(char) * 50);
   printf("Enter your name (less than 50 characters): ");

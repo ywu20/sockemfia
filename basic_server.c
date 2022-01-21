@@ -1,6 +1,6 @@
 #include "pipe_networking.h"
 #include "constants.h"
-
+#include "chat.h"
 struct player * players[20];
 
 int* role_setup(int civilian, int mafia, int doctor, int detective, int lead_mafia, int hunter){
@@ -294,7 +294,7 @@ void nightCycle(int playerCount)
 
           sscanf(in, "%c", &a);
           char message[BUFFER_SIZE] = "";
-    
+
           if (a == 'y')
           {
             char out[BUFFER_SIZE] = "Who do you want to posion?";
@@ -398,7 +398,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
 
     // gather the clients
     int clients[max_clients];
-    printf("waiting for people to connect\n"); 
+    printf("waiting for people to connect\n");
     int i = 0;
 
     // tell clients to connect
@@ -500,8 +500,8 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
         }
         printf("loop complete\n\n");
     }
-    
-    
+
+
     for (i=0;players[i];i++){
       write(players[i]->socket, "STOPTALKING", 11);
       printf("told player %s to stop talking\n", players[i]->name);
