@@ -4,7 +4,7 @@
 struct player * players[20];
 
 int* role_setup(int civilian, int mafia, int doctor, int detective, int lead_mafia, int hunter){
-  int role_num[6];
+  int* role_num = malloc(sizeof(int *) * 6);
 
   // set up number of each role
   role_num[0] = civilian;
@@ -557,5 +557,6 @@ int main() {
   int * num_player_per_role = role_setup(num_civilian,num_mafia,num_special,num_special,1,num_special);
   // here we assign roles
   role_assign(num_player, num_player_per_role);
+  free(num_player_per_role);
   gameCycle(num_player);
 }
