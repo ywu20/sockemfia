@@ -11,8 +11,8 @@
 #define WHITE   "\x1b[0m"
 #define STOP_TALKING "STOPTALKING"
 
- int chatroom(int seconds, int max_clients, struct player * players[20]);
- int chat(int server);
+int chatroom(int seconds, int max_clients, struct player * players[20]);
+int chat(int server);
 /*
 // simulating game assignment
 struct player{

@@ -2,7 +2,6 @@ all: client server
 
 chat: cserver cclient
 
-
 client: basic_client.o pipe_networking.o parse.o
 	gcc -o client basic_client.o pipe_networking.o parse.o
 
