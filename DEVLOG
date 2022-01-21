@@ -115,3 +115,7 @@ andyL —- 2022-01-20 11:47
 Fixed an issue where out of bound player count num input would cause the game to crash (which necessitated splitting off a new function)
 Fixed some line indentation issues
 Added a check to see if end game condition is met
+
+andyL —- 2022-01-20 19:40
+Hunter takedown is now in it's own function and fixed issue where hunter takedown was broken
+If a player is killed, their category headcount decrements by one
