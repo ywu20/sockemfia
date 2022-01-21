@@ -336,7 +336,7 @@ void nightCycle(int playerCount)
 }
 
 void dayCycle(int playerCount){
-  chatroom(20, playerCount, players); // doesn't have access to its own socket but maybe that can be fixed later
+  chatroom(20, playerCount, players);
   int i;
   int votedPlayer;
   for (i = 0; i < playerCount; i++)
@@ -410,8 +410,13 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
 
     // tell clients to connect
     for (i=0;players[i];i++){
-      write(players[i]->socket, "CHAT", 4);
-      printf("told player %s to connect\n", players[i]->name);
+      if ((players[i]->alive)==0) { // dead people
+          write(players[i]->socket, "CHAT0", 5);
+          printf("told player %s to be view only\n", players[i]->name);
+      } else {
+        write(players[i]->socket, "CHAT1", 5); // living people
+        printf("told player %s to connect\n", players[i]->name);
+      }
     }
 
     i = 0;
