@@ -89,8 +89,10 @@ void role_assign(int num_player, int num_player_per_role[6]){
     strcat(in, client_role);
     write(players[i]->socket, in, sizeof(in));
   }
-  //TODO: less hacky way of accounting for the lead mafia than add one after roles are assigned?
+  free(num_player_per_role);
+  //TODO: less hacky way of accounting for the lead mafia than add one after roles are assigned? And to deal with the special roles
   num_mafia++;
+  num_special *= 3;
 }
 
 void reset_votes(int playerCount){
@@ -316,6 +318,7 @@ void nightCycle(int playerCount)
 
   if(players[dead_player]->alive == 0){
     int i;
+    //TODO: list multiple people at the same time
     char out[BUFFER_SIZE] = NOTIFY_PLAYER;
     strcat(out, sep);
     strcat(out, "Player ");
@@ -344,6 +347,7 @@ void dayCycle(int playerCount){
     }
   }
   int playerKilled = eliminate_player(playerCount, -1);
+  //TODO: list multiple people at the same time
   char msg[BUFFER_SIZE] = NOTIFY_PLAYER;
   strcat(msg, sep);
   strcat(msg, players[playerKilled]->name);
@@ -356,23 +360,7 @@ void dayCycle(int playerCount){
   hunterTakedown(playerKilled, playerCount);
 }
 
-void day1NightTask(int playerCount){
-  int i;
-  char in[BUFFER_SIZE] = {0};
-  for (i = 0; i < playerCount; i++)
-  {
-    if (strcmp("lead mafia", players[i]->role) == 0 && players[i]->alive)
-    {
-      write(players[i]->socket, "Mafia, look up. See your fellow members. Press enter when you look back here.", BUFFER_SIZE);
-      read(players[i]->socket, in, sizeof(in));
-      i = playerCount;
-    }
-  }
-}
-
 void gameCycle(int playerCount){
-  // day 1 night
-  day1NightTask(playerCount);
   while (1)
   {
     // night cycle
@@ -385,7 +373,6 @@ void gameCycle(int playerCount){
     if (checkForGameEnd(num_player, num_mafia, num_civilian, num_special)){
       break;
     }
-    // announce the deaths of the day here
   }
 }
 
@@ -545,18 +532,17 @@ int main() {
     //  free_struct(players);
     }
   // }
-  num_special = 3;
-  num_civilian = (num_player - num_special)/2;
-  num_mafia = num_player-num_special-num_civilian-1;
+  num_special = 1;
+  num_civilian = (num_player - 3 * num_special)/2;
+  num_mafia = num_player- 3 * num_special-num_civilian-1;
   if(num_mafia > 5){
     num_mafia = 5;
-    num_civilian = num_player-num_special-num_mafia-1;
+    num_civilian = num_player-3 * num_special-num_mafia-1;
   }
 
   // set number of people per role
-  int * num_player_per_role = role_setup(num_civilian,num_mafia,num_special/3,num_special/3,1,num_special/3);
+  int * num_player_per_role = role_setup(num_civilian,num_mafia,num_special,num_special,1,num_special);
   // here we assign roles
   role_assign(num_player, num_player_per_role);
-  free(num_player_per_role);
   gameCycle(num_player);
 }
