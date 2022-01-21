@@ -95,6 +95,8 @@ void role_assign(int num_player, int num_player_per_role[6]){
     strcat(in, client_role);
     write(players[i]->socket, in, sizeof(in));
   }
+  //TODO: less hacky way of accounting for the lead mafia than add one after roles are assigned?
+  num_mafia++;
 }
 
 void reset_votes(int playerCount){
@@ -104,28 +106,30 @@ void reset_votes(int playerCount){
   }
 }
 
-int eliminate_player(int playerCount){
-  int playerOut = -1;
+int eliminate_player(int playerCount, int specifiedPlayer){
   int votes = 0;
   int i;
-  for (i = 0; i < playerCount; i++){
-    if (votes < players[i]->votes){
-      playerOut = i;
-      votes = players[i]->votes;
+  if (specifiedPlayer < 0 || specifiedPlayer >= num_player){
+    for (i = 0; i < playerCount; i++)
+    {
+      if (votes < players[i]->votes){
+        specifiedPlayer = i;
+        votes = players[i]->votes;
+      }
     }
   }
-  if (playerOut != -1){
-    players[playerOut]->alive = false;
-    if (strstr(players[playerOut]->role, "mafia")){
+  if (specifiedPlayer >= 0 && specifiedPlayer < num_player){
+    players[specifiedPlayer]->alive = false;
+    if (strstr(players[specifiedPlayer]->role, "mafia")){
       num_mafia -= 1;
-    }else if (strcmp(players[playerOut]->role, "civilian") == 0){
+    }else if (strcmp(players[specifiedPlayer]->role, "civilian") == 0){
       num_civilian -= 1;
     }else{
       num_special -= 1;
     }
   }
   reset_votes(playerCount);
-  return playerOut;
+  return specifiedPlayer;
 }
 
 void sigint_handle(){
@@ -165,7 +169,7 @@ void hunterTakedown(int hunterPlayerNum, int playerCount){
           read(players[hunterPlayerNum]->socket, in, sizeof(in));
           sscanf(in, "%d", &hunter_voted_player);
         }
-        players[hunter_voted_player]->alive = 0;
+        eliminate_player(playerCount, hunter_voted_player);
         invalid_input = 0;
       }
       else if (a == 'n')
@@ -255,7 +259,6 @@ void nightCycle(int playerCount)
       strcat(out, disclose_players_to_player());
       votedPlayer = getPlayerNumInput(out, i, playerCount);
       dead_player = votedPlayer;
-      players[votedPlayer]->alive = 0;
     }
   }
   // doctor
@@ -269,7 +272,7 @@ void nightCycle(int playerCount)
       {
         if (players[i]->medicineCount > 0)
         {
-          char save[BUFFER_SIZE] = "";
+          char save[BUFFER_SIZE] = {0};
           strcat(save, players[dead_player]->name);
           strcat(save, " was killed tonight, do you want to save this person? [y/n]");
           write(players[i]->socket, save, BUFFER_SIZE);
@@ -281,11 +284,11 @@ void nightCycle(int playerCount)
           if (a == 'y')
           {
             players[i]->medicineCount--;
-            players[dead_player]->alive = 1;
             invalid_input = 0;
           }
           else if (a == 'n')
           {
+            eliminate_player(playerCount, dead_player);
             invalid_input = 0;
           }
         }
@@ -302,11 +305,11 @@ void nightCycle(int playerCount)
     
           if (a == 'y')
           {
-            char out[BUFFER_SIZE] = DOCTOR_PROMPT;
+            char out[BUFFER_SIZE] = "Who do you want to posion?";
             strcat(out, sep);
             strcat(out, disclose_players_to_player());
             votedPlayer = getPlayerNumInput(out, i, playerCount);
-            players[votedPlayer]->alive = 0;
+            eliminate_player(playerCount, votedPlayer);
             players[i]->poisonCount--;
             invalid_input = 0;
           }
@@ -348,7 +351,7 @@ void dayCycle(int playerCount)
       players[votedPlayer]->votes++;
     }
   }
-  int playerKilled = eliminate_player(playerCount);
+  int playerKilled = eliminate_player(playerCount, -1);
   char msg[BUFFER_SIZE] = NOTIFY_PLAYER;
   strcat(msg, sep);
   strcat(msg, players[playerKilled]->name);
@@ -409,7 +412,6 @@ int main() {
     read(STDIN_FILENO, in, sizeof(in));
     sscanf(in, "%d", &gameCapacity);
   }
-
 
   printf("Game is now open for players to log on!\n");
 
