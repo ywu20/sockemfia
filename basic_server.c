@@ -104,7 +104,7 @@ void reset_votes(int playerCount){
   }
 }
 
-void eliminate_player(int playerCount){
+int eliminate_player(int playerCount){
   int playerOut = -1;
   int votes = 0;
   int i;
@@ -116,15 +116,16 @@ void eliminate_player(int playerCount){
   }
   if (playerOut != -1){
     players[playerOut]->alive = false;
-    char msg[BUFFER_SIZE] = NOTIFY_PLAYER;
-    strcat(msg, sep);
-    strcat(msg, players[playerOut]->name);
-    strcat(msg, " was elimated.");
-    for (i = 0; i < playerCount; i++){
-      write(players[i]->socket, msg, sizeof(msg));
+    if (strstr(players[playerOut]->role, "mafia")){
+      num_mafia -= 1;
+    }else if (strcmp(players[playerOut]->role, "civilian") == 0){
+      num_civilian -= 1;
+    }else{
+      num_special -= 1;
     }
   }
   reset_votes(playerCount);
+  return playerOut;
 }
 
 void sigint_handle(){
@@ -155,17 +156,17 @@ void hunterTakedown(int hunterPlayerNum, int playerCount){
       sscanf(in, "%c", &a);
       if (a == 'y')
       {
+        char out[BUFFER_SIZE] = HUNTER_PROMPT;
+        strcat(out, sep);
+        strcat(out, disclose_players_to_player());
         while (hunter_voted_player < 0 || hunter_voted_player >= playerCount)
         {
-          char out[BUFFER_SIZE] = HUNTER_PROMPT;
-          strcat(out, sep);
-          strcat(out, disclose_players_to_player());
           write(players[hunterPlayerNum]->socket, out, BUFFER_SIZE);
           read(players[hunterPlayerNum]->socket, in, sizeof(in));
           sscanf(in, "%d", &hunter_voted_player);
-          players[hunter_voted_player]->alive = 0;
-          invalid_input = 0;
         }
+        players[hunter_voted_player]->alive = 0;
+        invalid_input = 0;
       }
       else if (a == 'n')
       {
@@ -347,9 +348,17 @@ void dayCycle(int playerCount)
       players[votedPlayer]->votes++;
     }
   }
-  eliminate_player(playerCount);
+  int playerKilled = eliminate_player(playerCount);
+  char msg[BUFFER_SIZE] = NOTIFY_PLAYER;
+  strcat(msg, sep);
+  strcat(msg, players[playerKilled]->name);
+  strcat(msg, " was killed in the broad daylight.");
+  for (i = 0; i < playerCount; i++)
+  {
+    write(players[i]->socket, msg, sizeof(msg));
+  }
 
-  hunterTakedown(votedPlayer, playerCount);
+  hunterTakedown(playerKilled, playerCount);
 }
 
 void day1NightTask(int playerCount){
