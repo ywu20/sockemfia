@@ -70,19 +70,26 @@ int main(int argc, char *argv[]) {
 int chat(int server) {
   printf("You have entered the chatroom!\n");
   char input[100];
-  int f = fork();
+  int f = 0;
 
-  if (f == 0) { // child waits for input to send
-    while (read(STDIN_FILENO, input, sizeof(input))) {
-      write(server, input, 100);
+  if (living == '1') {
+    // printf("living: %c\tliving='0': %d\n", living,(living == '0'));
+    f = fork();
+
+    if (f == 0) { // child waits for input to send
+      while (read(STDIN_FILENO, input, sizeof(input))) {
+        write(server, input, 100);
+      }
     }
+  } else {
+    printf("You are dead. You cannot talk.\n");
   }
 
   // main program reads from server client msgs
   while(read(server, input, sizeof(input)) && strcmp(input, "STOPTALKING")){
     printf("%s", input);
   }
-  kill(f, SIGKILL); // removes child process
+  if (f) kill(f, SIGKILL); // removes child process
   printf("\nchatroom over\n\n");
   return 0;
 }
