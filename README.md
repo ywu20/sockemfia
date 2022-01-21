@@ -1,6 +1,6 @@
 # sockemfia
 
-## By Sarah Leong, Yuqing Wu, Andy Lin pd 5
+By Sarah Leong, Yuqing Wu, Andy Lin pd 5
 ## Description of Project
 
 This will be an online multiplayer game where people play Mafia, an epic party game.  
@@ -43,6 +43,7 @@ special roles:
    - Working with files will be used to have the server communicate with the client and the client with the server.
    - Allocating memory will be used in order to work with structs to contain player data and in order to work with some user input.
    - Using forking in order to have a timer for voting and discussion phases of the game.
+   - Signals will be used in order to handle an event where the whole server goes down and ensure that the client isn't left in the dark.
    #### How you are breaking down the project and who is responsible for which parts.
    - Explain game rules at the start. - Yuqing
    - Semaphore - Andy
