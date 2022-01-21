@@ -546,11 +546,11 @@ int main() {
     }
   // }
   num_special = 3;
-  num_civilian = (num_player - 3*num_special)/2;
-  num_mafia = num_player- 3*num_special-num_civilian-1;
+  num_civilian = (num_player - num_special)/2;
+  num_mafia = num_player-num_special-num_civilian-1;
   if(num_mafia > 5){
     num_mafia = 5;
-    num_civilian = num_player-3*num_special-num_mafia-1;
+    num_civilian = num_player-num_special-num_mafia-1;
   }
 
   // set number of people per role
