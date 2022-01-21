@@ -24,32 +24,7 @@ void print_struct(struct player * s [20], int num_player){
   }
 }
 
-int main() {
-    // only for setting up separate chatrooms
-    int sd;
-
-    struct player * players[20];
-    players[0] = player_setup("steve",4);
-    players[1] = player_setup("tony",5);
-    // players[2] = player_setup("polly",6);
-    // players[3] = player_setup("santonio",7);
-
-    print_struct(players,1);
-
-    sd = server_setup();
-    int i = 2;
-    while (i) {
-        int s = server_connect(sd);
-        i--;
-    }
-
-    printf("sd: %d\n", sd);
-
-    // printf("socket #: %d\n",players[2]->socket);
-    chatroom(30,2,players);
-}
-
-int chatroom(int seconds, int max_clients, struct player * players[20]) { // seconds will but rn doesn't limit chat time
+int chatroom(int seconds, int max_clients, struct player * players[20]) {
     fd_set read_fds, write_fds, clients_fds;
     int max_fd = 0;
     int r;
@@ -63,11 +38,12 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) { // sec
 
     // tell clients to connect
     for (i=0;players[i];i++){
-      write(players[i]->socket, "CHAT", 4);
-      printf("told player %s to connect\n", players[i]->name);
-      if (!(players[i]->alive)) {
-          write(players[i]->socket, "DEAD", 4);
-          printf("told player %s to be view only", players[i]->name);
+      if ((players[i]->alive)==0) { // dead people
+          write(players[i]->socket, "CHAT0", 5);
+          printf("told player %s to be view only\n", players[i]->name);
+      } else {
+        write(players[i]->socket, "CHAT1", 5); // living people
+        printf("told player %s to connect\n", players[i]->name);
       }
     }
 
@@ -136,7 +112,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) { // sec
             for (int i = 0; i < 50; i++) {
                 if (chatter[i]!='\0') {
                     final_message[i] = chatter[i];
-                    printf("copying %c into final msg\n", chatter[i]);
+                    // printf("copying %c into final msg\n", chatter[i]);
                 } else {
                     len = i+1;
                     final_message[i] = ':';
@@ -147,7 +123,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) { // sec
             for (int i = 0; i < 100;i++) {
                 if (input[i]!='\n') {
                     final_message[i+len] = input[i];
-                    printf("copying %c into final msg\n", final_message[i+len]);
+                    // printf("copying %c into final msg\n", final_message[i+len]);
                 } else {
                     final_message[i+len] = '\n';
                     i = 100;
@@ -172,4 +148,30 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) { // sec
     }
 
     return 0;
+}
+
+int main() {
+    // only for setting up separate chatrooms
+    int sd;
+
+    struct player * players[20];
+    players[0] = player_setup("steve",4);
+    players[1] = player_setup("tony",5);
+    players[1]->alive = 0;
+    // players[2] = player_setup("polly",6);
+    // players[3] = player_setup("santonio",7);
+
+    print_struct(players,1);
+
+    sd = server_setup();
+    int i = 2;
+    while (i) {
+        int s = server_connect(sd);
+        i--;
+    }
+
+    printf("sd: %d\n", sd);
+
+    // printf("socket #: %d\n",players[2]->socket);
+    chatroom(30,2,players);
 }
