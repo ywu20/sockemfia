@@ -24,7 +24,7 @@ void print_struct(struct player * s [20], int num_player){
   }
 }
 
-int chatroom(int seconds, int max_clients, struct player * players[20]) {
+int chatroom(int seconds, int max_clients, struct player * players[20], int mafiaChat) {
     fd_set read_fds, write_fds, clients_fds;
     int max_fd = 0;
     int r;
@@ -38,12 +38,24 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
 
     // tell clients to connect
     for (i=0;players[i];i++){
-      if ((players[i]->alive)==0) { // dead people
-          write(players[i]->socket, "CHAT0", 5);
-          printf("told player %s to be view only\n", players[i]->name);
+      if (mafiaChat) {
+        if (!strcmp(players[i]->role, "mafia") || !strcmp(players[i]->role, "lead mafia")) {
+            if ((players[i]->alive)==0) { // dead people
+                write(players[i]->socket, "CHAT0", 5);
+                printf("told player %s to be view only\n", players[i]->name);
+            } else {
+                write(players[i]->socket, "CHAT1", 5); // living people
+                printf("told player %s to connect\n", players[i]->name);
+            }
+        }
       } else {
-        write(players[i]->socket, "CHAT1", 5); // living people
-        printf("told player %s to connect\n", players[i]->name);
+        if ((players[i]->alive)==0) { // dead people
+            write(players[i]->socket, "CHAT0", 5);
+            printf("told player %s to be view only\n", players[i]->name);
+        } else {
+            write(players[i]->socket, "CHAT1", 5); // living people
+            printf("told player %s to connect\n", players[i]->name);
+        }
       }
     }
 
@@ -173,5 +185,5 @@ int main() {
     printf("sd: %d\n", sd);
 
     // printf("socket #: %d\n",players[2]->socket);
-    chatroom(30,2,players);
+    chatroom(30,0,players,1);
 }
