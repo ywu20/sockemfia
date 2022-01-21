@@ -119,3 +119,6 @@ Added a check to see if end game condition is met
 andyL —- 2022-01-20 19:40
 Hunter takedown is now in it's own function and fixed issue where hunter takedown was broken
 If a player is killed, their category headcount decrements by one (regardless of when the player was killed)
+
+sarahL -- 2022-1-21 00:27
+Worked on limiting factors of the chatroom (mafia only chat and no dead talkers)
