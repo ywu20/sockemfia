@@ -330,7 +330,7 @@ void nightCycle(int playerCount)
 
 void dayCycle(int playerCount){
   informAllPlayers(-1, "The sun has risen. But there is animosity in the air.");
-  chatroom(20, playerCount, players); // doesn't have access to its own socket but maybe that can be fixed later
+  chatroom(20, playerCount, players);
   int i;
   int votedPlayer;
   char out[BUFFER_SIZE] = VOTE_PLAYER;
@@ -365,6 +365,7 @@ void gameCycle(int playerCount){
 
 int chatroom(int seconds, int max_clients, struct player * players[20]) {
     fd_set read_fds, write_fds, clients_fds;
+    int noRead[20];
     int max_fd = 0;
     int r;
 
@@ -382,6 +383,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
       if ((players[i]->alive)==0) {
           write(players[i]->socket, "DEAD", 4);
           printf("told player %s to be view only", players[i]->name);
+          noRead[i] = players[i] -> socket;
       }
     }
 
@@ -428,6 +430,12 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
 
         // copy client set
         read_fds = clients_fds;
+        // remove the no read clients from read set
+        for (int i = 0; i < max_clients; i++) {
+          if (noRead[i] && FD_ISSET(noRead[i], &read_fds)) {
+            FD_CLR(noRead[i], &read_fds);
+          }
+        }
         write_fds = clients_fds;
 
         int sel = select(max_fd+1, &read_fds, NULL, NULL, &t);

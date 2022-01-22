@@ -82,7 +82,7 @@ int chat(int server) {
   char input[100] = {0};
   int f = 0;
 
-  if (read(server,input,sizeof(input)) && !strcmp(input, "DEAD")){
+  if (read(server,input,sizeof(input)) && strcmp(input, "DEAD")){
     f = fork();
 
     if (f == 0) { // child waits for input to send
@@ -98,7 +98,7 @@ int chat(int server) {
   {
     printf("%s", input);
   }
-  kill(f, 0); // removes child process
+  if (f) kill(f, 0); // removes child process if there is one
   printf("\nchatroom over\n\n");
   if (gameEnd == 0)
   {
