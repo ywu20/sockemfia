@@ -380,7 +380,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
     for (i=0;players[i];i++){
       clients[i] = players[i]->socket;
       write(clients[i], "CHAT", 4);
-      printf("told player %s to connect\n", players[i]->name);
+      printf("\ntold player %s to connect\n", players[i]->name);
       if (!FD_ISSET(clients[i], &clients_fds)) {
         FD_SET(clients[i], &clients_fds); // add to client set
         printf("added fd %d to read set\n", clients[i]);
@@ -423,16 +423,16 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
     // start the chatroom
     while (time(NULL)-startTime < seconds) {
 
-        // 10 second warning will be moved to a fork
-        if (time(NULL)-startTime <= 10.5 && time(NULL)-startTime >= 9.5) {
-            write_fds = clients_fds;
-            for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
-                if (FD_ISSET(clients[i], &write_fds)) { // sends 10 second warning
-                    printf("going to write to %d: [server] 10 SECONDS LEFT TO CHAT!\n", clients[i]);
-                    write(clients[i], "[server] 10 SECONDS LEFT TO CHAT!\n", 34);
-                }
-            }
-        }
+        // // 10 second warning will be moved to a fork
+        // if (time(NULL)-startTime <= 10.5 && time(NULL)-startTime >= 9.5) {
+        //     write_fds = clients_fds;
+        //     for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
+        //         if (FD_ISSET(clients[i], &write_fds)) { // sends 10 second warning
+        //             printf("going to write to %d: [server] 10 SECONDS LEFT TO CHAT!\n", clients[i]);
+        //             write(clients[i], "[server] 10 SECONDS LEFT TO CHAT!\n", 34);
+        //         }
+        //     }
+        // }
 
         char input[100] = {0};
         char chatter[50] = "";
