@@ -84,10 +84,11 @@ int chat(int server) {
 
   if (read(server,input,sizeof(input)) && (strncmp(input, "CHATDEAD",8)!=0)){
     printf("forking a child\n");
-    printf("input:%s\n", input);
+    // printf("input:%s\n", input);
     f = fork();
 
     if (f == 0) { // child waits for input to send
+      printf("reading input started\n");
       while (read(STDIN_FILENO, input, sizeof(input))) {
         write(server, input, sizeof(input));
       }
