@@ -18,7 +18,8 @@ int chat(int server) {
   char input[100] = {0};
   int f = 0;
 
-  if (read(server,input,sizeof(input)) && !strcmp(input, "DEAD")){
+  if (read(server,input,sizeof(input)) && strcmp(input, "DEAD")==0){
+    printf("input (dead?): %s\n\n", input);
     f = fork();
 
     if (f == 0) { // child waits for input to send

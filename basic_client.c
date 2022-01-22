@@ -51,8 +51,8 @@ int main(int argc, char *argv[]) {
     else if(strcmp(parsedIn[0], NOTIFY_PLAYER) == 0){
       printf("%s\n", parsedIn[1]);
     }
-    else if(strcmp(parsedIn[0], "CHAT") == 0) {
-      chat(from_server);
+    else if(strncmp(parsedIn[0], "CHAT",4) == 0) {
+      chat(from_server, parsedIn[0][4]);
     }
     else
     {
@@ -77,28 +77,29 @@ int main(int argc, char *argv[]) {
   }
 }
 
-int chat(int server) {
+int chat(int server, char living) {
   printf("You have entered the chatroom!\n");
-  char input[100] = {0};
-  int f = fork();
+  char input[100];
+  int f = 0;
 
-  if (f == 0) { // child waits for input to send
-    while (read(STDIN_FILENO, input, sizeof(input))) {
-      write(server, input, sizeof(input));
+  if (living == '1') {
+    // printf("living: %c\tliving='0': %d\n", living,(living == '0'));
+    f = fork();
+
+    if (f == 0) { // child waits for input to send
+      while (read(STDIN_FILENO, input, sizeof(input))) {
+        write(server, input, 100);
+      }
     }
+  } else {
+    printf("You are dead. You cannot talk.\n");
   }
 
   // main program reads from server client msgs
-  int gameEnd = -1;
-  while (read(server, input, sizeof(input)) && strcmp(input, STOP_TALKING) && (gameEnd = strcmp(input, END_GAME)))
-  {
+  while(read(server, input, sizeof(input)) && strcmp(input, "STOPTALKING")){
     printf("%s", input);
   }
-  kill(f, 0); // removes child process
+  if (f) kill(f, SIGKILL); // removes child process
   printf("\nchatroom over\n\n");
-  if (gameEnd == 0)
-  {
-    printf("Game has ended!\n");
-  }
   return 0;
 }

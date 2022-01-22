@@ -333,7 +333,7 @@ void nightCycle(int playerCount)
 
 void dayCycle(int playerCount){
   informAllPlayers(-1, "The sun has risen. But there is animosity in the air.");
-  chatroom(20, playerCount, players); // doesn't have access to its own socket but maybe that can be fixed later
+  chatroom(20, playerCount, players);
   int i;
   int votedPlayer;
   char out[BUFFER_SIZE] = VOTE_PLAYER;
@@ -368,20 +368,25 @@ void gameCycle(int playerCount){
 
 int chatroom(int seconds, int max_clients, struct player * players[20]) {
     fd_set read_fds, write_fds, clients_fds;
-    int max_fd;
+    int max_fd = 0;
     int r;
 
     struct timeval t = {seconds, 0};
 
     // gather the clients
     int clients[max_clients];
-    printf("waiting for people to connect\n");
+    printf("waiting for people to connect\n"); 
     int i = 0;
 
     // tell clients to connect
     for (i=0;players[i];i++){
-      write(players[i]->socket, "CHAT", 4);
-      printf("told player %s to connect\n", players[i]->name);
+        if ((players[i]->alive)==0) { // dead people
+            write(players[i]->socket, "CHAT0", 5);
+            printf("told player %s to be view only\n", players[i]->name);
+        } else {
+            write(players[i]->socket, "CHAT1", 5); // living people
+            printf("told player %s to connect\n", players[i]->name);
+        }
     }
 
     i = 0;
@@ -391,7 +396,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
             max_fd = clients[i];
             printf("clients[%d] joined\n", clients[i]);
         }
-        // FD_SET(3, &clients_fds); // add server socket to set
+        // FD_SET(sd, &clients_fds); // add server socket to set
         if (FD_ISSET(clients[i], &clients_fds)) { // if already in client set
             printf("client %d was read set\n", clients[i]);
         } else { // if not in set
@@ -409,15 +414,15 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
     while (time(NULL)-startTime < seconds) {
 
         // 10 second warning will be moved to a fork
-        // if (time(NULL)-startTime <= 10.5 && time(NULL)-startTime >= 9.5) {
-        //     write_fds = clients_fds;
-        //     for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
-        //         if (FD_ISSET(clients[i], &write_fds)) { // sends 10 second warning
-        //             printf("going to write to %d: [server] 10 SECONDS LEFT TO CHAT!\n", clients[i]);
-        //             write(clients[i], "[server] 10 SECONDS LEFT TO CHAT!\n", 34);
-        //         }
-        //     }
-        // }
+        if (time(NULL)-startTime <= 10.5 && time(NULL)-startTime >= 9.5) {
+            write_fds = clients_fds;
+            for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
+                if (FD_ISSET(clients[i], &write_fds)) { // sends 10 second warning
+                    printf("going to write to %d: [server] 10 SECONDS LEFT TO CHAT!\n", clients[i]);
+                    write(clients[i], "[server] 10 SECONDS LEFT TO CHAT!\n", 34);
+                }
+            }
+        }
 
         char input[100] = "";
         char chatter[50] = "";
@@ -449,7 +454,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
             for (int i = 0; i < 50; i++) {
                 if (chatter[i]!='\0') {
                     final_message[i] = chatter[i];
-                    printf("copying %c into final msg\n", chatter[i]);
+                    // printf("copying %c into final msg\n", chatter[i]);
                 } else {
                     len = i+1;
                     final_message[i] = ':';
@@ -460,7 +465,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
             for (int i = 0; i < 100;i++) {
                 if (input[i]!='\n') {
                     final_message[i+len] = input[i];
-                    printf("copying %c into final msg\n", final_message[i+len]);
+                    // printf("copying %c into final msg\n", final_message[i+len]);
                 } else {
                     final_message[i+len] = '\n';
                     i = 100;
@@ -477,8 +482,8 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
         }
         printf("loop complete\n\n");
     }
-
-
+    
+    
     for (i=0;players[i];i++){
       write(players[i]->socket, "STOPTALKING", 11);
       printf("told player %s to stop talking\n", players[i]->name);
