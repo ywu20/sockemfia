@@ -96,7 +96,9 @@ int chat(int server) {
   }
   kill(f, 0); // removes child process
   printf("\nchatroom over\n\n");
-  if (gameEnd == 0){
+  fpurge(STDIN_FILENO);
+  if (gameEnd == 0)
+  {
     printf("Game has ended!\n");
   }
   return 0;
