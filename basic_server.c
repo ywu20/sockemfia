@@ -452,7 +452,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
         }
         write_fds = clients_fds;
 
-        int sel = select(max_fd+1, &read_fds, NULL, NULL, &t);
+        int sel = select(max_fd, &read_fds, NULL, NULL, &t);
         printf("sel: %d\n", sel);
 
         if (sel) { // if there is stuff left in read set
