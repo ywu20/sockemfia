@@ -269,7 +269,7 @@ void nightCycle(int playerCount)
   {
     int invalid_input = 1;
     int votedPlayer = playerCount;
-    if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
+    if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive && i != dead_player)
     {
       while (invalid_input)
       {
