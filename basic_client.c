@@ -82,7 +82,7 @@ int chat(int server) {
   char input[100] = {0};
   int f = -1;
 
-  read(server,input,sizeof(input);
+  read(server,input,sizeof(input));
   printf("input: %s\n", input);
   if (strncmp(input, "CHATDEAD",4)!=0){
     // printf("input:%s\n", input);
