@@ -83,8 +83,8 @@ int chat(int server) {
   int f = -1;
 
   if (read(server,input,sizeof(input)) && (strncmp(input, "CHATDEAD",8)!=0)){
+    printf("input:%s\n", input);
     printf("forking a child\n");
-    // printf("input:%s\n", input);
     f = fork();
 
     if (f == 0) { // child waits for input to send

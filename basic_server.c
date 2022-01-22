@@ -445,8 +445,8 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
         // remove the no read clients from read set
         for (int i = 0; i < max_clients; i++) {
           if (noRead[i] && FD_ISSET(noRead[i], &read_fds)) {
-            // FD_CLR(noRead[i], &read_fds);
-            // printf("removed %d from read set\n", noRead[i]);
+            FD_CLR(noRead[i], &read_fds);
+            printf("removed %d from read set\n", noRead[i]);
           }
           else 
           printf("noRead[%d]: %d\n",i, noRead[i]);
