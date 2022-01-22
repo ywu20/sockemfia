@@ -39,16 +39,13 @@ void print_struct(struct player * s [20], int num_player){
 
 char* disclose_players_to_player(){
   int i;
-  char *out = malloc(BUFFER_SIZE);
+  char *out = malloc(sizeof(char) * BUFFER_SIZE);
   for (i = 0; players[i]; i++)
   {
     if (players[i]->alive)
     {
       char cur[BUFFER_SIZE];
-      sprintf(cur, "%d", i);
-      strcat(cur, ": ");
-      strcat(cur, players[i]->name);
-      strcat(cur, "\n");
+      sprintf(cur, "%d: %s\n", i, players[i]->name);
       strcat(out, cur);
     }
   }
@@ -175,7 +172,6 @@ void hunterTakedown(int hunterPlayerNum, int playerCount){
       if (a == 'y')
       {
         char out[BUFFER_SIZE] = HUNTER_PROMPT;
-        strcat(out, sep);
         strcat(out, disclose_players_to_player());
         while (hunter_voted_player < 0 || hunter_voted_player >= playerCount)
         {
@@ -249,20 +245,18 @@ void nightCycle(int playerCount)
     if (strcmp("detective", players[i]->role) == 0 && players[i]->alive)
     {
       char out[BUFFER_SIZE] = DETECTIVE_PROMPT;
-      strcat(out, sep);
       strcat(out, disclose_players_to_player());
       votedPlayer = getPlayerNumInput(out, i, playerCount);
-      char message[100] = "Player ";
-      strcat(message, players[votedPlayer]->name);
+      char message[100];
       if ((strcmp(players[votedPlayer]->role, "mafia") == 0) || (strcmp(players[votedPlayer]->role, "lead mafia") == 0))
       {
-        strcat(message, " is a bad person. Hit enter to continue.");
+        sprintf(message, "Player %s is a bad person. Hit enter to continue.", players[votedPlayer]->name);
       }
       else
       {
-        strcat(message, " is a good person. Hit enter to continue.");
+        sprintf(message, "Player %s is a good person. Hit enter to continue.", players[votedPlayer]->name);
       }
-      write(players[i]->socket, message, 100);
+      write(players[i]->socket, message, sizeof(message));
       read(players[i]->socket, in, sizeof(in));
     }
   }
@@ -273,7 +267,6 @@ void nightCycle(int playerCount)
     if (strcmp("lead mafia", players[i]->role) == 0 && players[i]->alive)
     {
       char out[BUFFER_SIZE] = MAFIA_PROMPT;
-      strcat(out, sep);
       strcat(out, disclose_players_to_player());
       votedPlayer = getPlayerNumInput(out, i, playerCount);
       dead_player = votedPlayer;
@@ -322,8 +315,7 @@ void nightCycle(int playerCount)
 
           if (a == 'y')
           {
-            char out[BUFFER_SIZE] = "Who do you want to posion?";
-            strcat(out, sep);
+            char out[BUFFER_SIZE] = "Who do you want to posion?\n";
             strcat(out, disclose_players_to_player());
             votedPlayer = getPlayerNumInput(out, i, playerCount);
 
@@ -347,13 +339,12 @@ void dayCycle(int playerCount){
   chatroom(20, playerCount, players); // doesn't have access to its own socket but maybe that can be fixed later
   int i;
   int votedPlayer;
+  char out[BUFFER_SIZE] = VOTE_PLAYER;
+  strcat(out, disclose_players_to_player());
   for (i = 0; i < playerCount; i++)
   {
     if (players[i]->alive)
     {
-      char out[BUFFER_SIZE] = VOTE_PLAYER;
-      strcat(out, sep);
-      strcat(out, disclose_players_to_player());
       votedPlayer = getPlayerNumInput(out, i, playerCount);
       players[votedPlayer]->votes++;
     }

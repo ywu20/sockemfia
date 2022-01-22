@@ -1,8 +1,8 @@
-#define DETECTIVE_PROMPT "Who do you want to know about?"
-#define MAFIA_PROMPT "Who do you want to kill?"
+#define DETECTIVE_PROMPT "Who do you want to know about?\n"
+#define MAFIA_PROMPT "Who do you want to kill?\n"
 #define DOCTOR_PROMPT "Who do you want to save?"
-#define VOTE_PLAYER "Who do you want to accuse?"
-#define HUNTER_PROMPT "Who do you want to bring?"
+#define VOTE_PLAYER "Who do you want to accuse?\n"
+#define HUNTER_PROMPT "Who do you want to take down with you?\n"
 #define MAFIA_WIN "The mafia has won!"
 #define INNOCENT_WIN "The civilians has won!"
 
