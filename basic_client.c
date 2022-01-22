@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
 int chat(int server) {
   printf("You have entered the chatroom!\n");
   char input[100] = {0};
-  int f = 0;
+  int f = -1;
 
   if (read(server,input,sizeof(input)) && strcmp(input, "DEAD")){
     printf("forking a child\n");
@@ -100,7 +100,7 @@ int chat(int server) {
   {
     printf("%s", input);
   }
-  if (f) kill(f, 0); // removes child process if there is one
+  if (f>0) kill(f, 0); // removes child process if there is one
   printf("\nchatroom over\n\n");
   if (gameEnd == 0)
   {
