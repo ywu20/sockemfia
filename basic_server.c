@@ -127,9 +127,11 @@ int eliminate_player(int playerCount, int specifiedPlayer){
 void informAllPlayers(int dead_player, char * note){
   int i;
   char out[BUFFER_SIZE] = NOTIFY_PLAYER;
+  char noteFilled[BUFFER_SIZE];
+  strcpy(noteFilled, note);
   strcat(out, sep);
-  strcat(out, note);
-  sprintf(out, out, players[dead_player]->name);
+  sprintf(noteFilled, note, players[dead_player]->name);
+  strcat(out, noteFilled);
   for (i = 0; players[i]; i++)
   {
     write(players[i]->socket, out, sizeof(out));
