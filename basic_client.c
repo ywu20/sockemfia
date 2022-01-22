@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     else if(strcmp(parsedIn[0], NOTIFY_PLAYER) == 0){
       printf("%s\n", parsedIn[1]);
     }
-    else if(strncmp(parsedIn[0], "CHAT",5) == 0) {
+    else if(strncmp(parsedIn[0], "CHAT",4) == 0) {
       chat(from_server, parsedIn[0][4]);
     }
     else
