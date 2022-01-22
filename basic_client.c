@@ -67,11 +67,15 @@ int main(int argc, char *argv[]) {
 int chat(int server) {
   printf("You have entered the chatroom!\n");
   char input[100] = {0};
-  int f = fork();
+  int f = 0;
 
-  if (f == 0) { // child waits for input to send
-    while (read(STDIN_FILENO, input, sizeof(input))) {
-      write(server, input, sizeof(input));
+  if (read(server,input,sizeof(input)) && !strcmp(input, "DEAD")){
+    f = fork();
+
+    if (f == 0) { // child waits for input to send
+      while (read(STDIN_FILENO, input, sizeof(input))) {
+        write(server, input, sizeof(input));
+      }
     }
   }
 
