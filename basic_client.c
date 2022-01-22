@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
       }
       else
       {
-        fseek(STDIN_FILENO, 0, SEEK_END);
+        lseek(STDIN_FILENO, 0, SEEK_END);
         read(STDIN_FILENO, in, sizeof(in));
         write(from_server, in, sizeof(in));
         kill(f, SIGKILL);
