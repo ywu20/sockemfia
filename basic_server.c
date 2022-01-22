@@ -448,7 +448,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
             FD_CLR(noRead[i], &read_fds);
             printf("removed %d from read set\n", noRead[i]);
           }
-          else printf("noRead[%d]: %d\n",i, noRead);
+          else printf("noRead[%d]: %d\n",i, noRead[i]);
         }
         write_fds = clients_fds;
 
