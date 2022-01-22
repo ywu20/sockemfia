@@ -37,7 +37,6 @@ int main(int argc, char *argv[]) {
   printf("Your name is: %s",name);
 
   while(1){
-    while ((getchar()) != '\n');
     char serverComms[BUFFER_SIZE] = {0};
     char in[BUFFER_SIZE] = {0};
     read(from_server, serverComms, sizeof(serverComms));
