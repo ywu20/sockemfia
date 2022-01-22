@@ -30,13 +30,6 @@ struct player * player_setup(char name[50], int socket){
   return a;
 }
 
-void print_struct(struct player * s [20], int num_player){
-  int i;
-  for(i=0;i<=num_player;i++){
-     printf("Player name: %s\n Player role: %s\n Player alive status: %d\n", s[i]->name, s[i]->role, s[i]->alive);
-  }
-}
-
 char* disclose_players_to_player(){
   int i;
   char *out = malloc(sizeof(char) * BUFFER_SIZE);
@@ -50,7 +43,6 @@ char* disclose_players_to_player(){
     }
   }
   out[strlen(out) - 1] = '\0';
-  printf("%s\n", out);
   return out;
 }
 
@@ -512,13 +504,12 @@ int main() {
   while (num_player < gameCapacity)
   {
     to_client = server_connect(sd);
-    printf("===============Client connected===============\n");
+    printf("===============Player connected===============\n");
     char name[50];
-    read(to_client, name, 50);
-    printf("client name: %s\n", name);
+    read(to_client, name, sizeof(name));
+    printf("Player name: %s\n", name);
 
     players[num_player] = player_setup(name, to_client);
-    print_struct(players, num_player);
     num_player++;
   }
   num_special = 1;

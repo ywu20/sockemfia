@@ -76,10 +76,15 @@ int chat(int server) {
   }
 
   // main program reads from server client msgs
-  while(read(server, input, sizeof(input)) && strcmp(input, STOP_TALKING)){
+  int gameEnd;
+  while (read(server, input, sizeof(input)) && strcmp(input, STOP_TALKING) && (gameEnd = strcmp(input, END_GAME)))
+  {
     printf("%s", input);
   }
   kill(f, SIGKILL); // removes child process
   printf("\nchatroom over\n\n");
+  if (gameEnd == 0){
+    printf("Game has ended!\n");
+  }
   return 0;
 }
