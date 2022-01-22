@@ -380,10 +380,17 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
     for (i=0;players[i];i++){
       write(players[i]->socket, "CHAT", 4);
       printf("told player %s to connect\n", players[i]->name);
-      if (FD_ISSET(players[i]->socket, &clients_fds)) {
+      if (!FD_ISSET(players[i]->socket, &clients_fds)) {
         FD_SET(clients[i], &clients_fds); // add to client set
         printf("added fd %d to read set\n", clients[i]);
       }
+
+      // update max_fds
+      if (clients[i] > max_fd) {
+          max_fd = clients[i];
+          printf("clients[%d] joined\n", clients[i]);
+      }
+
       if ((players[i]->alive)==0) {
           write(players[i]->socket, "DEAD", 4);
           printf("told player %s to be view only\n", players[i]->name);
