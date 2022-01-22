@@ -126,3 +126,8 @@ Worked on limiting factors of the chatroom (mafia only chat and no dead talkers)
 andyL -- 2022-01-21 11:47
 removed unnecessary shared memory component of project
 tried to fix issue where if one special role dies, then mafia wins
+
+andyL -- 2022-01-21 23:39
+added a function that can tell all players the events that have gone down during the game
+each death is now reported
+hunter death will now result in a recursive cycle if another hunter is chosen
