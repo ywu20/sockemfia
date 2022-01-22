@@ -377,7 +377,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
     for (i=0;players[i];i++){
       write(players[i]->socket, "CHAT", 4);
       printf("told player %s to connect\n", players[i]->name);
-      if (!(players[i]->alive)) {
+      if ((players[i]->alive)==0) {
           write(players[i]->socket, "DEAD", 4);
           printf("told player %s to be view only", players[i]->name);
       }
