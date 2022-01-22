@@ -48,7 +48,7 @@ char* disclose_players_to_player(){
 
 void free_struct(struct player * s[20]){
   int i;
-  for(i=0;i<20;i++){
+  for(i=0;players[i];i++){
     write(s[i]->socket, END_GAME, sizeof(END_GAME));
     free(s[i]);
   }
