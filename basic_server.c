@@ -502,7 +502,7 @@ int main() {
   srand(time (NULL));
   while (gameCapacity < MIN_PLAYERS){
     printf("How many players will be playing this game of Mafia?\nYou need at least %d people to play this game.\n", MIN_PLAYERS);
-    read(STDIN_FILENO, in, sizeof(in));
+    fgets(in, 4, stdin);
     sscanf(in, "%d", &gameCapacity);
   }
 

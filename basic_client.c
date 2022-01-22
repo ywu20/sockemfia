@@ -26,12 +26,16 @@ void rules(){
     Hunter: can kill a person when the hunter dies.\n");
 }
 
-int main(int argc, char *argv[]) {
-  rules();
-  char *ipAddress = "localhost";
-  if (argc > 1){
-    ipAddress = argv[1];
+int main() {
+  char ipAddress[BUFFER_SIZE];
+  printf("What is the IP address of the game server you want to connect to?\nPress enter if you want to use localhost.\n");
+  fgets(ipAddress, BUFFER_SIZE, stdin);
+  ipAddress[strlen(ipAddress) - 1] = '\0';
+  if (strlen(ipAddress) == 0)
+  {
+    strcpy(ipAddress, "localhost");
   }
+  rules();
   int from_server = client_handshake(ipAddress);
   char * name = get_name(from_server);
   printf("Your name is: %s",name);
@@ -57,7 +61,7 @@ int main(int argc, char *argv[]) {
     else
     {
       printf("%s\n", parsedIn[0]);
-      read(STDIN_FILENO, in, sizeof(in));
+      fgets(in, BUFFER_SIZE, stdin);
       write(from_server, in, sizeof(in));
     }
     free(parsedIn);
@@ -70,7 +74,7 @@ int chat(int server) {
   int f = fork();
 
   if (f == 0) { // child waits for input to send
-    while (read(STDIN_FILENO, input, sizeof(input))) {
+    while (fgets(input, 100, stdin)) {
       write(server, input, sizeof(input));
     }
   }

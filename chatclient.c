@@ -21,7 +21,7 @@ int chat(int server) {
     f = fork();
 
     if (f == 0) { // child waits for input to send
-      while (read(STDIN_FILENO, input, sizeof(input))) {
+      while (fgets(input, 100, stdin)) {
         write(server, input, sizeof(input));
       }
     }
