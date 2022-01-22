@@ -113,6 +113,8 @@ int eliminate_player(int playerCount, int specifiedPlayer){
       if (votes < players[i]->votes){
         specifiedPlayer = i;
         votes = players[i]->votes;
+      }else if (votes == players[i]->votes){
+        specifiedPlayer = num_player;
       }
     }
   }
@@ -131,6 +133,18 @@ int eliminate_player(int playerCount, int specifiedPlayer){
   }
   reset_votes(playerCount);
   return specifiedPlayer;
+}
+
+void reportDeath(int dead_player, char * note){
+  int i;
+  char out[BUFFER_SIZE] = NOTIFY_PLAYER;
+  strcat(out, sep);
+  strcat(out, note);
+  sprintf(out, out, players[dead_player]->name);
+  for (i = 0; players[i]; i++)
+  {
+    write(players[i]->socket, out, sizeof(out));
+  }
 }
 
 void sigint_handle(){
@@ -170,16 +184,7 @@ void hunterTakedown(int hunterPlayerNum, int playerCount){
           sscanf(in, "%d", &hunter_voted_player);
         }
 
-        int i;
-        strcpy(in, NOTIFY_PLAYER);
-        strcat(in, sep);
-        strcat(in, players[hunter_voted_player]->name);
-        strcat(in, " was killed by the ghost of ");
-        strcat(in, players[hunterPlayerNum]->name);
-        for (i = 0; i < playerCount; i++)
-        {
-          write(players[i]->socket, in, sizeof(in));
-        }
+        reportDeath(hunter_voted_player, "Player %s was killed by the ghost of a slain hunter.");
         eliminate_player(playerCount, hunter_voted_player);
         invalid_input = 0;
       }
@@ -299,6 +304,7 @@ void nightCycle(int playerCount)
           }
           else if (a == 'n')
           {
+            reportDeath(dead_player, "Player %s was killed last night.");
             eliminate_player(playerCount, dead_player);
             invalid_input = 0;
           }
@@ -319,6 +325,8 @@ void nightCycle(int playerCount)
             strcat(out, sep);
             strcat(out, disclose_players_to_player());
             votedPlayer = getPlayerNumInput(out, i, playerCount);
+
+            reportDeath(votedPlayer, "Player %s was poisoned and died last night.");
             eliminate_player(playerCount, votedPlayer);
             players[i]->poisonCount--;
             invalid_input = 0;
@@ -329,19 +337,6 @@ void nightCycle(int playerCount)
           }
         }
       }
-    }
-  }
-
-  if(players[dead_player]->alive == 0){
-    int i;
-    //TODO: list multiple people at the same time
-    char out[BUFFER_SIZE] = NOTIFY_PLAYER;
-    strcat(out, sep);
-    strcat(out, "Player ");
-    strcat(out, players[dead_player]->name);
-    strcat(out, " died last night.\n");
-    for (i=0;players[i];i++){
-      write(players[i]->socket, out, BUFFER_SIZE);
     }
   }
 }
@@ -362,15 +357,7 @@ void dayCycle(int playerCount){
     }
   }
   int playerKilled = eliminate_player(playerCount, -1);
-  //TODO: list multiple people at the same time
-  char msg[BUFFER_SIZE] = NOTIFY_PLAYER;
-  strcat(msg, sep);
-  strcat(msg, players[playerKilled]->name);
-  strcat(msg, " was killed in the broad daylight.");
-  for (i = 0; i < playerCount; i++)
-  {
-    write(players[i]->socket, msg, sizeof(msg));
-  }
+  reportDeath(playerKilled, "Player %s was killed in the broad daylight.");
 }
 
 void gameCycle(int playerCount){
