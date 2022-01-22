@@ -89,7 +89,7 @@ int chat(int server) {
   }
 
   // main program reads from server client msgs
-  int gameEnd;
+  int gameEnd = -1;
   while (read(server, input, sizeof(input)) && strcmp(input, STOP_TALKING) && (gameEnd = strcmp(input, END_GAME)))
   {
     printf("%s", input);
