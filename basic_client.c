@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     char **parsedIn = parse_args(serverComms, STRING_SEPERATOR);
 
     if (strcmp(parsedIn[0], END_GAME) == 0){
-      printf("Game has ended!\n");
+      printf(GAME_HAS_ENDED);
       break;
     }else if(strcmp(parsedIn[0], TELL_ROLE) == 0){
       printf("Your role is: %s\n", parsedIn[1]);
@@ -57,8 +57,21 @@ int main(int argc, char *argv[]) {
     else
     {
       printf("%s\n", parsedIn[0]);
-      read(STDIN_FILENO, in, sizeof(in));
-      write(from_server, in, sizeof(in));
+      int f = fork();
+
+      if (f == 0){
+        while(read(from_server, in, sizeof(in)) && strcmp(in, END_GAME)){
+        }
+        kill(getppid(), SIGINT);
+        printf(GAME_HAS_ENDED);
+        exit(0);
+      }
+      else
+      {
+        read(STDIN_FILENO, in, sizeof(in));
+        write(from_server, in, sizeof(in));
+        kill(f, SIGINT);
+      }
     }
     free(parsedIn);
   }
@@ -81,7 +94,7 @@ int chat(int server) {
   {
     printf("%s", input);
   }
-  kill(f, SIGKILL); // removes child process
+  kill(f, 0); // removes child process
   printf("\nchatroom over\n\n");
   if (gameEnd == 0){
     printf("Game has ended!\n");
