@@ -380,29 +380,33 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
     for (i=0;players[i];i++){
       write(players[i]->socket, "CHAT", 4);
       printf("told player %s to connect\n", players[i]->name);
+      if (FD_ISSET(players[i]->socket, clients_fds)) {
+        FD_SET(clients[i], &clients_fds); // add to client set
+        printf("added fd %d to read set\n", clients[i]);
+      }
       if ((players[i]->alive)==0) {
           write(players[i]->socket, "DEAD", 4);
-          printf("told player %s to be view only", players[i]->name);
+          printf("told player %s to be view only\n", players[i]->name);
           noRead[i] = players[i] -> socket;
       }
     }
 
-    i = 0;
-    while (i<max_clients) {
-        clients[i] = (players[i] -> socket);
-        if (clients[i] > max_fd) {
-            max_fd = clients[i];
-            printf("clients[%d] joined\n", clients[i]);
-        }
-        // FD_SET(sd, &clients_fds); // add server socket to set
-        if (FD_ISSET(clients[i], &clients_fds)) { // if already in client set
-            printf("client %d was read set\n", clients[i]);
-        } else { // if not in set
-            FD_SET(clients[i], &clients_fds); // add to client set
-            printf("added fd %d to read set\n", clients[i]);
-        }
-        i++;
-    }
+    // i = 0;
+    // while (i<max_clients) {
+    //     clients[i] = (players[i] -> socket);
+    //     if (clients[i] > max_fd) {
+    //         max_fd = clients[i];
+    //         printf("clients[%d] joined\n", clients[i]);
+    //     }
+    //     // FD_SET(sd, &clients_fds); // add server socket to set
+    //     if (FD_ISSET(clients[i], &clients_fds)) { // if already in client set
+    //         printf("client %d was read set\n", clients[i]);
+    //     } else { // if not in set
+    //         FD_SET(clients[i], &clients_fds); // add to client set
+    //         printf("added fd %d to read set\n", clients[i]);
+    //     }
+    //     i++;
+    // }
     printf("new max_fd: %d\n", max_fd);
 
     // preparing the timings
@@ -434,6 +438,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
         for (int i = 0; i < max_clients; i++) {
           if (noRead[i] && FD_ISSET(noRead[i], &read_fds)) {
             FD_CLR(noRead[i], &read_fds);
+            printf("removed %d from read set\n", noRead[i]);
           }
         }
         write_fds = clients_fds;
