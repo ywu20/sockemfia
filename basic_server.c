@@ -458,6 +458,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
 
         if (sel) { // if there is stuff left in read set
             for (int i = 0; i < max_clients; i++) { // loops to find the active client
+                printf("checking clients[%d]\n",i);
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
                     printf("going to read from %d\n", clients[i]);
                     r = read(clients[i], input, sizeof(input));
