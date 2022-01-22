@@ -37,6 +37,7 @@ int main(int argc, char *argv[]) {
   printf("Your name is: %s",name);
 
   while(1){
+    while ((getchar()) != '\n');
     char serverComms[BUFFER_SIZE] = {0};
     char in[BUFFER_SIZE] = {0};
     read(from_server, serverComms, sizeof(serverComms));
@@ -96,7 +97,6 @@ int chat(int server) {
   }
   kill(f, 0); // removes child process
   printf("\nchatroom over\n\n");
-  while ((getchar()) != '\n');
   if (gameEnd == 0)
   {
     printf("Game has ended!\n");

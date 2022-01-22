@@ -35,7 +35,6 @@ int chat(int server) {
   }
   kill(f, SIGKILL); // removes child process
   printf("\nchatroom over\n\n");
-  while ((getchar()) != '\n');
   if (gameEnd == 0){
     printf("Game has ended!\n");
   }
