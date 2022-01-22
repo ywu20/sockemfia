@@ -525,4 +525,5 @@ int main() {
   // here we assign roles
   role_assign(num_player, num_player_per_role);
   gameCycle(num_player);
+  free_struct(players);
 }
