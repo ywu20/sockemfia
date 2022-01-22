@@ -135,7 +135,7 @@ int eliminate_player(int playerCount, int specifiedPlayer){
   return specifiedPlayer;
 }
 
-void reportDeath(int dead_player, char * note){
+void informAllPlayers(int dead_player, char * note){
   int i;
   char out[BUFFER_SIZE] = NOTIFY_PLAYER;
   strcat(out, sep);
@@ -184,7 +184,7 @@ void hunterTakedown(int hunterPlayerNum, int playerCount){
           sscanf(in, "%d", &hunter_voted_player);
         }
 
-        reportDeath(hunter_voted_player, "Player %s was killed by the ghost of a slain hunter.");
+        informAllPlayers(hunter_voted_player, "Player %s was killed by the ghost of a slain hunter.");
         eliminate_player(playerCount, hunter_voted_player);
         invalid_input = 0;
       }
@@ -242,6 +242,7 @@ void nightCycle(int playerCount)
   int votedPlayer;
   char a;
 
+  informAllPlayers(-1, "The sun has set. Night has fallen among us.");
   // detective
   for (i = 0; i < playerCount; i++)
   {
@@ -304,7 +305,7 @@ void nightCycle(int playerCount)
           }
           else if (a == 'n')
           {
-            reportDeath(dead_player, "Player %s was killed last night.");
+            informAllPlayers(dead_player, "Player %s was killed last night.");
             eliminate_player(playerCount, dead_player);
             invalid_input = 0;
           }
@@ -326,7 +327,7 @@ void nightCycle(int playerCount)
             strcat(out, disclose_players_to_player());
             votedPlayer = getPlayerNumInput(out, i, playerCount);
 
-            reportDeath(votedPlayer, "Player %s was poisoned and died last night.");
+            informAllPlayers(votedPlayer, "Player %s was poisoned and died last night.");
             eliminate_player(playerCount, votedPlayer);
             players[i]->poisonCount--;
             invalid_input = 0;
@@ -342,6 +343,7 @@ void nightCycle(int playerCount)
 }
 
 void dayCycle(int playerCount){
+  informAllPlayers(-1, "The sun has risen. But there is animosity in the air.");
   chatroom(20, playerCount, players); // doesn't have access to its own socket but maybe that can be fixed later
   int i;
   int votedPlayer;
@@ -357,7 +359,7 @@ void dayCycle(int playerCount){
     }
   }
   int playerKilled = eliminate_player(playerCount, -1);
-  reportDeath(playerKilled, "Player %s was killed in the broad daylight.");
+  informAllPlayers(playerKilled, "Player %s was killed in the broad daylight.");
 }
 
 void gameCycle(int playerCount){
@@ -524,14 +526,10 @@ int main() {
     read(to_client, name, 50);
     printf("client name: %s\n", name);
 
-    // char * client_role = role_assign(to_client, roles, num_player_per_role);
     players[num_player] = player_setup(name, to_client);
     print_struct(players, num_player);
     num_player++;
-    //remove_shm();
-    //  free_struct(players);
-    }
-  // }
+  }
   num_special = 1;
   num_civilian = (num_player - 3 * num_special)/2;
   num_mafia = num_player- 3 * num_special-num_civilian-1;
