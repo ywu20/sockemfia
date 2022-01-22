@@ -139,3 +139,6 @@ changed some sigkills to sigints
 cleaned up code a bit, remove some unnecessary print statements
 added a new workflow for inputting an ip address (is currently only on andy branch)
 fixed segfault that occurs when someone has won
+
+sarahL -- 2022-01-22 16:21
+Chatroom doesn't relay any input that dead people send (moved code from sarah to sarah2; merged with main)
