@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
       {
         read(STDIN_FILENO, in, sizeof(in));
         write(from_server, in, sizeof(in));
-        kill(f, SIGINT);
+        kill(f, SIGKILL);
       }
     }
     free(parsedIn);
