@@ -3,6 +3,8 @@
 #include "chat.h"
 struct player * players[20];
 
+void hunterTakedown(int hunterPlayerNum, int playerCount);
+
 int* role_setup(int civilian, int mafia, int doctor, int detective, int lead_mafia, int hunter){
   int* role_num = malloc(sizeof(int *) * 6);
 
@@ -121,6 +123,9 @@ int eliminate_player(int playerCount, int specifiedPlayer){
     }else if (strcmp(players[specifiedPlayer]->role, "civilian") == 0){
       num_civilian -= 1;
     }else{
+      if (strcmp(players[specifiedPlayer]->role, "hunter") == 0){
+        hunterTakedown(specifiedPlayer, playerCount);
+      }
       num_special -= 1;
     }
   }
@@ -163,6 +168,17 @@ void hunterTakedown(int hunterPlayerNum, int playerCount){
           write(players[hunterPlayerNum]->socket, out, BUFFER_SIZE);
           read(players[hunterPlayerNum]->socket, in, sizeof(in));
           sscanf(in, "%d", &hunter_voted_player);
+        }
+
+        int i;
+        strcpy(in, NOTIFY_PLAYER);
+        strcat(in, sep);
+        strcat(in, players[hunter_voted_player]->name);
+        strcat(in, " was killed by the ghost of ");
+        strcat(in, players[hunterPlayerNum]->name);
+        for (i = 0; i < playerCount; i++)
+        {
+          write(players[i]->socket, in, sizeof(in));
         }
         eliminate_player(playerCount, hunter_voted_player);
         invalid_input = 0;
@@ -288,7 +304,7 @@ void nightCycle(int playerCount)
           }
         }
 
-        if (players[i]->poisonCount > 0)
+        if (players[i]->poisonCount > 0 && players[i]->alive)
         {
           char kill[100] = "Do you want to poison anyone tonight? [y/n]";
           write(players[i]->socket, kill, BUFFER_SIZE);
@@ -327,7 +343,6 @@ void nightCycle(int playerCount)
     for (i=0;players[i];i++){
       write(players[i]->socket, out, BUFFER_SIZE);
     }
-    hunterTakedown(dead_player, playerCount);
   }
 }
 
@@ -356,8 +371,6 @@ void dayCycle(int playerCount){
   {
     write(players[i]->socket, msg, sizeof(msg));
   }
-
-  hunterTakedown(playerKilled, playerCount);
 }
 
 void gameCycle(int playerCount){
