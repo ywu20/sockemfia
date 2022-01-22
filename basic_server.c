@@ -127,9 +127,11 @@ int eliminate_player(int playerCount, int specifiedPlayer){
 void informAllPlayers(int dead_player, char * note){
   int i;
   char out[BUFFER_SIZE] = NOTIFY_PLAYER;
+  char noteFilled[BUFFER_SIZE];
+  strcpy(noteFilled, note);
   strcat(out, sep);
-  strcat(out, note);
-  sprintf(out, out, players[dead_player]->name);
+  sprintf(noteFilled, note, players[dead_player]->name);
+  strcat(out, noteFilled);
   for (i = 0; players[i]; i++)
   {
     write(players[i]->socket, out, sizeof(out));
@@ -269,7 +271,7 @@ void nightCycle(int playerCount)
   {
     int invalid_input = 1;
     int votedPlayer = playerCount;
-    if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive)
+    if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive && i != dead_player)
     {
       while (invalid_input)
       {
@@ -529,4 +531,5 @@ int main() {
   // here we assign roles
   role_assign(num_player, num_player_per_role);
   gameCycle(num_player);
+  free_struct(players);
 }

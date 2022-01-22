@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
       {
         read(STDIN_FILENO, in, sizeof(in));
         write(from_server, in, sizeof(in));
-        kill(f, SIGINT);
+        kill(f, SIGKILL);
       }
     }
     free(parsedIn);
@@ -93,14 +93,15 @@ int chat(int server) {
   }
 
   // main program reads from server client msgs
-  int gameEnd;
+  int gameEnd = -1;
   while (read(server, input, sizeof(input)) && strcmp(input, STOP_TALKING) && (gameEnd = strcmp(input, END_GAME)))
   {
     printf("%s", input);
   }
   kill(f, 0); // removes child process
   printf("\nchatroom over\n\n");
-  if (gameEnd == 0){
+  if (gameEnd == 0)
+  {
     printf("Game has ended!\n");
   }
   return 0;
