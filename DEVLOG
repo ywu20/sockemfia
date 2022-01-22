@@ -138,3 +138,4 @@ fixed issue where if game ends, the game client still runs for player that is ex
 changed some sigkills to sigints
 cleaned up code a bit, remove some unnecessary print statements
 added a new workflow for inputting an ip address (is currently only on andy branch)
+fixed segfault that occurs when someone has won
