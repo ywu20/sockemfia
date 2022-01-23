@@ -96,7 +96,7 @@ int chat(int server, char living) {
 
   // main program reads from server client msgs
   while(read(server, input, sizeof(input)) && strcmp(input, "STOPTALKING")){
-    input[99] = '\n';
+    input[152] = '\n';
     printf("%s", input);
   }
   if (f) kill(f, SIGKILL); // removes child process
