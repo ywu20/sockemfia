@@ -427,19 +427,22 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
 
     // preparing the timings
     time_t startTime = time(NULL);
-    // int f = fork();
+    int f = fork();
 
     // start the chatroom
     while (time(NULL)-startTime < seconds) {
-      // if (f==0) { // timer
-      //   if (seconds - (time(NULL) - startTime) == 10) {
-      //     for (int i = 0; i < max_clients; i++) {
-      //       write(clients[i], "=== 10 SECONDS LEFT IN CHATROOM ===\n", 36);
-      //     }
-      //     exit(0);
-      //   }
-      // }
-      // else { // main program
+      if (f==0) { // timer
+        if (seconds - (time(NULL) - startTime) == 10) {
+          for (int i = 0; i < max_clients; i++) {
+            write(clients[i], "=== 10 SECONDS LEFT IN CHATROOM ===\n", 36);
+          }
+          exit(0);
+        }
+        if (seconds - (time(NULL) - startTime) < 10) {
+          exit(0);
+        }
+      }
+      else { // main program
         char input[100] = "";
         char chatter[50] = "";
         char final_message[152] = "";
