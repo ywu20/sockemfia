@@ -149,39 +149,17 @@ static void sighandler(int signo){
  }
 }
 
-void hunterTakedown(int hunterPlayerNum, int playerCount){
-  char in[BUFFER_SIZE] = {0};
-
-  if (strcmp(players[hunterPlayerNum]->role, "hunter") == 0)
-  {
-    int invalid_input = 1;
-    int hunter_voted_player = playerCount;
-    while (invalid_input)
-    {
-      write(players[hunterPlayerNum]->socket, "You can take a player down with you when you die. Do you want to bring a player with you [y/n]?", BUFFER_SIZE);
-      read(players[hunterPlayerNum]->socket, in, sizeof(in));
-
-      char a;
-      sscanf(in, "%c", &a);
-      if (a == 'y')
-      {
-        char out[BUFFER_SIZE] = HUNTER_PROMPT;
-        strcat(out, disclose_players_to_player());
-        while (hunter_voted_player < 0 || hunter_voted_player >= playerCount)
-        {
-          write(players[hunterPlayerNum]->socket, out, BUFFER_SIZE);
-          read(players[hunterPlayerNum]->socket, in, sizeof(in));
-          sscanf(in, "%d", &hunter_voted_player);
-        }
-
-        informAllPlayers(hunter_voted_player, "Player %s was killed by the ghost of a slain hunter.");
-        eliminate_player(playerCount, hunter_voted_player);
-        invalid_input = 0;
-      }
-      else if (a == 'n')
-      {
-        invalid_input = 0;
-      }
+int getYesOrNo(int playerNum, char *prompt){
+  char a;
+  char in[BUFFER_SIZE];
+  write(players[playerNum]->socket, prompt, BUFFER_SIZE);
+  while (1){
+    read(players[playerNum]->socket, in, sizeof(in));
+    sscanf(in, "%c", &a);
+    if (a == 'y'){
+      return 1;
+    }else if (a == 'n'){
+      return 0;
     }
   }
 }
@@ -190,7 +168,7 @@ int getPlayerNumInput(char * out, int playerNum, int playerCount){
   int votedPlayer = playerCount;
   char in[BUFFER_SIZE] = {0};
 
-  while (votedPlayer < 0 || votedPlayer >= playerCount)
+  while (votedPlayer < 0 || votedPlayer >= playerCount || players[votedPlayer]->alive == 0)
   {
     write(players[playerNum]->socket, out, BUFFER_SIZE);
     read(players[playerNum]->socket, in, sizeof(in));
@@ -199,6 +177,22 @@ int getPlayerNumInput(char * out, int playerNum, int playerCount){
 
   return votedPlayer;
 }
+
+void hunterTakedown(int hunterPlayerNum, int playerCount){
+  char in[BUFFER_SIZE] = {0};
+
+  if (strcmp(players[hunterPlayerNum]->role, "hunter") == 0)
+  {
+    if (getYesOrNo(hunterPlayerNum, "You can take a player down with you when you die. Do you want to bring a player with you [y/n]?")){
+      char out[BUFFER_SIZE] = HUNTER_PROMPT;
+      strcat(out, disclose_players_to_player());
+      int hunter_voted_player = getPlayerNumInput(out, hunterPlayerNum, playerCount);
+      informAllPlayers(hunter_voted_player, "Player %s was killed by the ghost of a slain hunter.");
+      eliminate_player(playerCount, hunter_voted_player);
+    }
+  }
+}
+
 
 int checkForGameEnd(int playerCount, int mafiaCount, int civilianCount, int specialCount){
   int i;
@@ -274,70 +268,34 @@ void nightCycle(int playerCount)
   // doctor
   for (i = 0; i < playerCount; i++)
   {
-    int invalid_input = 1;
-    int votedPlayer = playerCount;
+    char message[BUFFER_SIZE] = {0};
     if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive && i != dead_player)
     {
-      while (invalid_input)
-      {
-        if (players[i]->medicineCount > 0)
-        {
-          char save[BUFFER_SIZE] = {0};
-          strcat(save, players[dead_player]->name);
-          strcat(save, " was killed tonight, do you want to save this person? [y/n]");
-          write(players[i]->socket, save, BUFFER_SIZE);
-          read(players[i]->socket, in, sizeof(in));
-
-          sscanf(in, "%c", &a);
-
-          if (a == 'y')
-          {
-            players[i]->medicineCount--;
-            invalid_input = 0;
-          }
-          else if (a == 'n')
-          {
-            informAllPlayers(dead_player, "Player %s was killed last night.");
-            eliminate_player(playerCount, dead_player);
-            invalid_input = 0;
-          }
+      if (players[i]->medicineCount > 0){
+        sprintf(message, "%s was killed tonight. Do you want to save this person? [y/n]", players[dead_player]->name);
+        if(getYesOrNo(i, message)){
+          players[i]->medicineCount--;
         }else{
           informAllPlayers(dead_player, "Player %s was killed last night.");
           eliminate_player(playerCount, dead_player);
-          invalid_input = 0;
         }
+      }else{
+        informAllPlayers(dead_player, "Player %s was killed last night.");
+        eliminate_player(playerCount, dead_player);
+      }
 
-        if (players[i]->poisonCount > 0 && players[i]->alive)
-        {
-          invalid_input = 1;
-          char kill[100] = "Do you want to poison anyone tonight? [y/n]";
-          write(players[i]->socket, kill, BUFFER_SIZE);
-          read(players[i]->socket, in, sizeof(in));
+      if (players[i]->poisonCount > 0 && players[i]->alive){
+        if (getYesOrNo(i, "Do you want to posion anyone tonight? [y/n]")){
+          strcpy(message, "Who do you want to posion?\n");
+          strcat(message, disclose_players_to_player());
+          int votedPlayer = getPlayerNumInput(message, i, playerCount);
 
-          sscanf(in, "%c", &a);
-          char message[BUFFER_SIZE] = "";
-
-          if (a == 'y')
-          {
-            char out[BUFFER_SIZE] = "Who do you want to posion?\n";
-            strcat(out, disclose_players_to_player());
-            votedPlayer = getPlayerNumInput(out, i, playerCount);
-
-            informAllPlayers(votedPlayer, "Player %s was poisoned and died last night.");
-            eliminate_player(playerCount, votedPlayer);
-            players[i]->poisonCount--;
-            invalid_input = 0;
-          }
-          else if (a == 'n')
-          {
-            invalid_input = 0;
-          }
+          informAllPlayers(votedPlayer, "Player %s was poisoned and died last night.");
+          eliminate_player(playerCount, votedPlayer);
+          players[i]->poisonCount--;
         }
       }
-    }else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive && i == dead_player){
-      informAllPlayers(dead_player, "Player %s was killed last night.");
-      eliminate_player(playerCount, dead_player);
-    }else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive == false){
+    }else if (strcmp("doctor", players[i]->role) == 0 && ((players[i]->alive && i == dead_player) || players[i]->alive == false)){
       informAllPlayers(dead_player, "Player %s was killed last night.");
       eliminate_player(playerCount, dead_player);
     }
@@ -445,9 +403,9 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
         }
       }
       else { // main program
-        char input[100] = "";
-        char chatter[50] = "";
-        char final_message[152] = "";
+        char input[100];
+        char chatter[50];
+        char final_message[153];
         FD_ZERO(&read_fds); // clears set
         FD_ZERO(&write_fds);
 
@@ -467,32 +425,17 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
                     here = i;
                 }
             }
-            
-            // prepare the final message
-            int len = 0;
-            for (int i = 0; i < 50; i++) {
-                if (chatter[i]!='\0') {
-                    final_message[i] = chatter[i];
-                } else {
-                    len = i+1;
-                    final_message[i] = ':';
-                    final_message[i+1] = ' ';
-                    i = 50;
-                }
-            }
-            for (int i = 0; i < 100;i++) {
-                if (input[i]!='\n') {
-                    final_message[i+len] = input[i];
-                } else {
-                    final_message[i+len] = '\n';
-                    i = 100;
-                }
-            }
 
-             // if there is stuff left in write set
+            //prepare the final message
+
+            char *toSwap = strchr(input, '\n');
+            *toSwap = '\0';
+            sprintf(final_message, "%s: %s\n", chatter, input);
+
+            // if there is stuff left in write set
             for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
                 if (FD_ISSET(clients[i], &write_fds)) { // if the client is in remaining one
-                    write(clients[i], final_message, 152);
+                    write(clients[i], final_message, 153);
                 }
             }
         }
