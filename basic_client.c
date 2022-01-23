@@ -89,7 +89,7 @@ int chat(int server, char living) {
     if (f == 0) { // child waits for input to send
       while (read(STDIN_FILENO, input, sizeof(input))) {
         write(server, input, 100);
-        strncpy(input, "", 100);
+        strncpy(input, "\0", 100);
       }
     }
   } else {
@@ -100,7 +100,7 @@ int chat(int server, char living) {
   while(read(server, output, sizeof(input)) && strcmp(output, "STOPTALKING")){
     // input[152] = '\n';
     printf("%s", output);
-    strncpy(output, "", 152);
+    strncpy(output, "\0", 152);
   }
   if (f) kill(f, SIGKILL); // removes child process
   printf("\nchatroom over\n\n");
