@@ -1,7 +1,7 @@
 #include "pipe_networking.h"
 #include "parse.h"
 #include "constants.h"
-
+#include "chat.h"
 char * get_name(int server){
   char * name = malloc(sizeof(char) * 50);
   printf("Enter your name (less than 50 characters): ");
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     char **parsedIn = parse_args(serverComms, STRING_SEPERATOR);
 
     if (strcmp(parsedIn[0], END_GAME) == 0){
-      printf("Game has ended!\n");
+      printf(GAME_HAS_ENDED);
       break;
     }else if(strcmp(parsedIn[0], TELL_ROLE) == 0){
       printf("Your role is: %s\n", parsedIn[1]);
@@ -57,27 +57,38 @@ int main(int argc, char *argv[]) {
     else
     {
       printf("%s\n", parsedIn[0]);
-      if (parsedIn[1]){
-        printf("%s\n", parsedIn[1]);
+      int f = fork();
+
+      if (f == 0){
+        while(read(from_server, in, sizeof(in)) && strcmp(in, END_GAME)){
+        }
+        kill(getppid(), SIGINT);
+        printf(GAME_HAS_ENDED);
+        exit(0);
       }
-      read(STDIN_FILENO, in, sizeof(in));
-      write(from_server, in, sizeof(in));
+      else
+      {
+        read(STDIN_FILENO, in, sizeof(in));
+        write(from_server, in, sizeof(in));
+        kill(f, SIGKILL);
+      }
     }
     free(parsedIn);
   }
 }
 
-int chat(int server) {
+int chat(int server, char living) {
   printf("You have entered the chatroom!\n");
   char input[100];
+  char output[152];
   int f = 0;
 
-  if (living == '1') {
-    // printf("living: %c\tliving='0': %d\n", living,(living == '0'));
+  if (living == '1') { // if alive
     f = fork();
 
     if (f == 0) { // child waits for input to send
-      while (read(STDIN_FILENO, input, sizeof(input))) {
+      while (read(STDIN_FILENO, input, sizeof(input)-1)) {
+        input[99] = '\n';
         write(server, input, 100);
       }
     }
@@ -86,8 +97,9 @@ int chat(int server) {
   }
 
   // main program reads from server client msgs
-  while(read(server, input, sizeof(input)) && strcmp(input, "STOPTALKING")){
-    printf("%s", input);
+  while(read(server, output, sizeof(output)) && strncmp(output, "STOPTALKING", 11)){
+    // input[99] = '\n';
+    printf("%s", output);
   }
   if (f) kill(f, SIGKILL); // removes child process
   printf("\nchatroom over\n\n");
