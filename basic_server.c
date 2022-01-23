@@ -233,6 +233,9 @@ void nightCycle(int playerCount)
   char a;
 
   informAllPlayers(-1, "The sun has set. Night has fallen among us.");
+  // mafia chat
+  chatroom(20, num_mafia, players, 1);
+
   // detective
   for (i = 0; i < playerCount; i++)
   {
@@ -333,7 +336,7 @@ void nightCycle(int playerCount)
 
 void dayCycle(int playerCount){
   informAllPlayers(-1, "The sun has risen. But there is animosity in the air.");
-  chatroom(20, playerCount, players);
+  chatroom(20, playerCount, players, 0);
   int i;
   int votedPlayer;
   char out[BUFFER_SIZE] = VOTE_PLAYER;
@@ -366,7 +369,7 @@ void gameCycle(int playerCount){
   }
 }
 
-int chatroom(int seconds, int max_clients, struct player * players[20]) {
+int chatroom(int seconds, int max_clients, struct player * players[20], int mafiaChat) {
     fd_set read_fds, write_fds, clients_fds;
     int max_fd = 0;
     int r;
@@ -380,6 +383,10 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
 
     // tell clients to connect
     for (i=0;players[i];i++){
+      if (mafiaChat && 
+        (strncmp(players[i]->role,"mafia",5) || 
+        (strncmp(players[i]->role,"lead mafia",10)))
+        ) {
         if ((players[i]->alive)==0) { // dead people
             write(players[i]->socket, "CHAT0", 5);
             printf("told player %s to be view only\n", players[i]->name);
@@ -387,6 +394,16 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
             write(players[i]->socket, "CHAT1", 5); // living people
             printf("told player %s to connect\n", players[i]->name);
         }
+      }
+      else {
+        if ((players[i]->alive)==0) { // dead people
+            write(players[i]->socket, "CHAT0", 5);
+            printf("told player %s to be view only\n", players[i]->name);
+        } else {
+            write(players[i]->socket, "CHAT1", 5); // living people
+            printf("told player %s to connect\n", players[i]->name);
+        }
+      }
     }
 
     i = 0;
@@ -416,7 +433,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
       if (f==0) { // timer
         if (seconds - (time(NULL) - startTime) == 10) {
           for (int i = 0; i < max_clients; i++) {
-            write(clients[i], "10 SECONDS LEFT\n", 16);
+            write(clients[i], "=== 10 SECONDS LEFT IN CHATROOM ===\n", 36);
           }
           exit(0);
         }
