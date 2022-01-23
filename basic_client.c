@@ -81,19 +81,23 @@ int chat(int server, char living) {
   printf("You have entered the chatroom!\n");
   char input[100];
   char output[152];
-  int f = 0;
+  int f = fork();
 
-  if (living == '1') { // if alive
-    f = fork();
-
-    if (f == 0) { // child waits for input to send
+  if (f == 0) { // child waits for input to send
+    if (living == '1'){
       while (read(STDIN_FILENO, input, sizeof(input)-1)) {
         input[99] = '\n';
         write(server, input, 100);
       }
+    }else{
+      while (read(STDIN_FILENO, input, sizeof(input)-1)){
+        printf("SYSTEM: You are dead. You cannot talk.\n");
+      }
     }
-  } else {
-    printf("You are dead. You cannot talk.\n");
+  }
+  if (living == '0')
+  { // if dead
+    printf("SYSTEM: You are dead. You cannot talk.\n");
   }
 
   // main program reads from server client msgs
@@ -101,7 +105,7 @@ int chat(int server, char living) {
     // input[99] = '\n';
     printf("%s", output);
   }
-  if (f) kill(f, SIGKILL); // removes child process
+  kill(f, SIGKILL); // removes child process
   printf("\nchatroom over\n\n");
   return 0;
 }
