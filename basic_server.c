@@ -476,15 +476,6 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
             }
             
             // prepare the final message
-            // printf("here: %d\n", here);
-            // printf("players[%d] name: %s\n", here, players[here]->name);
-            // strcpy(final_message, players[here]->name);
-            // printf("final msg so far: %s\n", final_message);
-            // strncat(final_message, ": \0", 3);
-            // printf("final msg so far: %s\n", final_message);
-            // strncat(final_message, input, 100);
-            
-            // back to the original thing
             int len = 0;
             for (int i = 0; i < 50; i++) {
                 if (chatter[i]!='\0') {
