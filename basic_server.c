@@ -235,7 +235,7 @@ void nightCycle(int playerCount)
   informAllPlayers(-1, "The sun has set. Night has fallen among us.");
 
   // mafia chat
-  chatroom(20, num_mafia, players, 1);
+  // chatroom(20, num_mafia, players, 1);
 
   // detective
   for (i = 0; i < playerCount; i++)
