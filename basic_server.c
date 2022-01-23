@@ -466,7 +466,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
                     printf("going to read from %d\n", clients[i]);
                     r = read(clients[i], input, 100);
-                    // strcpy(final_message, players[i]->name);
+                    strcpy(chatter, players[i]->name);
                     printf("got data: %s\n",input);
                     // printf("chatter: %s\n", chatter);
                     // printf("final msg so far: %s\n", final_message);
