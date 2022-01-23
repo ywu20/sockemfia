@@ -464,6 +464,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
             //     }
             // }
             // strncpy(, final_message, 2);
+            strncat(final_message, ": \0", 3);
             printf("final msg so far: %s\n", final_message);
             strncat(final_message, input, 100);
             // for (int i = 0; i < 100;i++) {
