@@ -1,4 +1,5 @@
 #include "chat.h"
+#include "constants.h"
 
 int main() {
 
@@ -17,7 +18,8 @@ int chat(int server) {
   char input[100] = {0};
   int f = 0;
 
-  if (read(server,input,sizeof(input)) && !strcmp(input, "DEAD")){
+  if (read(server,input,sizeof(input)) && strcmp(input, "DEAD")==0){
+    printf("input (dead?): %s\n\n", input);
     f = fork();
 
     if (f == 0) { // child waits for input to send
@@ -28,10 +30,15 @@ int chat(int server) {
   }
 
   // main program reads from server client msgs
-  while(read(server, input, sizeof(input)) && strcmp(input, STOP_TALKING)){
+  int gameEnd = -1;
+  while (read(server, input, sizeof(input)) && strcmp(input, STOP_TALKING) && (gameEnd = strcmp(input, END_GAME)))
+  {
     printf("%s", input);
   }
-  if (f) kill(f, SIGKILL); // removes child process
+  kill(f, SIGKILL); // removes child process
   printf("\nchatroom over\n\n");
+  if (gameEnd == 0){
+    printf("Game has ended!\n");
+  }
   return 0;
 }

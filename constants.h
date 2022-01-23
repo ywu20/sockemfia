@@ -5,6 +5,7 @@
 #define HUNTER_PROMPT "Who do you want to take down with you?\n"
 #define MAFIA_WIN "The mafia has won!"
 #define INNOCENT_WIN "The civilians has won!"
+#define GAME_HAS_ENDED "Game has ended!\n"
 
 #define TELL_ROLE "tellRole"
 #define END_GAME "gameEnd"

@@ -47,7 +47,7 @@ int main() {
     char **parsedIn = parse_args(serverComms, STRING_SEPERATOR);
 
     if (strcmp(parsedIn[0], END_GAME) == 0){
-      printf("Game has ended!\n");
+      printf(GAME_HAS_ENDED);
       break;
     }else if(strcmp(parsedIn[0], TELL_ROLE) == 0){
       printf("Your role is: %s\n", parsedIn[1]);
@@ -55,35 +55,68 @@ int main() {
     else if(strcmp(parsedIn[0], NOTIFY_PLAYER) == 0){
       printf("%s\n", parsedIn[1]);
     }
-    else if(strcmp(parsedIn[0], "CHAT") == 0) {
-      chat(from_server);
+    else if(strncmp(parsedIn[0], "CHAT",4) == 0) {
+      chat(from_server, parsedIn[0][4]);
     }
     else
     {
       printf("%s\n", parsedIn[0]);
-      fgets(in, BUFFER_SIZE, stdin);
-      write(from_server, in, sizeof(in));
+      int f = fork();
+
+      if (f == 0){
+        while(read(from_server, in, sizeof(in)) && strcmp(in, END_GAME)){
+        }
+        kill(getppid(), SIGINT);
+        printf(GAME_HAS_ENDED);
+        exit(0);
+      }
+      else
+      {
+        read(STDIN_FILENO, in, sizeof(in));
+        write(from_server, in, sizeof(in));
+        kill(f, SIGKILL);
+      }
     }
     free(parsedIn);
   }
 }
 
-int chat(int server) {
+int chat(int server, char living) {
   printf("You have entered the chatroom!\n");
-  char input[100] = {0};
+  char input[100];
+  char output[152];
   int f = fork();
 
   if (f == 0) { // child waits for input to send
-    while (fgets(input, 100, stdin)) {
-      write(server, input, sizeof(input));
+    if (living == '1'){
+      while (read(STDIN_FILENO, input, sizeof(input)-1)) {
+        input[99] = '\n';
+        write(server, input, 100);
+      }
+    }else{
+      while (read(STDIN_FILENO, input, sizeof(input)-1)){
+        printf("SYSTEM: You are dead. You cannot talk.\n");
+      }
+    }
+  }else{
+    int gameEnd = -1;
+    if (living == '0')
+    { // if dead
+      printf("SYSTEM: You are dead. You cannot talk.\n");
+    }
+
+    // main program reads from server client msgs
+    while (read(server, output, sizeof(output)) && strncmp(output, "STOPTALKING", 11) && (gameEnd = strcmp(output, END_GAME)))
+    {
+      // input[99] = '\n';
+      printf("%s", output);
+    }
+    kill(f, SIGKILL); // removes child process
+    printf("\nchatroom over\n\n");
+    if (gameEnd == 0){
+      printf(GAME_HAS_ENDED);
+      exit(SIGINT);
     }
   }
-
-  // main program reads from server client msgs
-  while(read(server, input, sizeof(input)) && strcmp(input, STOP_TALKING)){
-    printf("%s", input);
-  }
-  kill(f, SIGKILL); // removes child process
-  printf("\nchatroom over\n\n");
   return 0;
 }

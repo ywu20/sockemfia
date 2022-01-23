@@ -131,3 +131,17 @@ andyL -- 2022-01-21 23:39
 added a function that can tell all players the events that have gone down during the game
 each death is now reported
 hunter death will now result in a recursive cycle if another hunter is chosen
+
+andyL -- 2022-01-22 11:25
+fixed the sigint signal processing function causing a segfault
+fixed issue where if game ends, the game client still runs for player that is expected to input something
+changed some sigkills to sigints
+cleaned up code a bit, remove some unnecessary print statements
+added a new workflow for inputting an ip address (is currently only on andy branch)
+fixed segfault that occurs when someone has won
+
+sarahL -- 2022-01-22 16:21
+Chatroom doesn't relay any input that dead people send (moved code from sarah to sarah2; merged with main)
+
+sarahL -- 2022-01-23 11:26
+Added a mafia chat option
