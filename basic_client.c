@@ -94,18 +94,25 @@ int chat(int server, char living) {
         printf("SYSTEM: You are dead. You cannot talk.\n");
       }
     }
-  }
-  if (living == '0')
-  { // if dead
-    printf("SYSTEM: You are dead. You cannot talk.\n");
-  }
+  }else{
+    int gameEnd = -1;
+    if (living == '0')
+    { // if dead
+      printf("SYSTEM: You are dead. You cannot talk.\n");
+    }
 
-  // main program reads from server client msgs
-  while(read(server, output, sizeof(output)) && strncmp(output, "STOPTALKING", 11)){
-    // input[99] = '\n';
-    printf("%s", output);
+    // main program reads from server client msgs
+    while (read(server, output, sizeof(output)) && strncmp(output, "STOPTALKING", 11) && (gameEnd = strcmp(output, END_GAME)))
+    {
+      // input[99] = '\n';
+      printf("%s", output);
+    }
+    kill(f, SIGKILL); // removes child process
+    printf("\nchatroom over\n\n");
+    if (gameEnd == 0){
+      printf(GAME_HAS_ENDED);
+      exit(SIGINT);
+    }
   }
-  kill(f, SIGKILL); // removes child process
-  printf("\nchatroom over\n\n");
   return 0;
 }
