@@ -436,6 +436,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
 
         int sel = select(max_fd+1, &read_fds, NULL, NULL, &t);
         printf("sel: %d\n", sel);
+        printf("final_msg check (null): %s\n", final_message);
         int here = 0;
 
         if (sel) { // if there is stuff left in read set
@@ -451,7 +452,8 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
                     here = i;
                 }
             }
-            printf("here: %d", here);
+            printf("here: %d\n", here);
+            printf("players[%d] name: %s\n", players[here]->name);
 
             // preparing the final message
             // int len = 0;
