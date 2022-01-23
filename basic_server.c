@@ -383,16 +383,15 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
 
     // tell clients to connect
     for (i=0;players[i];i++){
-      if (mafiaChat && 
-        (strncmp(players[i]->role,"mafia",5) || 
-        (strncmp(players[i]->role,"lead mafia",10)))
-        ) {
-        if ((players[i]->alive)==0) { // dead people
-            write(players[i]->socket, "CHAT0", 5);
-            printf("told player %s to be view only\n", players[i]->name);
-        } else {
-            write(players[i]->socket, "CHAT1", 5); // living people
-            printf("told player %s to connect\n", players[i]->name);
+      if (mafiaChat) {
+        if (strncmp(players[i]->role,"mafia",5) || (strncmp(players[i]->role,"lead mafia",10))) {
+          if ((players[i]->alive)==0) { // dead people
+              write(players[i]->socket, "CHAT0", 5);
+              printf("told player %s to be view only\n", players[i]->name);
+          } else {
+              write(players[i]->socket, "CHAT1", 5); // living people
+              printf("told player %s to connect\n", players[i]->name);
+          }
         }
       }
       else {
