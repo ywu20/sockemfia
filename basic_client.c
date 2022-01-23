@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 
 int chat(int server, char living) {
   printf("You have entered the chatroom!\n");
-  char input[100];
+  char input[152];
   int f = 0;
 
   if (living == '1') {
@@ -91,8 +91,6 @@ int chat(int server, char living) {
         // for (int i = 0; i < sizeof(input); i++) {
         //   if (input[i]=='\n') input[i] = '\0';
         // }
-        input[99] = '\n';
-        printf("input[99]: %c\n", input[99]);
         write(server, input, 100);
       }
     }
