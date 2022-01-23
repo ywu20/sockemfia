@@ -419,29 +419,6 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
             printf("added fd %d to read set\n", clients[i]);
         }
       }
-      // if (clients[i] > max_fd) {
-      //     max_fd = clients[i];
-      //     printf("clients[%d] joined\n", clients[i]);
-      // }
-      
-    }
-
-    // i = 0;
-    // while (i<max_clients) {
-    //     clients[i] = (players[i] -> socket);
-    //     if (clients[i] > max_fd) {
-    //         max_fd = clients[i];
-    //         printf("clients[%d] joined\n", clients[i]);
-    //     }
-    //     // FD_SET(sd, &clients_fds); // add server socket to set
-    //     if (FD_ISSET(clients[i], &clients_fds)) { // if already in client set
-    //         printf("client %d was read set\n", clients[i]);
-    //     } else { // if not in set
-    //         FD_SET(clients[i], &clients_fds); // add to client set
-    //         printf("added fd %d to read set\n", clients[i]);
-    //     }
-    //     i++;
-    // }
     printf("new max_fd: %d\n", max_fd);
 
     // preparing the timings
@@ -476,6 +453,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
 
         if (sel) { // if there is stuff left in read set
             for (int i = 0; i < max_clients; i++) { // loops to find the active client
+                printf("clients[%d]: %d\n", i, clients[i]);
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
                     printf("going to read from %d\n", clients[i]);
                     r = read(clients[i], input, 100);
