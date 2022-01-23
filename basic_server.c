@@ -398,6 +398,8 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
           if (clients[i] > max_fd) {
               max_fd = clients[i];
               printf("clients[%d] joined\n", clients[i]);
+              FD_SET(clients[i], &clients_fds); // add to client set
+              printf("added fd %d to read set\n", clients[i]);
           }
         }
       }
@@ -413,6 +415,8 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
         if (clients[i] > max_fd) {
             max_fd = clients[i];
             printf("clients[%d] joined\n", clients[i]);
+            FD_SET(clients[i], &clients_fds); // add to client set
+            printf("added fd %d to read set\n", clients[i]);
         }
       }
       // if (clients[i] > max_fd) {
