@@ -385,6 +385,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
     printf("number of mafia: %d\n", num_mafia);
     // tell clients to connect
     for (i=0;players[i];i++){
+      client[i] = 0;
       if (mafiaChat) {
         if (strncmp(players[i]->role,"mafia",5)==0 || (strncmp(players[i]->role,"lead mafia",10))==0) {
           if ((players[i]->alive)==0) { // dead people
