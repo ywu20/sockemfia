@@ -37,7 +37,7 @@ char* disclose_players_to_player(){
   {
     if (players[i]->alive)
     {
-      char cur[BUFFER_SIZE];
+      char cur[BUFFER_SIZE] = {0};
       sprintf(cur, "%d: %s\n", i, players[i]->name);
       strcat(out, cur);
     }
@@ -127,7 +127,7 @@ int eliminate_player(int playerCount, int specifiedPlayer){
 void informAllPlayers(int dead_player, char * note){
   int i;
   char out[BUFFER_SIZE] = NOTIFY_PLAYER;
-  char noteFilled[BUFFER_SIZE];
+  char noteFilled[BUFFER_SIZE] = {0};
   strcpy(noteFilled, note);
   strcat(out, sep);
   sprintf(noteFilled, note, players[dead_player]->name);
@@ -151,8 +151,9 @@ static void sighandler(int signo){
 
 int getYesOrNo(int playerNum, char *prompt){
   char a;
-  char in[BUFFER_SIZE];
-  while (1){
+  char in[BUFFER_SIZE] = {0};
+  while (1)
+  {
     write(players[playerNum]->socket, prompt, BUFFER_SIZE);
     read(players[playerNum]->socket, in, sizeof(in));
     sscanf(in, "%c", &a);
@@ -247,7 +248,7 @@ void nightCycle(int playerCount)
       char out[BUFFER_SIZE] = DETECTIVE_PROMPT;
       strcat(out, disclose_players_to_player());
       votedPlayer = getPlayerNumInput(out, i, playerCount);
-      char message[100];
+      char message[100] = {0};
       if ((strcmp(players[votedPlayer]->role, "mafia") == 0) || (strcmp(players[votedPlayer]->role, "lead mafia") == 0))
       {
         sprintf(message, "Player %s is a bad person. Hit enter to continue.", players[votedPlayer]->name);
@@ -509,7 +510,7 @@ int main() {
   {
     to_client = server_connect(sd);
     printf("===============Player connected===============\n");
-    char name[50];
+    char name[50] = {0};
     read(to_client, name, sizeof(name));
     printf("Player name: %s\n", name);
 
