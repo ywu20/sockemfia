@@ -90,7 +90,7 @@ int chat(int server, char living) {
       while (read(STDIN_FILENO, input, sizeof(input))) {
         write(server, input, 100);
         // strncpy(input, "\0", 100);
-        input[0] = '\0';
+        // input[0] = '\0';
       }
     }
   } else {
@@ -102,7 +102,7 @@ int chat(int server, char living) {
     // input[152] = '\n';
     printf("%s", output);
     // strncpy(output, "\0", 152);
-    input[0] = '\0';
+    // input[0] = '\0';
   }
   if (f) kill(f, SIGKILL); // removes child process
   printf("\nchatroom over\n\n");
