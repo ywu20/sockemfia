@@ -167,7 +167,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) { // sec
     
     
     for (i=0;players[i];i++){
-      write(players[i]->socket, "STOPTALKING", 11);
+      write(players[i]->socket, STOP_TALKING, sizeof(STOP_TALKING));
       printf("told player %s to stop talking\n", players[i]->name);
     }
 

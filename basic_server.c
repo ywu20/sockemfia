@@ -327,6 +327,9 @@ void nightCycle(int playerCount)
     }else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive && i == dead_player){
       informAllPlayers(dead_player, "Player %s was killed last night.");
       eliminate_player(playerCount, dead_player);
+    }else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive == false){
+      informAllPlayers(dead_player, "Player %s was killed last night.");
+      eliminate_player(playerCount, dead_player);
     }
   }
 }
@@ -485,7 +488,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
     
     
     for (i=0;players[i];i++){
-      write(players[i]->socket, "STOPTALKING", 11);
+      write(players[i]->socket, STOP_TALKING, sizeof(STOP_TALKING));
       printf("told player %s to stop talking\n", players[i]->name);
     }
 
