@@ -478,11 +478,34 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
             // prepare the final message
             // printf("here: %d\n", here);
             // printf("players[%d] name: %s\n", here, players[here]->name);
-            strcpy(final_message, players[here]->name);
-            printf("final msg so far: %s\n", final_message);
-            strncat(final_message, ": \0", 3);
-            printf("final msg so far: %s\n", final_message);
-            strncat(final_message, input, 100);
+            // strcpy(final_message, players[here]->name);
+            // printf("final msg so far: %s\n", final_message);
+            // strncat(final_message, ": \0", 3);
+            // printf("final msg so far: %s\n", final_message);
+            // strncat(final_message, input, 100);
+            
+            // back to the original thing
+            int len = 0;
+            for (int i = 0; i < 50; i++) {
+                if (chatter[i]!='\0') {
+                    final_message[i] = chatter[i];
+                    printf("copying %c into final msg\n", chatter[i]);
+                } else {
+                    len = i+1;
+                    final_message[i] = ':';
+                    final_message[i+1] = ' ';
+                    i = 50;
+                }
+            }
+            for (int i = 0; i < 100;i++) {
+                if (input[i]!='\n') {
+                    final_message[i+len] = input[i];
+                    printf("copying %c into final msg\n", final_message[i+len]);
+                } else {
+                    final_message[i+len] = '\n';
+                    i = 100;
+                }
+            }
 
              // if there is stuff left in write set
             for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
