@@ -28,7 +28,7 @@ void rules(){
 
 int main(int argc, char *argv[]) {
   rules();
-  char *ipAddress = "localhost";
+  char *ipAddress = "149.89.150.101";
   if (argc > 1){
     ipAddress = argv[1];
   }

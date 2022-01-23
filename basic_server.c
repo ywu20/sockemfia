@@ -196,8 +196,15 @@ void hunterTakedown(int hunterPlayerNum, int playerCount){
 
 int checkForGameEnd(int playerCount, int mafiaCount, int civilianCount, int specialCount){
   int i;
+  int lead_mafia;
   char toPlayers[BUFFER_SIZE] = NOTIFY_PLAYER;
-  if (mafiaCount == 0)
+  for(i=0;i<playerCount;i++){
+   if(strcmp(players[i]->role,"lead mafia")==0){
+	lead_mafia = i;
+	break;
+      }
+  }
+  if (mafiaCount == 0 || players[lead_mafia]->alive == 0)
   {
     strcat(toPlayers, sep);
     strcat(toPlayers, INNOCENT_WIN);
@@ -271,10 +278,12 @@ void nightCycle(int playerCount)
     char message[BUFFER_SIZE] = {0};
     if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive && i != dead_player)
     {
+      int save = 0;
       if (players[i]->medicineCount > 0){
         sprintf(message, "%s was killed tonight. Do you want to save this person? [y/n]", players[dead_player]->name);
         if(getYesOrNo(i, message)){
           players[i]->medicineCount--;
+	  save = 1;
         }else{
           informAllPlayers(dead_player, "Player %s was killed last night.");
           eliminate_player(playerCount, dead_player);
@@ -294,6 +303,9 @@ void nightCycle(int playerCount)
           eliminate_player(playerCount, votedPlayer);
           players[i]->poisonCount--;
         }
+	else if (save){
+	 informAllPlayers(dead_player, "Nobody died last night.");
+	}
       }
     }else if (strcmp("doctor", players[i]->role) == 0 && ((players[i]->alive && i == dead_player) || players[i]->alive == false)){
       informAllPlayers(dead_player, "Player %s was killed last night.");
