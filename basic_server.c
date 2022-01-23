@@ -152,8 +152,8 @@ static void sighandler(int signo){
 int getYesOrNo(int playerNum, char *prompt){
   char a;
   char in[BUFFER_SIZE];
-  write(players[playerNum]->socket, prompt, BUFFER_SIZE);
   while (1){
+    write(players[playerNum]->socket, prompt, BUFFER_SIZE);
     read(players[playerNum]->socket, in, sizeof(in));
     sscanf(in, "%c", &a);
     if (a == 'y'){
