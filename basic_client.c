@@ -88,6 +88,9 @@ int chat(int server, char living) {
 
     if (f == 0) { // child waits for input to send
       while (read(STDIN_FILENO, input, sizeof(input))) {
+        for (int i = 0; i < sizeof(input); i++) {
+          if (input[i]=='\n') input[i] = '\0';
+        }
         write(server, input, 100);
       }
     }
