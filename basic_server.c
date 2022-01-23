@@ -397,7 +397,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
           }
           clients[c] = players[i]->socket;
           if (clients[c] > max_fd) {
-              max_fd = clients[i];
+              max_fd = clients[c];
               printf("clients[%d] joined\n", clients[c]);
               FD_SET(clients[c], &clients_fds); // add to client set
               printf("added fd %d to read set\n", clients[c]);
