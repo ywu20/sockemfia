@@ -379,13 +379,13 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
 
     // gather the clients
     int clients[max_clients];
+    int c=0;
     printf("waiting for people to connect\n"); 
     int i = 0;
 
     printf("number of mafia: %d\n", num_mafia);
     // tell clients to connect
     for (i=0;players[i];i++){
-      clients[i] = 0;
       if (mafiaChat) {
         if (strncmp(players[i]->role,"mafia",5)==0 || (strncmp(players[i]->role,"lead mafia",10))==0) {
           if ((players[i]->alive)==0) { // dead people
@@ -395,12 +395,13 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
               write(players[i]->socket, "CHAT1", 5); // living people
               printf("told player %s to connect\n", players[i]->name);
           }
-          clients[i] = players[i]->socket;
-          if (clients[i] > max_fd) {
+          clients[c] = players[i]->socket;
+          if (clients[c] > max_fd) {
               max_fd = clients[i];
-              printf("clients[%d] joined\n", clients[i]);
-              FD_SET(clients[i], &clients_fds); // add to client set
-              printf("added fd %d to read set\n", clients[i]);
+              printf("clients[%d] joined\n", clients[c]);
+              FD_SET(clients[c], &clients_fds); // add to client set
+              printf("added fd %d to read set\n", clients[c]);
+              c++;
           }
         }
       }
@@ -412,12 +413,13 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
             write(players[i]->socket, "CHAT1", 5); // living people
             printf("told player %s to connect\n", players[i]->name);
         }
-        clients[i] = players[i]->socket;
-        if (clients[i] > max_fd) {
-            max_fd = clients[i];
-            printf("clients[%d] joined\n", clients[i]);
-            FD_SET(clients[i], &clients_fds); // add to client set
-            printf("added fd %d to read set\n", clients[i]);
+        clients[c] = players[i]->socket;
+        if (clients[c] > max_fd) {
+            max_fd = clients[c];
+            printf("clients[%d] joined\n", clients[c]);
+            FD_SET(clients[c], &clients_fds); // add to client set
+            printf("added fd %d to read set\n", clients[c]);
+            c++;
         }
       } 
     }
