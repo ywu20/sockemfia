@@ -9,10 +9,11 @@
 #define MAGENTA "\x1b[35m"
 #define CYAN    "\x1b[36m"
 #define WHITE   "\x1b[0m"
+#define STOP_TALKING "STOPTALKING"
 
-// int chatroom(int seconds, int sd, int max_clients, struct player * players[20]);
-// int chat(int server);
-
+int chatroom(int seconds, int max_clients, struct player * players[20], int mafiaChat);
+int chat(int server, char living);
+/*
 // simulating game assignment
 struct player{
     char name [50];
@@ -21,5 +22,6 @@ struct player{
     int socket;
     int votes;
 };
+*/
 
 struct player * player_setup(char name[50], int socket);
