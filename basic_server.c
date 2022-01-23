@@ -395,6 +395,10 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
               printf("told player %s to connect\n", players[i]->name);
           }
           clients[i] = players[i]->socket;
+          if (clients[i] > max_fd) {
+              max_fd = clients[i];
+              printf("clients[%d] joined\n", clients[i]);
+          }
         }
       }
       else {
@@ -406,11 +410,15 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
             printf("told player %s to connect\n", players[i]->name);
         }
         clients[i] = players[i]->socket;
+        if (clients[i] > max_fd) {
+            max_fd = clients[i];
+            printf("clients[%d] joined\n", clients[i]);
+        }
       }
-      if (clients[i] > max_fd) {
-          max_fd = clients[i];
-          printf("clients[%d] joined\n", clients[i]);
-      }
+      // if (clients[i] > max_fd) {
+      //     max_fd = clients[i];
+      //     printf("clients[%d] joined\n", clients[i]);
+      // }
       
     }
 
