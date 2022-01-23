@@ -492,7 +492,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
             }
         }
         printf("loop complete\n\n");
-      // }
+      }
     }
 
     for (i=0;players[i];i++){
