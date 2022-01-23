@@ -382,6 +382,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
     printf("waiting for people to connect\n"); 
     int i = 0;
 
+    printf("number of mafia: %d\n", num_mafia);
     // tell clients to connect
     for (i=0;players[i];i++){
       if (mafiaChat) {
@@ -451,7 +452,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
 
         int sel = select(max_fd+1, &read_fds, NULL, NULL, &t);
         printf("sel: %d\n", sel);
-        printf("final_msg check (null): %s\n", final_message);
+        // printf("final_msg check (null): %s\n", final_message);
         int here = 0;
 
         if (sel) { // if there is stuff left in read set
@@ -462,7 +463,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
                     // strcpy(final_message, players[i]->name);
                     printf("got data: %s\n",input);
                     // printf("chatter: %s\n", chatter);
-                    printf("final msg so far: %s\n", final_message);
+                    // printf("final msg so far: %s\n", final_message);
                     FD_CLR(clients[i], &write_fds);
                     here = i;
                 }
@@ -473,7 +474,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
             // printf("players[%d] name: %s\n", here, players[here]->name);
             strcpy(final_message, players[here]->name);
             strncat(final_message, ": \0", 3);
-            printf("final msg so far: %s\n", final_message);
+            // printf("final msg so far: %s\n", final_message);
             strncat(final_message, input, 100);
 
              // if there is stuff left in write set
@@ -489,8 +490,10 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
     }
 
     for (i=0;players[i];i++){
-      write(players[i]->socket, "STOPTALKING", 11);
-      printf("told player %s to stop talking\n", players[i]->name);
+      if (FD_ISSET(players[i]->socket, &clients_fds)){
+        write(players[i]->socket, "STOPTALKING", 11);
+        printf("told player %s to stop talking\n", players[i]->name);
+      }
     }
 
     return 0;
