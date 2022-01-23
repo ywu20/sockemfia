@@ -235,6 +235,7 @@ void nightCycle(int playerCount)
   informAllPlayers(-1, "The sun has set. Night has fallen among us.");
 
   // mafia chat
+  if (num_mafia < 2)
   chatroom(20, num_mafia, players, 1);
 
   // detective
