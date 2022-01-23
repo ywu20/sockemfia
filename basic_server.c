@@ -409,21 +409,19 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
 
     // preparing the timings
     time_t startTime = time(NULL);
+    int f = fork();
 
     // start the chatroom
     while (time(NULL)-startTime < seconds) {
-
-        // 10 second warning will be moved to a fork
-        // if (time(NULL)-startTime <= 10.5 && time(NULL)-startTime >= 9.5) {
-        //     write_fds = clients_fds;
-        //     for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
-        //         if (FD_ISSET(clients[i], &write_fds)) { // sends 10 second warning
-        //             printf("going to write to %d: [server] 10 SECONDS LEFT TO CHAT!\n", clients[i]);
-        //             write(clients[i], "[server] 10 SECONDS LEFT TO CHAT!\n", 35);
-        //         }
-        //     }
-        // }
-
+      if (f==0) { // timer
+        if ((seconds - (time(NULL) - startTime) >= 9.75) 
+        && (seconds - (time(NULL) - startTime) <= 10.25)) {
+          printf("\x1b[1;0m 10 SECONDS LEFT\n");
+        } else {
+          exit(0); // end timer process
+        }        
+      }
+      else { // main program
         char input[100] = "";
         char chatter[50] = "";
         char final_message[152] = "";
@@ -470,8 +468,9 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
             }
         }
         printf("loop complete\n\n");
+      }
     }
-    
+
     for (i=0;players[i];i++){
       write(players[i]->socket, "STOPTALKING", 11);
       printf("told player %s to stop talking\n", players[i]->name);
