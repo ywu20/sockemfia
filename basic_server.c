@@ -450,18 +450,19 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
             }
 
             // preparing the final message
-            int len = 0;
-            for (int i = 0; i < 50; i++) {
-                if (chatter[i]!='\0') {
-                    final_message[i] = chatter[i];
-                    // printf("copying %c into final msg\n", chatter[i]);
-                } else {
-                    len = i+1;
-                    final_message[i] = ':';
-                    final_message[i+1] = ' ';
-                    i = 50;
-                }
-            }
+            // int len = 0;
+            // for (int i = 0; i < 50; i++) {
+            //     if (chatter[i]!='\0') {
+            //         final_message[i] = chatter[i];
+            //         // printf("copying %c into final msg\n", chatter[i]);
+            //     } else {
+            //         len = i+1;
+            //         final_message[i] = ':';
+            //         final_message[i+1] = ' ';
+            //         i = 50;
+            //     }
+            // }
+            strcpy(chatter, final_message);
             strncat(final_message, input,100);
             // for (int i = 0; i < 100;i++) {
             //     if (input[i]!='\n') {
