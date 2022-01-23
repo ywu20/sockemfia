@@ -190,7 +190,7 @@ int getPlayerNumInput(char * out, int playerNum, int playerCount){
   int votedPlayer = playerCount;
   char in[BUFFER_SIZE] = {0};
 
-  while (votedPlayer < 0 || votedPlayer >= playerCount)
+  while (votedPlayer < 0 || votedPlayer >= playerCount || players[votedPlayer]->alive == 0)
   {
     write(players[playerNum]->socket, out, BUFFER_SIZE);
     read(players[playerNum]->socket, in, sizeof(in));
