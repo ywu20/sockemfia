@@ -417,9 +417,10 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
         if ((seconds - (time(NULL) - startTime) >= 9.75) 
         && (seconds - (time(NULL) - startTime) <= 10.25)) {
           printf("\x1b[1;0m 10 SECONDS LEFT\n");
-        } else {
-          exit(0); // end timer process
-        }        
+        }
+        if (seconds - (time(NULL) - startTime) < 0) {
+          exit(0);
+        }
       }
       else { // main program
         char input[100] = "";
