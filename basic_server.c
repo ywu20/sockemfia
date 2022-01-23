@@ -426,7 +426,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
 
         char input[100] = "";
         char chatter[50] = "";
-        char final_message[150] = "";
+        char final_message[152] = "";
         FD_ZERO(&read_fds); // clears set
         FD_ZERO(&write_fds);
 
@@ -462,7 +462,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
                     i = 50;
                 }
             }
-            strncat(final_message, input);
+            strncat(final_message, input,100);
             // for (int i = 0; i < 100;i++) {
             //     if (input[i]!='\n') {
             //         final_message[i+len] = input[i];
