@@ -53,6 +53,8 @@ int main(int argc, char *argv[]) {
     }
     else if(strncmp(parsedIn[0], "CHAT",4) == 0) {
       chat(from_server, parsedIn[0][4]);
+    }else if (strncmp(parsedIn[0], STOP_TALKING, 11) == 0){
+      write(from_server, "ENDED", sizeof(char) * BUFFER_SIZE);
     }
     else
     {
@@ -102,14 +104,16 @@ int chat(int server, char living) {
     }
 
     // main program reads from server client msgs
-    while (read(server, output, sizeof(output)) && strncmp(output, "STOPTALKING", 11) && (gameEnd = strcmp(output, END_GAME)))
+    while (read(server, output, sizeof(output)) && strncmp(output, STOP_TALKING, 11) && (gameEnd = strcmp(output, END_GAME)))
     {
       // input[99] = '\n';
       printf("%s", output);
     }
     kill(f, SIGKILL); // removes child process
     printf("\nchatroom over\n\n");
-    if (gameEnd == 0){
+    write(server, "ENDED", sizeof(char) * BUFFER_SIZE);
+    if (gameEnd == 0)
+    {
       printf(GAME_HAS_ENDED);
       exit(SIGINT);
     }
