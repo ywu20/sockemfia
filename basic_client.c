@@ -82,15 +82,11 @@ int chat(int server, char living) {
   char input[152];
   int f = 0;
 
-  if (living == '1') {
-    // printf("living: %c\tliving='0': %d\n", living,(living == '0'));
+  if (living == '1') { // if alive
     f = fork();
 
     if (f == 0) { // child waits for input to send
       while (read(STDIN_FILENO, input, sizeof(input)-1)) {
-        // for (int i = 0; i < sizeof(input); i++) {
-        //   if (input[i]=='\n') input[i] = '\0';
-        // }
         write(server, input, 100);
       }
     }
