@@ -414,15 +414,15 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
     while (time(NULL)-startTime < seconds) {
 
         // 10 second warning will be moved to a fork
-        if (time(NULL)-startTime <= 10.5 && time(NULL)-startTime >= 9.5) {
-            write_fds = clients_fds;
-            for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
-                if (FD_ISSET(clients[i], &write_fds)) { // sends 10 second warning
-                    printf("going to write to %d: [server] 10 SECONDS LEFT TO CHAT!\n", clients[i]);
-                    write(clients[i], "[server] 10 SECONDS LEFT TO CHAT!\n", 35);
-                }
-            }
-        }
+        // if (time(NULL)-startTime <= 10.5 && time(NULL)-startTime >= 9.5) {
+        //     write_fds = clients_fds;
+        //     for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
+        //         if (FD_ISSET(clients[i], &write_fds)) { // sends 10 second warning
+        //             printf("going to write to %d: [server] 10 SECONDS LEFT TO CHAT!\n", clients[i]);
+        //             write(clients[i], "[server] 10 SECONDS LEFT TO CHAT!\n", 35);
+        //         }
+        //     }
+        // }
 
         char input[100] = "";
         char chatter[50] = "";
@@ -451,6 +451,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
                     here = i;
                 }
             }
+            printf("here: %d", here);
 
             // preparing the final message
             // int len = 0;
