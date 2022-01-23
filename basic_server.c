@@ -480,7 +480,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
             for (int i = 0; i < 50; i++) {
                 if (chatter[i]!='\0') {
                     final_message[i] = chatter[i];
-                    printf("copying %c into final msg\n", chatter[i]);
+                    // printf("copying %c into final msg\n", chatter[i]);
                 } else {
                     len = i+1;
                     final_message[i] = ':';
@@ -491,7 +491,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
             for (int i = 0; i < 100;i++) {
                 if (input[i]!='\n') {
                     final_message[i+len] = input[i];
-                    printf("copying %c into final msg\n", final_message[i+len]);
+                    // printf("copying %c into final msg\n", final_message[i+len]);
                 } else {
                     final_message[i+len] = '\n';
                     i = 100;
