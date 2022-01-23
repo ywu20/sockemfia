@@ -80,23 +80,24 @@ int main(int argc, char *argv[]) {
 int chat(int server, char living) {
   printf("You have entered the chatroom!\n");
   char input[100];
+  char output[152];
   int f = 0;
 
-  if (living == '1') {
-    // printf("living: %c\tliving='0': %d\n", living,(living == '0'));
+  if (living == '1') { // if alive
     f = fork();
 
     if (f == 0) { // child waits for input to send
-      while (read(STDIN_FILENO, input, sizeof(input))) {
+      while (read(STDIN_FILENO, input, sizeof(input)-1)) {
+        input[99] = '\n';
         write(server, input, 100);
       }
     }
   }else{
     // main program reads from server client msgs
     int gameEnd = -1;
-    while (read(server, input, sizeof(input)) && strcmp(input, STOP_TALKING) && (gameEnd = strcmp(input, END_GAME)))
+    while (read(server, output, sizeof(output)) && strncmp(output, STOP_TALKING,11) && (gameEnd = strcmp(input, END_GAME)))
     {
-      printf("%s", input);
+      printf("%s", output);
     }
     if (f) kill(f, SIGINT); // removes child process
     printf("\nchatroom over\n\n");
