@@ -416,7 +416,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
       if (f==0) { // timer
         if (seconds - (time(NULL) - startTime) == 10) {
           for (int i = 0; i < max_clients; i++) {
-            write(clients[i], "");
+            write(clients[i], "10 SECONDS LEFT\n", 16);
           }
           printf("\x1b[1;0m 10 SECONDS LEFT \x1b[0m \n");
         }
