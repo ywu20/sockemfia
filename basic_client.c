@@ -92,7 +92,7 @@ int chat(int server, char living) {
         //   if (input[i]=='\n') input[i] = '\0';
         // }
         input[99] = '\n';
-        printf("input[100]: %d\n", input[100]);
+        printf("input[100]: %c\n", input[100]);
         write(server, input, 100);
       }
     }
