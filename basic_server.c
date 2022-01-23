@@ -442,9 +442,10 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
                     printf("going to read from %d\n", clients[i]);
                     r = read(clients[i], input, 100);
-                    strncpy(chatter, players[i]->name,50);
+                    strncpy(final_message, players[i]->name,50);
                     printf("got data: %s\n",input);
-                    printf("chatter: %s\n", chatter);
+                    // printf("chatter: %s\n", chatter);
+                    printf("final msg so far: %s\n", final_message);
                     FD_CLR(clients[i], &write_fds);
                 }
             }
@@ -462,7 +463,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
             //         i = 50;
             //     }
             // }
-            strncpy(chatter, final_message, 2);
+            // strncpy(, final_message, 2);
             printf("final msg so far: %s\n", final_message);
             strncat(final_message, input, 100);
             // for (int i = 0; i < 100;i++) {
