@@ -324,6 +324,9 @@ void nightCycle(int playerCount)
           }
         }
       }
+    }else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive && i == dead_player){
+      informAllPlayers(dead_player, "Player %s was killed last night.");
+      eliminate_player(playerCount, dead_player);
     }
   }
 }
@@ -416,7 +419,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
             for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
                 if (FD_ISSET(clients[i], &write_fds)) { // sends 10 second warning
                     printf("going to write to %d: [server] 10 SECONDS LEFT TO CHAT!\n", clients[i]);
-                    write(clients[i], "[server] 10 SECONDS LEFT TO CHAT!\n", 34);
+                    write(clients[i], "[server] 10 SECONDS LEFT TO CHAT!\n", 35);
                 }
             }
         }
