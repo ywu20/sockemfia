@@ -453,7 +453,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
                 }
             }
             printf("here: %d\n", here);
-            printf("players[%d] name: %s\n", players[here]->name);
+            printf("players[%d] name: %s\n", here, players[here]->name);
 
             // preparing the final message
             // int len = 0;
