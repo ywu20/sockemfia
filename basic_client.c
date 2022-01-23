@@ -91,7 +91,7 @@ int chat(int server, char living) {
         // for (int i = 0; i < sizeof(input); i++) {
         //   if (input[i]=='\n') input[i] = '\0';
         // }
-        input[99] = '\n';
+        // input[99] = '\n';
         write(server, input, 100);
       }
     }
@@ -101,7 +101,7 @@ int chat(int server, char living) {
 
   // main program reads from server client msgs
   while(read(server, input, sizeof(input)) && strcmp(input, "STOPTALKING")){
-    printf("%s", input);
+    printf("%s\n", input);
   }
   if (f) kill(f, SIGKILL); // removes child process
   printf("\nchatroom over\n\n");
