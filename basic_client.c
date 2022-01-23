@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
 int chat(int server, char living) {
   printf("You have entered the chatroom!\n");
   char input[100];
-  char output[152];
+  char output[153];
   int f = 0;
 
   if (living == '1') { // if alive
@@ -98,7 +98,7 @@ int chat(int server, char living) {
   }
 
   // main program reads from server client msgs
-  while(read(server, output, sizeof(input)) && strcmp(output, "STOPTALKING")){
+  while(read(server, output, sizeof(output)) && strcmp(output, "STOPTALKING")){
     // input[152] = '\n';
     printf("%s", output);
     // strncpy(output, "\0", 152);
