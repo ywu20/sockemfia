@@ -436,6 +436,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
 
         int sel = select(max_fd+1, &read_fds, NULL, NULL, &t);
         printf("sel: %d\n", sel);
+        int here = 0;
 
         if (sel) { // if there is stuff left in read set
             for (int i = 0; i < max_clients; i++) { // loops to find the active client
@@ -447,23 +448,24 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
                     // printf("chatter: %s\n", chatter);
                     printf("final msg so far: %s\n", final_message);
                     FD_CLR(clients[i], &write_fds);
+                    here = i;
                 }
             }
 
             // preparing the final message
-            int len = 0;
-            for (int i = 0; i < 50; i++) {
-                strncpy(chatter,players[i]->name, 50);
-                if (chatter[i]!='\0') {
-                    final_message[i] = chatter[i];
-                    // printf("copying %c into final msg\n", chatter[i]);
-                } else {
-                    len = i+1;
-                    final_message[i] = ':';
-                    final_message[i+1] = ' ';
-                    i = 50;
-                }
-            }
+            // int len = 0;
+            // for (int i = 0; i < 50; i++) {
+            //     if (chatter[i]!='\0') {
+            //         final_message[i] = chatter[i];
+            //         // printf("copying %c into final msg\n", chatter[i]);
+            //     } else {
+            //         len = i+1;
+            //         final_message[i] = ':';
+            //         final_message[i+1] = ' ';
+            //         i = 50;
+            //     }
+            // }
+            strcpy(final_message, players[here]->name);
             strncat(final_message, ": \0", 3);
             printf("final msg so far: %s\n", final_message);
             strncat(final_message, input, 100);
