@@ -453,7 +453,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
             // preparing the final message
             int len = 0;
             for (int i = 0; i < 50; i++) {
-                strncpy(chatter,player[i]->name, 50);
+                strncpy(chatter,players[i]->name, 50);
                 if (chatter[i]!='\0') {
                     final_message[i] = chatter[i];
                     // printf("copying %c into final msg\n", chatter[i]);
