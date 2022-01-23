@@ -360,7 +360,11 @@ void dayCycle(int playerCount){
     }
   }
   int playerKilled = eliminate_player(playerCount, -1);
-  informAllPlayers(playerKilled, "Player %s was killed in the broad daylight.");
+  if (playerKilled < 0){
+    informAllPlayers(playerKilled, "Nobody was killed during the day.");
+  }else{
+    informAllPlayers(playerKilled, "Player %s was killed in the broad daylight.");
+  }
 }
 
 void gameCycle(int playerCount){
