@@ -445,7 +445,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
       else { // main program
         char input[100] = "";
         char chatter[50] = "";
-        char final_message[153] = "";
+        char final_message[152] = "";
         FD_ZERO(&read_fds); // clears set
         FD_ZERO(&write_fds);
 
@@ -487,7 +487,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
             for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
                 if (FD_ISSET(clients[i], &write_fds)) { // if the client is in remaining one
                     printf("going to write to %d: %s\n", clients[i], final_message);
-                    write(clients[i], final_message, 153);
+                    write(clients[i], final_message, 152);
                 }
             }
         }

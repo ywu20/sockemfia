@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
 int chat(int server, char living) {
   printf("You have entered the chatroom!\n");
   char input[100];
-  char output[153];
+  char output[152];
   int f = 0;
 
   if (living == '1') { // if alive
@@ -88,7 +88,7 @@ int chat(int server, char living) {
 
     if (f == 0) { // child waits for input to send
       while (read(STDIN_FILENO, input, sizeof(input))) {
-        write(server, input, 100);
+        write(server, input, sizeof(input));
         // strncpy(input, "\0", 100);
         // input[0] = '\0';
       }
