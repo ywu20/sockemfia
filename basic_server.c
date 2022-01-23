@@ -301,10 +301,15 @@ void nightCycle(int playerCount)
             eliminate_player(playerCount, dead_player);
             invalid_input = 0;
           }
+        }else{
+          informAllPlayers(dead_player, "Player %s was killed last night.");
+          eliminate_player(playerCount, dead_player);
+          invalid_input = 0;
         }
 
         if (players[i]->poisonCount > 0 && players[i]->alive)
         {
+          invalid_input = 1;
           char kill[100] = "Do you want to poison anyone tonight? [y/n]";
           write(players[i]->socket, kill, BUFFER_SIZE);
           read(players[i]->socket, in, sizeof(in));
@@ -330,6 +335,9 @@ void nightCycle(int playerCount)
         }
       }
     }else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive && i == dead_player){
+      informAllPlayers(dead_player, "Player %s was killed last night.");
+      eliminate_player(playerCount, dead_player);
+    }else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive == false){
       informAllPlayers(dead_player, "Player %s was killed last night.");
       eliminate_player(playerCount, dead_player);
     }
