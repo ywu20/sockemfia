@@ -478,12 +478,10 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
     }
 
     for (i=0;players[i];i++){
-      if (FD_ISSET(players[i]->socket, &clients_fds)){
-        char verify[BUFFER_SIZE] = {0};
-        write(players[i]->socket, STOP_TALKING, 11);
-        printf("told player %s to stop talking\n", players[i]->name);
-        read(players[i]->socket, verify, sizeof(verify));
-      }
+      char verify[BUFFER_SIZE] = {0};
+      write(players[i]->socket, STOP_TALKING, 11);
+      printf("told player %s to stop talking\n", players[i]->name);
+      read(players[i]->socket, verify, sizeof(verify));
     }
 
     return 0;
