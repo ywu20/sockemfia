@@ -233,6 +233,7 @@ void nightCycle(int playerCount)
   char a;
 
   informAllPlayers(-1, "The sun has set. Night has fallen among us.");
+
   // mafia chat
   chatroom(20, num_mafia, players, 1);
 
@@ -384,7 +385,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
     // tell clients to connect
     for (i=0;players[i];i++){
       if (mafiaChat) {
-        if (strncmp(players[i]->role,"mafia",5) || (strncmp(players[i]->role,"lead mafia",10))) {
+        if (strncmp(players[i]->role,"mafia",5)==0 || (strncmp(players[i]->role,"lead mafia",10))==0) {
           if ((players[i]->alive)==0) { // dead people
               write(players[i]->socket, "CHAT0", 5);
               printf("told player %s to be view only\n", players[i]->name);
