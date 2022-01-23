@@ -332,9 +332,6 @@ void nightCycle(int playerCount)
     }else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive && i == dead_player){
       informAllPlayers(dead_player, "Player %s was killed last night.");
       eliminate_player(playerCount, dead_player);
-    }else if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive == false){
-      informAllPlayers(dead_player, "Player %s was killed last night.");
-      eliminate_player(playerCount, dead_player);
     }
   }
 }
