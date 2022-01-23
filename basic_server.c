@@ -462,15 +462,16 @@ int chatroom(int seconds, int max_clients, struct player * players[20]) {
                     i = 50;
                 }
             }
-            for (int i = 0; i < 100;i++) {
-                if (input[i]!='\n') {
-                    final_message[i+len] = input[i];
-                    // printf("copying %c into final msg\n", final_message[i+len]);
-                } else {
-                    final_message[i+len] = '\n';
-                    i = 100;
-                }
-            }
+            strncat(final_message, input);
+            // for (int i = 0; i < 100;i++) {
+            //     if (input[i]!='\n') {
+            //         final_message[i+len] = input[i];
+            //         // printf("copying %c into final msg\n", final_message[i+len]);
+            //     } else {
+            //         final_message[i+len] = '\n';
+            //         i = 100;
+            //     }
+            // }
 
              // if there is stuff left in write set
             for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
