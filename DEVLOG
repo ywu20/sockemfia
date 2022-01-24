@@ -150,3 +150,9 @@ yuqingW -- 2022-01-23 21:46
 Fixed chat not matching names error.
 Fixed doctor error when the doctor do not save people.
 Fixed readme.
+
+andyL -- 2022-01-23 22:48
+Tried to fix chat in regards to ending chat
+Tried to squash out a bunch of last minute bugs
+Splitting out a few more functions
+(painful to see my weekend being wasted like this)
