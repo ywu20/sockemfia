@@ -42,7 +42,7 @@ special roles:
    - We will be using a sockets in order to create a server to connect multiple clients to a server (for gameplay and chat with other players).
    - Working with files will be used to have the server communicate with the client and the client with the server.
    - Allocating memory will be used in order to work with structs to contain player data and in order to work with some user input.
-   - Using forking in order to have a timer for voting and discussion phases of the game.
+   - Using forking in order to have a timer for voting and running the discussion phases of the game. It will also be used in order to recieve the notification that game has ended when standard in is busy with waiting for a player to enter something.
    - Signals will be used in order to handle an event where the whole server goes down and ensure that the client isn't left in the dark.
    #### How you are breaking down the project and who is responsible for which parts.
    - Explain game rules at the start. - Yuqing
@@ -58,9 +58,8 @@ special roles:
    - The people who are dead can continue watch the game but can't write anything to the server or can write to a separate chat. - Sarah
    - End game, announce results. - Andy
    #### What algorithms and /or data structures you will be using, and how.
-   - A struct will keep track of the state of a player (alive, role, ...), as well as the IP address and port the client is on.
+   - A struct will keep track of the state of a player (alive, role, ...), as well as the file descriptor the client is on.
    - Each player will get a number (ID) and the file that stores their information would be named like that. 
-   - An array of structs will be used in order to have the statuses of all players in the game.
 
 ## Timeline 
 1/13: Role assignment, semaphore, instructional period for mafia to kill people, announce death.  
