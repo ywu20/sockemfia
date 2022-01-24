@@ -273,27 +273,20 @@ void nightCycle(int playerCount)
       dead_player = votedPlayer;
     }
   }
+    int save = 0;
   // doctor
   for (i = 0; i < playerCount; i++)
   {
     char message[BUFFER_SIZE] = {0};
     if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive && i != dead_player)
     {
-      int save = 0;
       if (players[i]->medicineCount > 0){
         sprintf(message, "%s was killed tonight. Do you want to save this person? [y/n]", players[dead_player]->name);
         if(getYesOrNo(i, message)){
           players[i]->medicineCount--;
-	  save = 1;
-        }else{
-          informAllPlayers(dead_player, "Player %s was killed last night.");
-          eliminate_player(playerCount, dead_player);
+	         save = 1;
         }
-      }else{
-        informAllPlayers(dead_player, "Player %s was killed last night.");
-        eliminate_player(playerCount, dead_player);
       }
-
       if (players[i]->poisonCount > 0 && players[i]->alive){
         if (getYesOrNo(i, "Do you want to posion anyone tonight? [y/n]")){
           strcpy(message, "Who do you want to posion?\n");
@@ -304,15 +297,21 @@ void nightCycle(int playerCount)
           eliminate_player(playerCount, votedPlayer);
           players[i]->poisonCount--;
         }
-	else if (save){
-	 informAllPlayers(dead_player, "Nobody died last night.");
-	}
+	 else if (save){
+	    informAllPlayers(dead_player, "Nobody died last night.");
+	  }
       }
     }else if (strcmp("doctor", players[i]->role) == 0 && ((players[i]->alive && i == dead_player) || players[i]->alive == false)){
       informAllPlayers(dead_player, "Player %s was killed last night.");
       eliminate_player(playerCount, dead_player);
     }
   }
+if (save){
+  informAllPlayers(dead_player, "Nodbody died last night.");
+}else{
+  informAllPlayers(dead_player, "Player %s was killed last night.");
+  eliminate_player(playerCount, dead_player);
+}
 }
 
 void dayCycle(int playerCount){
@@ -364,7 +363,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
     // gather the clients
     int clients[max_clients];
     int c=0;
-    printf("waiting for people to connect\n"); 
+    printf("waiting for people to connect\n");
     int i = 0;
 
     printf("number of mafia: %d\n", num_mafia);
@@ -405,7 +404,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
             printf("added fd %d to read set\n", clients[c]);
             c++;
         }
-      } 
+      }
     }
     printf("new max_fd: %d\n", max_fd);
 
@@ -450,7 +449,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
                     printf("going to read from %d\n", clients[i]);
                     r = read(clients[i], input, 100);
-                    strcpy(chatter, players[i]->name);
+                    //strcpy(chatter, players[i]->name);
                     printf("got data: %s\n",input);
                     // printf("chatter: %s\n", chatter);
                     // printf("final msg so far: %s\n", final_message);
@@ -463,7 +462,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
 
             char *toSwap = strchr(input, '\n');
             *toSwap = '\0';
-            sprintf(final_message, "%s: %s\n", chatter, input);
+            sprintf(final_message, "%s\n", input);
 
             // if there is stuff left in write set
             for (int i = 0; i < max_clients && r; i++) { // loops to find the active client

@@ -35,12 +35,11 @@ special roles:
 
 7. Announce who got voted out.  
 
-8. Repeat steps 3-7 until all mafia die (good people win) or all special roles die or all civilian die (bad people win). Or maybe you guys want to do mafia win if they outnumber good people. 
+8. Repeat steps 3-7 until all mafia die (good people win) or all special roles die or all civilian die (bad people win).
 
 ## Technical Design. 
    #### How you will be using the topics covered in class in the project.
    - We will be using a sockets in order to create a server to connect multiple clients to a server (for gameplay and chat with other players).
-   - Working with files will be used to have the server communicate with the client and the client with the server.
    - Allocating memory will be used in order to work with structs to contain player data and in order to work with some user input.
    - Using forking in order to have a timer for voting and running the discussion phases of the game. It will also be used in order to recieve the notification that game has ended when standard in is busy with waiting for a player to enter something.
    - Signals will be used in order to handle an event where the whole server goes down and ensure that the client isn't left in the dark.
