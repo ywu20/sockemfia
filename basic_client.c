@@ -2,12 +2,13 @@
 #include "parse.h"
 #include "constants.h"
 #include "chat.h"
-char * name = {0};
+char name [50] = {0};
 char * get_name(int server){
-  char * name = malloc(sizeof(char) * 50);
+  char * name_get = malloc(sizeof(char) * 50);
   printf("Enter your name (less than 50 characters): ");
-  fgets(name, 50, stdin);
-  write(server, name, 50);
+  fgets(name_get, 50, stdin);
+  write(server, name_get, 50);
+  strcpy(name,name_get);
   return name;
 }
 
@@ -29,13 +30,14 @@ void rules(){
 
 int main(int argc, char *argv[]) {
   rules();
-  char *ipAddress = "149.89.150.101";
-  //char *ipAddress = "localhost";
+  //
+  //char *ipAddress = "149.89.150.101";
+  char *ipAddress = "localhost";
   if (argc > 1){
     ipAddress = argv[1];
   }
   int from_server = client_handshake(ipAddress);
-  name = get_name(from_server);
+  get_name(from_server);
   printf("Your name is: %s",name);
 
   while(1){
@@ -83,10 +85,6 @@ int main(int argc, char *argv[]) {
 
 int chat(int server, char living) {
   printf("You have entered the chatroom!\n");
-  char prefix[100] = "";
-  strcat(prefix, name);
-  prefix[strlen(name) - 1]='\0';
-  strcat(prefix,": ");
   char input[100] = {0};
   char output[152] = {0};
   int f = fork();
@@ -94,8 +92,14 @@ int chat(int server, char living) {
   if (f == 0) { // child waits for input to send
     if (living == '1'){
       while (read(STDIN_FILENO, input, sizeof(input)-1)) {
+        char prefix[100] = "";
+        strcat(prefix, name);
+        prefix[strlen(name) - 1]='\0';
+        strcat(prefix,": ");
         input[99] = '\n';
-        strcat(prefix, input);
+        char cp [100] = "";
+        strcpy(cp,input);
+        strcat(prefix, cp);
         write(server, prefix, 100);
       }
     }else{

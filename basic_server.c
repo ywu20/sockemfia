@@ -238,7 +238,7 @@ void nightCycle(int playerCount)
 
   // mafia chat
   if (num_mafia >= 2)
-  chatroom(20, num_mafia, players, 1);
+  chatroom(100, num_mafia, players, 1);
 
   // detective
   for (i = 0; i < playerCount; i++)
@@ -316,7 +316,7 @@ if (save){
 
 void dayCycle(int playerCount){
   informAllPlayers(-1, "The sun has risen. But there is animosity in the air.");
-  chatroom(20, playerCount, players, 0);
+  chatroom(100, playerCount, players, 0);
   int i;
   int votedPlayer;
   char out[BUFFER_SIZE] = VOTE_PLAYER;
