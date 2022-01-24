@@ -1,7 +1,5 @@
 all: client server
 
-chat: cserver cclient
-
 client: basic_client.o pipe_networking.o parse.o
 	gcc -o client basic_client.o pipe_networking.o parse.o
 
@@ -16,12 +14,6 @@ basic_server.o: basic_server.c pipe_networking.h constants.h
 
 pipe_networking.o: pipe_networking.c pipe_networking.h
 	gcc -c pipe_networking.c
-
-cserver: chatserver.c pipe_networking.o
-	gcc -o cserver chatserver.c pipe_networking.o
-
-cclient: chatclient.c pipe_networking.o
-	gcc -o cclient chatclient.c pipe_networking.o
 
 parse.o: parse.c parse.h
 	gcc -c parse.c
