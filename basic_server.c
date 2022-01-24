@@ -1,12 +1,13 @@
 #include "pipe_networking.h"
 #include "constants.h"
 #include "chat.h"
-struct player * players[20];
+struct player *players[20];
 
 void hunterTakedown(int hunterPlayerNum, int playerCount);
 
-int* role_setup(int civilian, int mafia, int doctor, int detective, int lead_mafia, int hunter){
-  int* role_num = malloc(sizeof(int *) * 6);
+int *role_setup(int civilian, int mafia, int doctor, int detective, int lead_mafia, int hunter)
+{
+  int *role_num = malloc(sizeof(int *) * 6);
 
   // set up number of each role
   role_num[0] = civilian;
@@ -19,8 +20,9 @@ int* role_setup(int civilian, int mafia, int doctor, int detective, int lead_maf
   return role_num;
 }
 
-struct player * player_setup(char name[50], int socket){
-  struct player * a = malloc(sizeof(struct player));
+struct player *player_setup(char name[50], int socket)
+{
+  struct player *a = malloc(sizeof(struct player));
   name[strlen(name) - 1] = '\0';
   strcpy(a->name, name);
   a->alive = 1;
@@ -30,7 +32,8 @@ struct player * player_setup(char name[50], int socket){
   return a;
 }
 
-char* disclose_players_to_player(){
+char *disclose_players_to_player()
+{
   int i;
   char *out = malloc(sizeof(char) * BUFFER_SIZE);
   for (i = 0; players[i]; i++)
@@ -46,24 +49,28 @@ char* disclose_players_to_player(){
   return out;
 }
 
-void free_struct(struct player * s[20]){
+void free_struct(struct player *s[20])
+{
   int i;
-  for(i=0;players[i];i++){
+  for (i = 0; players[i]; i++)
+  {
     write(s[i]->socket, END_GAME, sizeof(END_GAME));
     free(s[i]);
   }
 }
 
-void role_assign(int num_player, int num_player_per_role[6]){
+void role_assign(int num_player, int num_player_per_role[6])
+{
   char out[BUFFER_SIZE] = {0};
   int i;
   for (i = 0; i < num_player && players[i]; i++)
   {
-    char* client_role = NULL;
-    int r = rand()%6;
+    char *client_role = NULL;
+    int r = rand() % 6;
 
-    while(num_player_per_role[r] == 0){
-      r = rand()%6;
+    while (num_player_per_role[r] == 0)
+    {
+      r = rand() % 6;
     }
 
     // role is takable, reduce role number left by 1
@@ -86,35 +93,49 @@ void role_assign(int num_player, int num_player_per_role[6]){
   num_special *= 3;
 }
 
-void reset_votes(int playerCount){
+void reset_votes(int playerCount)
+{
   int i;
-  for (i = 0; i < playerCount; i++){
+  for (i = 0; i < playerCount; i++)
+  {
     players[i]->votes = 0;
   }
 }
 
-int eliminate_player(int playerCount, int specifiedPlayer){
+int eliminate_player(int playerCount, int specifiedPlayer)
+{
   int votes = 0;
   int i;
-  if (specifiedPlayer < 0 || specifiedPlayer >= num_player){
+  if (specifiedPlayer < 0 || specifiedPlayer >= num_player)
+  {
     for (i = 0; i < playerCount; i++)
     {
-      if (votes < players[i]->votes){
+      if (votes < players[i]->votes)
+      {
         specifiedPlayer = i;
         votes = players[i]->votes;
-      }else if (votes == players[i]->votes){
+      }
+      else if (votes == players[i]->votes)
+      {
         specifiedPlayer = num_player;
       }
     }
   }
-  if (specifiedPlayer >= 0 && specifiedPlayer < num_player){
+  if (specifiedPlayer >= 0 && specifiedPlayer < num_player)
+  {
     players[specifiedPlayer]->alive = false;
-    if (strstr(players[specifiedPlayer]->role, "mafia")){
+    if (strstr(players[specifiedPlayer]->role, "mafia"))
+    {
       num_mafia -= 1;
-    }else if (strcmp(players[specifiedPlayer]->role, "civilian") == 0){
+    }
+    else if (strcmp(players[specifiedPlayer]->role, "civilian") == 0)
+    {
       num_civilian -= 1;
-    }else{
-      if (strcmp(players[specifiedPlayer]->role, "hunter") == 0){
+    }
+    else
+    {
+      if (strcmp(players[specifiedPlayer]->role, "hunter") == 0)
+      {
         hunterTakedown(specifiedPlayer, playerCount);
       }
       num_special -= 1;
@@ -124,7 +145,8 @@ int eliminate_player(int playerCount, int specifiedPlayer){
   return specifiedPlayer;
 }
 
-void informAllPlayers(int dead_player, char * note){
+void informAllPlayers(int dead_player, char *note)
+{
   int i;
   char out[BUFFER_SIZE] = NOTIFY_PLAYER;
   char noteFilled[BUFFER_SIZE] = {0};
@@ -138,18 +160,22 @@ void informAllPlayers(int dead_player, char * note){
   }
 }
 
-void sigint_handle(){
+void sigint_handle()
+{
   free_struct(players);
   exit(SIGINT);
 }
 
-static void sighandler(int signo){
- if(signo == SIGINT){
-   sigint_handle();
- }
+static void sighandler(int signo)
+{
+  if (signo == SIGINT)
+  {
+    sigint_handle();
+  }
 }
 
-int getYesOrNo(int playerNum, char *prompt){
+int getYesOrNo(int playerNum, char *prompt)
+{
   char a;
   char in[BUFFER_SIZE] = {0};
   while (1)
@@ -157,15 +183,19 @@ int getYesOrNo(int playerNum, char *prompt){
     write(players[playerNum]->socket, prompt, BUFFER_SIZE);
     read(players[playerNum]->socket, in, sizeof(in));
     sscanf(in, "%c", &a);
-    if (a == 'y'){
+    if (a == 'y')
+    {
       return 1;
-    }else if (a == 'n'){
+    }
+    else if (a == 'n')
+    {
       return 0;
     }
   }
 }
 
-int getPlayerNumInput(char * out, int playerNum, int playerCount){
+int getPlayerNumInput(char *out, int playerNum, int playerCount)
+{
   int votedPlayer = playerCount;
   char in[BUFFER_SIZE] = {0};
 
@@ -179,12 +209,14 @@ int getPlayerNumInput(char * out, int playerNum, int playerCount){
   return votedPlayer;
 }
 
-void hunterTakedown(int hunterPlayerNum, int playerCount){
+void hunterTakedown(int hunterPlayerNum, int playerCount)
+{
   char in[BUFFER_SIZE] = {0};
 
   if (strcmp(players[hunterPlayerNum]->role, "hunter") == 0)
   {
-    if (getYesOrNo(hunterPlayerNum, "You can take a player down with you when you die. Do you want to bring a player with you [y/n]?")){
+    if (getYesOrNo(hunterPlayerNum, "You can take a player down with you when you die. Do you want to bring a player with you [y/n]?"))
+    {
       char out[BUFFER_SIZE] = HUNTER_PROMPT;
       strcat(out, disclose_players_to_player());
       int hunter_voted_player = getPlayerNumInput(out, hunterPlayerNum, playerCount);
@@ -194,22 +226,25 @@ void hunterTakedown(int hunterPlayerNum, int playerCount){
   }
 }
 
-
-int checkForGameEnd(int playerCount, int mafiaCount, int civilianCount, int specialCount){
+int checkForGameEnd(int playerCount, int mafiaCount, int civilianCount, int specialCount)
+{
   int i;
   int lead_mafia;
   char toPlayers[BUFFER_SIZE] = NOTIFY_PLAYER;
-  for(i=0;i<playerCount;i++){
-   if(strcmp(players[i]->role,"lead mafia")==0){
-	lead_mafia = i;
-	break;
-      }
+  for (i = 0; i < playerCount; i++)
+  {
+    if (strcmp(players[i]->role, "lead mafia") == 0)
+    {
+      lead_mafia = i;
+      break;
+    }
   }
   if (mafiaCount == 0 || players[lead_mafia]->alive == 0)
   {
     strcat(toPlayers, sep);
     strcat(toPlayers, INNOCENT_WIN);
-    for (i = 0; i < playerCount; i++){
+    for (i = 0; i < playerCount; i++)
+    {
       write(players[i]->socket, toPlayers, sizeof(toPlayers));
     }
     return 1;
@@ -218,7 +253,8 @@ int checkForGameEnd(int playerCount, int mafiaCount, int civilianCount, int spec
   {
     strcat(toPlayers, sep);
     strcat(toPlayers, MAFIA_WIN);
-    for (i = 0; i < playerCount; i++){
+    for (i = 0; i < playerCount; i++)
+    {
       write(players[i]->socket, toPlayers, sizeof(toPlayers));
     }
     return 1;
@@ -238,7 +274,7 @@ void nightCycle(int playerCount)
 
   // mafia chat
   if (num_mafia >= 2)
-  chatroom(100, num_mafia, players, 1);
+    chatroom(100, num_mafia, players, 1);
 
   // detective
   for (i = 0; i < playerCount; i++)
@@ -273,22 +309,26 @@ void nightCycle(int playerCount)
       dead_player = votedPlayer;
     }
   }
-    int save = 0;
+  int save = 0;
   // doctor
   for (i = 0; i < playerCount; i++)
   {
     char message[BUFFER_SIZE] = {0};
     if (strcmp("doctor", players[i]->role) == 0 && players[i]->alive && i != dead_player)
     {
-      if (players[i]->medicineCount > 0){
+      if (players[i]->medicineCount > 0)
+      {
         sprintf(message, "%s was killed tonight. Do you want to save this person? [y/n]", players[dead_player]->name);
-        if(getYesOrNo(i, message)){
+        if (getYesOrNo(i, message))
+        {
           players[i]->medicineCount--;
-	         save = 1;
+          save = 1;
         }
       }
-      if (players[i]->poisonCount > 0 && players[i]->alive){
-        if (getYesOrNo(i, "Do you want to posion anyone tonight? [y/n]")){
+      if (players[i]->poisonCount > 0 && players[i]->alive)
+      {
+        if (getYesOrNo(i, "Do you want to posion anyone tonight? [y/n]"))
+        {
           strcpy(message, "Who do you want to posion?\n");
           strcat(message, disclose_players_to_player());
           int votedPlayer = getPlayerNumInput(message, i, playerCount);
@@ -297,24 +337,31 @@ void nightCycle(int playerCount)
           eliminate_player(playerCount, votedPlayer);
           players[i]->poisonCount--;
         }
-	 else if (save){
-	    informAllPlayers(dead_player, "Nobody died last night.");
-	  }
+        else if (save)
+        {
+          informAllPlayers(dead_player, "Nobody died last night.");
+        }
       }
-    }else if (strcmp("doctor", players[i]->role) == 0 && ((players[i]->alive && i == dead_player) || players[i]->alive == false)){
+    }
+    else if (strcmp("doctor", players[i]->role) == 0 && ((players[i]->alive && i == dead_player) || players[i]->alive == false))
+    {
       informAllPlayers(dead_player, "Player %s was killed last night.");
       eliminate_player(playerCount, dead_player);
     }
   }
-if (save){
-  informAllPlayers(dead_player, "Nodbody died last night.");
-}else{
-  informAllPlayers(dead_player, "Player %s was killed last night.");
-  eliminate_player(playerCount, dead_player);
-}
+  if (save)
+  {
+    informAllPlayers(dead_player, "Nodbody died last night.");
+  }
+  else
+  {
+    informAllPlayers(dead_player, "Player %s was killed last night.");
+    eliminate_player(playerCount, dead_player);
+  }
 }
 
-void dayCycle(int playerCount){
+void dayCycle(int playerCount)
+{
   informAllPlayers(-1, "The sun has risen. But there is animosity in the air.");
   chatroom(100, playerCount, players, 0);
   int i;
@@ -330,145 +377,177 @@ void dayCycle(int playerCount){
     }
   }
   int playerKilled = eliminate_player(playerCount, -1);
-  if (playerKilled < 0){
+  if (playerKilled < 0)
+  {
     informAllPlayers(playerKilled, "Nobody was killed during the day.");
-  }else{
+  }
+  else
+  {
     informAllPlayers(playerKilled, "Player %s was killed in the broad daylight.");
   }
 }
 
-void gameCycle(int playerCount){
+void gameCycle(int playerCount)
+{
   while (1)
   {
     // night cycle
     nightCycle(playerCount);
-    if (checkForGameEnd(num_player, num_mafia, num_civilian, num_special)){
+    if (checkForGameEnd(num_player, num_mafia, num_civilian, num_special))
+    {
       break;
     }
     // day cycle
     dayCycle(playerCount);
-    if (checkForGameEnd(num_player, num_mafia, num_civilian, num_special)){
+    if (checkForGameEnd(num_player, num_mafia, num_civilian, num_special))
+    {
       break;
     }
   }
 }
 
-int chatroom(int seconds, int max_clients, struct player * players[20], int mafiaChat) {
-    fd_set read_fds, write_fds, clients_fds;
-    int max_fd = 0;
-    int r;
+int chatroom(int seconds, int max_clients, struct player *players[20], int mafiaChat)
+{
+  fd_set read_fds, write_fds, clients_fds;
+  int max_fd = 0;
+  int r;
 
-    struct timeval t = {seconds, 0};
+  struct timeval t = {seconds, 0};
 
-    // gather the clients
-    int clients[max_clients];
-    int c=0;
-    printf("waiting for people to connect\n");
-    int i = 0;
+  // gather the clients
+  int clients[max_clients];
+  int c = 0;
+  printf("waiting for people to connect\n");
+  int i = 0;
 
-    // tell clients to connect
-    for (i=0;players[i];i++){
-      if (mafiaChat) {
-        if (strncmp(players[i]->role,"mafia",5)==0 || (strncmp(players[i]->role,"lead mafia",10))==0) {
-          if ((players[i]->alive)==0) { // dead people
-              write(players[i]->socket, "CHAT0", 5);
-          } else {
-              write(players[i]->socket, "CHAT1", 5); // living people
-          }
-          clients[c] = players[i]->socket;
-          if (clients[c] > max_fd) {
-              max_fd = clients[c];
-              FD_SET(clients[c], &clients_fds); // add to client set
-              c++;
-          }
+  // tell clients to connect
+  for (i = 0; players[i]; i++)
+  {
+    if (mafiaChat)
+    {
+      if (strncmp(players[i]->role, "mafia", 5) == 0 || (strncmp(players[i]->role, "lead mafia", 10)) == 0)
+      {
+        if ((players[i]->alive) == 0)
+        { // dead people
+          write(players[i]->socket, "CHAT0", 5);
         }
-      }
-      else {
-        if ((players[i]->alive)==0) { // dead people
-            write(players[i]->socket, "CHAT0", 5);
-        } else {
-            write(players[i]->socket, "CHAT1", 5); // living people
+        else
+        {
+          write(players[i]->socket, "CHAT1", 5); // living people
         }
         clients[c] = players[i]->socket;
-        if (clients[c] > max_fd) {
-            max_fd = clients[c];
-            FD_SET(clients[c], &clients_fds); // add to client set
-            c++;
+        if (clients[c] > max_fd)
+        {
+          max_fd = clients[c];
+          FD_SET(clients[c], &clients_fds); // add to client set
+          c++;
         }
       }
     }
+    else
+    {
+      if ((players[i]->alive) == 0)
+      { // dead people
+        write(players[i]->socket, "CHAT0", 5);
+      }
+      else
+      {
+        write(players[i]->socket, "CHAT1", 5); // living people
+      }
+      clients[c] = players[i]->socket;
+      if (clients[c] > max_fd)
+      {
+        max_fd = clients[c];
+        FD_SET(clients[c], &clients_fds); // add to client set
+        c++;
+      }
+    }
+  }
 
-    // preparing the timings
-    time_t startTime = time(NULL);
-    int f = fork();
+  // preparing the timings
+  time_t startTime = time(NULL);
+  int f = fork();
 
-    // start the chatroom
-    while (time(NULL)-startTime < seconds) {
-      if (f==0) { // timer
-        if (seconds - (time(NULL) - startTime) == 10) {
-          for (int i = 0; i < max_clients; i++) {
-            write(clients[i], "=== 10 SECONDS LEFT IN CHATROOM ===\n", 36);
+  // start the chatroom
+  while (time(NULL) - startTime < seconds)
+  {
+    if (f == 0)
+    { // timer
+      if (seconds - (time(NULL) - startTime) == 10)
+      {
+        for (int i = 0; i < max_clients; i++)
+        {
+          write(clients[i], "=== 10 SECONDS LEFT IN CHATROOM ===\n", 36);
+        }
+        exit(0);
+      }
+      if (seconds - (time(NULL) - startTime) < 10)
+      {
+        exit(0);
+      }
+    }
+    else
+    { // main program
+      char input[100] = {0};
+      char chatter[50] = {0};
+      char final_message[153] = {0};
+      FD_ZERO(&read_fds); // clears set
+      FD_ZERO(&write_fds);
+
+      // copy client set
+      read_fds = clients_fds;
+      write_fds = clients_fds;
+
+      int sel = select(max_fd + 1, &read_fds, NULL, NULL, &t);
+      int here = 0;
+
+      if (sel)
+      { // if there is stuff left in read set
+        for (int i = 0; i < max_clients; i++)
+        { // loops to find the active client
+          if (FD_ISSET(clients[i], &read_fds))
+          { // if the client is in remaining one
+            r = read(clients[i], input, 100);
+            //strcpy(chatter, players[i]->name);
+            printf("got data: %s\n", input);
+            // printf("chatter: %s\n", chatter);
+            // printf("final msg so far: %s\n", final_message);
+            FD_CLR(clients[i], &write_fds);
+            here = i;
           }
-          exit(0);
         }
-        if (seconds - (time(NULL) - startTime) < 10) {
-          exit(0);
-        }
-      }
-      else { // main program
-        char input[100] = {0};
-        char chatter[50] = {0};
-        char final_message[153] = {0};
-        FD_ZERO(&read_fds); // clears set
-        FD_ZERO(&write_fds);
 
-        // copy client set
-        read_fds = clients_fds;
-        write_fds = clients_fds;
+        //prepare the final message
 
-        int sel = select(max_fd+1, &read_fds, NULL, NULL, &t);
-        int here = 0;
+        char *toSwap = strchr(input, '\n');
+        *toSwap = '\0';
+        sprintf(final_message, "%s\n", input);
 
-        if (sel) { // if there is stuff left in read set
-            for (int i = 0; i < max_clients; i++) { // loops to find the active client
-                if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
-                    r = read(clients[i], input, 100);
-                    //strcpy(chatter, players[i]->name);
-                    printf("got data: %s\n",input);
-                    // printf("chatter: %s\n", chatter);
-                    // printf("final msg so far: %s\n", final_message);
-                    FD_CLR(clients[i], &write_fds);
-                    here = i;
-                }
-            }
-
-            //prepare the final message
-
-            char *toSwap = strchr(input, '\n');
-            *toSwap = '\0';
-            sprintf(final_message, "%s\n", input);
-
-            // if there is stuff left in write set
-            for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
-                if (FD_ISSET(clients[i], &write_fds)) { // if the client is in remaining one
-                    write(clients[i], final_message, 153);
-                }
-            }
+        // if there is stuff left in write set
+        for (int i = 0; i < max_clients && r; i++)
+        { // loops to find the active client
+          if (FD_ISSET(clients[i], &write_fds))
+          { // if the client is in remaining one
+            write(clients[i], final_message, 153);
+          }
         }
       }
     }
+  }
 
-    for (i=0;players[i];i++){
-      char verify[BUFFER_SIZE] = {0};
-      write(players[i]->socket, STOP_TALKING, 11);
-      printf("told player %s to stop talking\n", players[i]->name);
-      read(players[i]->socket, verify, sizeof(verify));
-    }
+  for (i = 0; players[i]; i++)
+  {
+    char verify[BUFFER_SIZE] = {0};
+    write(players[i]->socket, STOP_TALKING, 11);
+    printf("told player %s to stop talking\n", players[i]->name);
+    read(players[i]->socket, verify, sizeof(verify));
+  }
 
-    return 0;
+  return 0;
 }
 
-int main() {
+int main()
+{
 
   int to_client;
   int sd = server_setup();
@@ -477,8 +556,9 @@ int main() {
   gameCapacity = 0;
   char in[BUFFER_SIZE] = {0};
 
-  srand(time (NULL));
-  while (gameCapacity < MIN_PLAYERS){
+  srand(time(NULL));
+  while (gameCapacity < MIN_PLAYERS)
+  {
     printf("How many players will be playing this game of Mafia?\nYou need at least %d people to play this game.\n", MIN_PLAYERS);
     fgets(in, 4, stdin);
     sscanf(in, "%d", &gameCapacity);
@@ -499,15 +579,16 @@ int main() {
     num_player++;
   }
   num_special = 1;
-  num_civilian = (num_player - 3 * num_special)/2;
-  num_mafia = num_player- 3 * num_special-num_civilian-1;
-  if(num_mafia > 5){
+  num_civilian = (num_player - 3 * num_special) / 2;
+  num_mafia = num_player - 3 * num_special - num_civilian - 1;
+  if (num_mafia > 5)
+  {
     num_mafia = 5;
-    num_civilian = num_player-3 * num_special-num_mafia-1;
+    num_civilian = num_player - 3 * num_special - num_mafia - 1;
   }
 
   // set number of people per role
-  int * num_player_per_role = role_setup(num_civilian,num_mafia,num_special,num_special,1,num_special);
+  int *num_player_per_role = role_setup(num_civilian, num_mafia, num_special, num_special, 1, num_special);
   // here we assign roles
   role_assign(num_player, num_player_per_role);
   gameCycle(num_player);
