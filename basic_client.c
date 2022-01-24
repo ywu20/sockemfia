@@ -2,6 +2,7 @@
 #include "parse.h"
 #include "constants.h"
 #include "chat.h"
+char * name = {0};
 char * get_name(int server){
   char * name = malloc(sizeof(char) * 50);
   printf("Enter your name (less than 50 characters): ");
@@ -29,11 +30,12 @@ void rules(){
 int main(int argc, char *argv[]) {
   rules();
   char *ipAddress = "149.89.150.101";
+  //char *ipAddress = "localhost";
   if (argc > 1){
     ipAddress = argv[1];
   }
   int from_server = client_handshake(ipAddress);
-  char * name = get_name(from_server);
+  name = get_name(from_server);
   printf("Your name is: %s",name);
 
   while(1){
@@ -81,6 +83,10 @@ int main(int argc, char *argv[]) {
 
 int chat(int server, char living) {
   printf("You have entered the chatroom!\n");
+  char prefix[100] = "";
+  strcat(prefix, name);
+  prefix[strlen(name) - 1]='\0';
+  strcat(prefix,": ");
   char input[100] = {0};
   char output[152] = {0};
   int f = fork();
@@ -89,7 +95,8 @@ int chat(int server, char living) {
     if (living == '1'){
       while (read(STDIN_FILENO, input, sizeof(input)-1)) {
         input[99] = '\n';
-        write(server, input, 100);
+        strcat(prefix, input);
+        write(server, prefix, 100);
       }
     }else{
       while (read(STDIN_FILENO, input, sizeof(input)-1)){

@@ -449,7 +449,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
                     printf("going to read from %d\n", clients[i]);
                     r = read(clients[i], input, 100);
-                    strcpy(chatter, players[i]->name);
+                    //strcpy(chatter, players[i]->name);
                     printf("got data: %s\n",input);
                     // printf("chatter: %s\n", chatter);
                     // printf("final msg so far: %s\n", final_message);
@@ -462,7 +462,7 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
 
             char *toSwap = strchr(input, '\n');
             *toSwap = '\0';
-            sprintf(final_message, "%s: %s\n", chatter, input);
+            sprintf(final_message, "%s\n", input);
 
             // if there is stuff left in write set
             for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
