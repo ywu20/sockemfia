@@ -101,6 +101,7 @@ int chat(int server, char living) {
         strcpy(cp,input);
         strcat(prefix, cp);
         write(server, prefix, 100);
+        strcpy(input, "\0");
       }
     }else{
       while (read(STDIN_FILENO, input, sizeof(input)-1)){

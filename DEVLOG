@@ -145,3 +145,8 @@ Chatroom doesn't relay any input that dead people send (moved code from sarah to
 
 sarahL -- 2022-01-23 11:26
 Added a mafia chat option
+
+yuqingW -- 2022-01-23 21:46
+Fixed chat not matching names error.
+Fixed doctor error when the doctor do not save people.
+Fixed readme.
