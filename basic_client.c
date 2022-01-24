@@ -29,8 +29,8 @@ void rules(){
 
 int main(int argc, char *argv[]) {
   rules();
-  char *ipAddress = "149.89.150.101";
-  //char *ipAddress = "localhost";
+  // char *ipAddress = "149.89.150.101";
+  char *ipAddress = "localhost";
   if (argc > 1){
     ipAddress = argv[1];
   }
@@ -97,6 +97,7 @@ int chat(int server, char living) {
         input[99] = '\n';
         strcat(prefix, input);
         write(server, prefix, 100);
+        strcpy(input, "\0");
       }
     }else{
       while (read(STDIN_FILENO, input, sizeof(input)-1)){
