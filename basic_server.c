@@ -366,24 +366,19 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
     printf("waiting for people to connect\n");
     int i = 0;
 
-    printf("number of mafia: %d\n", num_mafia);
     // tell clients to connect
     for (i=0;players[i];i++){
       if (mafiaChat) {
         if (strncmp(players[i]->role,"mafia",5)==0 || (strncmp(players[i]->role,"lead mafia",10))==0) {
           if ((players[i]->alive)==0) { // dead people
               write(players[i]->socket, "CHAT0", 5);
-              printf("told player %s to be view only\n", players[i]->name);
           } else {
               write(players[i]->socket, "CHAT1", 5); // living people
-              printf("told player %s to connect\n", players[i]->name);
           }
           clients[c] = players[i]->socket;
           if (clients[c] > max_fd) {
               max_fd = clients[c];
-              printf("clients[%d] joined\n", clients[c]);
               FD_SET(clients[c], &clients_fds); // add to client set
-              printf("added fd %d to read set\n", clients[c]);
               c++;
           }
         }
@@ -391,22 +386,17 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
       else {
         if ((players[i]->alive)==0) { // dead people
             write(players[i]->socket, "CHAT0", 5);
-            printf("told player %s to be view only\n", players[i]->name);
         } else {
             write(players[i]->socket, "CHAT1", 5); // living people
-            printf("told player %s to connect\n", players[i]->name);
         }
         clients[c] = players[i]->socket;
         if (clients[c] > max_fd) {
             max_fd = clients[c];
-            printf("clients[%d] joined\n", clients[c]);
             FD_SET(clients[c], &clients_fds); // add to client set
-            printf("added fd %d to read set\n", clients[c]);
             c++;
         }
       }
     }
-    printf("new max_fd: %d\n", max_fd);
 
     // preparing the timings
     time_t startTime = time(NULL);
@@ -437,17 +427,11 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
         write_fds = clients_fds;
 
         int sel = select(max_fd+1, &read_fds, NULL, NULL, &t);
-        printf("sel: %d\n", sel);
-        // printf("final_msg check (null): %s\n", final_message);
         int here = 0;
 
         if (sel) { // if there is stuff left in read set
-            printf("sel if statement\n");
             for (int i = 0; i < max_clients; i++) { // loops to find the active client
-              printf("in the for loop\n");
-              printf("clients[%d]: %d\n", i, clients[i]);
                 if (FD_ISSET(clients[i], &read_fds)) { // if the client is in remaining one
-                    printf("going to read from %d\n", clients[i]);
                     r = read(clients[i], input, 100);
                     //strcpy(chatter, players[i]->name);
                     printf("got data: %s\n",input);
@@ -467,12 +451,10 @@ int chatroom(int seconds, int max_clients, struct player * players[20], int mafi
             // if there is stuff left in write set
             for (int i = 0; i < max_clients && r; i++) { // loops to find the active client
                 if (FD_ISSET(clients[i], &write_fds)) { // if the client is in remaining one
-                    printf("going to write to %d: %s\n", clients[i], final_message);
                     write(clients[i], final_message, 153);
                 }
             }
         }
-        printf("loop complete\n\n");
       }
     }
 
@@ -498,7 +480,7 @@ int main() {
   srand(time (NULL));
   while (gameCapacity < MIN_PLAYERS){
     printf("How many players will be playing this game of Mafia?\nYou need at least %d people to play this game.\n", MIN_PLAYERS);
-    read(STDIN_FILENO, in, sizeof(in));
+    fgets(in, 4, stdin);
     sscanf(in, "%d", &gameCapacity);
   }
 
