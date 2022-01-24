@@ -45,17 +45,18 @@ special roles:
    - Signals will be used in order to handle an event where the whole server goes down and ensure that the client isn't left in the dark.
    #### How you are breaking down the project and who is responsible for which parts.
    - Explain game rules at the start. - Yuqing
-   - Semaphore - Andy
-      - When the server starts, the user that hosts the server will be asked to enter how many people are in the game, and that will be the number of semaphores we give.
+   - When the server starts, the user that hosts the server will be asked to enter how many people are in the game. - Andy
    - Role assignment, each client is assigned a role when they first connect to the server, record their roles in a file. - Yuqing
    - Instructional period where people are killed and special roles are doing special things. - Yuqing (maybe a separate mafia chatroom (Sarah)) 
       - use database file to record who got killed / saved. 
    - Announce who died. - Yuqing
    - Chatroom where every person goes around and talk. The server will receive what each client enters and podcast it to all the other clients. - Sarah
    - Voting: each person votes for who they think the mafia is. The vote is announced to the clients so that people can see what other people voted for. Record who's dead. - Andy
-   - Timer to ensure that people don't try to halt the game by refusing to vote or to ensure that people only discuss within a set time. - Andy
+   - Nighttime tasks - check whos good or bad, kill someone, revive someone - Andy
+   - Timer to ensure that people don't try to halt the game by refusing to vote or to ensure that people only discuss within a set time. - Sarah
    - The people who are dead can continue watch the game but can't write anything to the server or can write to a separate chat. - Sarah
    - End game, announce results. - Andy
+   - Handle server going down - Andy
    #### What algorithms and /or data structures you will be using, and how.
    - A struct will keep track of the state of a player (alive, role, ...), as well as the file descriptor the client is on.
    - Each player will get a number (ID) and the file that stores their information would be named like that. 
