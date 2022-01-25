@@ -310,6 +310,7 @@ void nightCycle(int playerCount)
     }
   }
   int save = 0;
+  int poison = 0;
   // doctor
   for (i = 0; i < playerCount; i++)
   {
@@ -332,6 +333,7 @@ void nightCycle(int playerCount)
           strcpy(message, "Who do you want to posion?\n");
           strcat(message, disclose_players_to_player());
           int votedPlayer = getPlayerNumInput(message, i, playerCount);
+          poison = 1;
 
           informAllPlayers(votedPlayer, "Player %s was poisoned and died last night.");
           eliminate_player(playerCount, votedPlayer);
@@ -349,7 +351,7 @@ void nightCycle(int playerCount)
       eliminate_player(playerCount, dead_player);
     }
   }
-  if (save)
+  if (save && !poison)
   {
     informAllPlayers(dead_player, "Nodbody died last night.");
   }
