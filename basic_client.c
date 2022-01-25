@@ -55,6 +55,7 @@ int main()
     if (strcmp(parsedIn[0], END_GAME) == 0)
     {
       printf(GAME_HAS_ENDED);
+      tcflush(STDIN_FILENO, TCIFLUSH);
       break;
     }
     else if (strcmp(parsedIn[0], TELL_ROLE) == 0)
@@ -148,6 +149,7 @@ int chat(int server, char living)
       // input[99] = '\n';
       printf("%s", output);
     }
+    tcflush(STDIN_FILENO, TCIFLUSH);
     kill(f, SIGKILL); // removes child process
     waitpid(f, &status, 0);
     printf("\nchatroom over\n\n");
