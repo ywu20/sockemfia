@@ -419,6 +419,7 @@ int chatroom(int seconds, int max_clients, struct player *players[20], int mafia
   // gather the clients
   int clients[max_clients];
   int c = 0;
+  printf("waiting for people to connect\n");
   int i = 0;
 
   // tell clients to connect
@@ -510,6 +511,7 @@ int chatroom(int seconds, int max_clients, struct player *players[20], int mafia
           { // if the client is in remaining one
             r = read(clients[i], input, 100);
             //strcpy(chatter, players[i]->name);
+            printf("got data: %s\n", input);
             // printf("chatter: %s\n", chatter);
             // printf("final msg so far: %s\n", final_message);
             FD_CLR(clients[i], &write_fds);
@@ -539,6 +541,7 @@ int chatroom(int seconds, int max_clients, struct player *players[20], int mafia
   {
     char verify[BUFFER_SIZE] = {0};
     write(players[i]->socket, STOP_TALKING, 11);
+    printf("told player %s to stop talking\n", players[i]->name);
     read(players[i]->socket, verify, sizeof(verify));
   }
 
