@@ -14,7 +14,6 @@
 #include <sys/shm.h>
 #include <signal.h>
 #include <sys/wait.h>
-#include <termio.h>
 
 #ifndef NETWORKING_H
 #define NETWORKING_H
