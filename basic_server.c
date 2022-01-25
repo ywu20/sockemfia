@@ -268,7 +268,6 @@ void nightCycle(int playerCount)
   char in[BUFFER_SIZE] = {0};
   int dead_player = -1;
   int votedPlayer;
-  char a;
 
   informAllPlayers(-1, "The sun has set. Night has fallen among us.");
 
