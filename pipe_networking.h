@@ -14,8 +14,11 @@
 #include <sys/shm.h>
 #include <signal.h>
 #include <sys/wait.h>
-#include <termio.h>
+#ifdef __APPLE__
 #include <termios.h>
+#else
+#include <termio.h>
+#endif
 
 #ifndef NETWORKING_H
 #define NETWORKING_H
