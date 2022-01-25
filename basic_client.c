@@ -32,6 +32,7 @@ void rules()
 
 int main()
 {
+  int status;
   char ipAddress[BUFFER_SIZE];
   printf("What is the IP address of the game server you want to connect to?\nPress enter if you want to use localhost.\n");
   fgets(ipAddress, BUFFER_SIZE, stdin);
@@ -94,6 +95,7 @@ int main()
         read(STDIN_FILENO, in, sizeof(in));
         write(from_server, in, sizeof(in));
         kill(f, SIGKILL);
+        waitpid(f, &status, 0);
       }
     }
     free(parsedIn);
