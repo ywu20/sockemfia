@@ -145,7 +145,7 @@ int chat(int server, char living)
       // input[99] = '\n';
       printf("%s", output);
     }
-    kill(f, SIGKILL); // removes child process
+    kill(f, SIGINT); // removes child process
     printf("\nchatroom over\n\n");
     write(server, "ENDED", sizeof(char) * BUFFER_SIZE);
     if (gameEnd == 0)
