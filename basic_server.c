@@ -310,6 +310,7 @@ void nightCycle(int playerCount)
     }
   }
   int save = 0;
+  int poison = 0;
   // doctor
   for (i = 0; i < playerCount; i++)
   {
@@ -332,6 +333,7 @@ void nightCycle(int playerCount)
           strcpy(message, "Who do you want to posion?\n");
           strcat(message, disclose_players_to_player());
           int votedPlayer = getPlayerNumInput(message, i, playerCount);
+          poison = 1;
 
           informAllPlayers(votedPlayer, "Player %s was poisoned and died last night.");
           eliminate_player(playerCount, votedPlayer);
@@ -349,7 +351,7 @@ void nightCycle(int playerCount)
       eliminate_player(playerCount, dead_player);
     }
   }
-  if (save)
+  if (save && !poison)
   {
     informAllPlayers(dead_player, "Nodbody died last night.");
   }
@@ -417,7 +419,6 @@ int chatroom(int seconds, int max_clients, struct player *players[20], int mafia
   // gather the clients
   int clients[max_clients];
   int c = 0;
-  printf("waiting for people to connect\n");
   int i = 0;
 
   // tell clients to connect
@@ -509,7 +510,6 @@ int chatroom(int seconds, int max_clients, struct player *players[20], int mafia
           { // if the client is in remaining one
             r = read(clients[i], input, 100);
             //strcpy(chatter, players[i]->name);
-            printf("got data: %s\n", input);
             // printf("chatter: %s\n", chatter);
             // printf("final msg so far: %s\n", final_message);
             FD_CLR(clients[i], &write_fds);
@@ -539,7 +539,6 @@ int chatroom(int seconds, int max_clients, struct player *players[20], int mafia
   {
     char verify[BUFFER_SIZE] = {0};
     write(players[i]->socket, STOP_TALKING, 11);
-    printf("told player %s to stop talking\n", players[i]->name);
     read(players[i]->socket, verify, sizeof(verify));
   }
 

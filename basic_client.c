@@ -55,6 +55,7 @@ int main()
     if (strcmp(parsedIn[0], END_GAME) == 0)
     {
       printf(GAME_HAS_ENDED);
+      tcflush(STDIN_FILENO, TCIFLUSH);
       break;
     }
     else if (strcmp(parsedIn[0], TELL_ROLE) == 0)
@@ -89,6 +90,7 @@ int main()
       }
       else
       {
+        tcflush(STDIN_FILENO, TCIFLUSH);
         read(STDIN_FILENO, in, sizeof(in));
         write(from_server, in, sizeof(in));
         kill(f, SIGKILL);
@@ -104,9 +106,11 @@ int chat(int server, char living)
   char input[100] = {0};
   char output[152] = {0};
   int f = fork();
+  int status;
 
   if (f == 0)
   { // child waits for input to send
+    tcflush(STDIN_FILENO, TCIFLUSH);
     if (living == '1')
     {
       while (read(STDIN_FILENO, input, sizeof(input) - 1))
@@ -145,7 +149,9 @@ int chat(int server, char living)
       // input[99] = '\n';
       printf("%s", output);
     }
-    kill(f, SIGINT); // removes child process
+    tcflush(STDIN_FILENO, TCIFLUSH);
+    kill(f, SIGKILL); // removes child process
+    waitpid(f, &status, 0);
     printf("\nchatroom over\n\n");
     write(server, "ENDED", sizeof(char) * BUFFER_SIZE);
     if (gameEnd == 0)
