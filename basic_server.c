@@ -412,6 +412,7 @@ int chatroom(int seconds, int max_clients, struct player *players[20], int mafia
   fd_set read_fds, write_fds, clients_fds;
   int max_fd = 0;
   int r;
+  int status;
 
   struct timeval t = {seconds, 0};
 
@@ -533,6 +534,9 @@ int chatroom(int seconds, int max_clients, struct player *players[20], int mafia
       }
     }
   }
+
+  kill(f, SIGKILL);
+  waitpid(f, &status, 0);
 
   for (i = 0; players[i]; i++)
   {
