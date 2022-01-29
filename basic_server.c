@@ -413,6 +413,10 @@ int chatroom(int seconds, int max_clients, struct player *players[20], int mafia
   int max_fd = 0;
   int r;
   int status;
+  
+  FD_ZERO(&read_fds);
+  FD_ZERO(&write_fds);
+  FD_ZERO(&clients_fds);
 
   struct timeval t = {seconds, 0};
 
